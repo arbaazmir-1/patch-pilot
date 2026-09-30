@@ -262,3 +262,7 @@ The AI is the engine, not the product. The product is a security workflow that p
 ---
 
 INTI International University · Track 1, Defence agents · hackai.my · *Think agents. Build impact.*
+
+## License
+
+Copyright (C) 2026 Abdullah Ibn Shahin. Licensed under the [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0-only).

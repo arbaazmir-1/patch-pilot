@@ -4,8 +4,8 @@
   "private": true,
   "description": "Local-first agent that investigates npm dependency vulnerabilities against your real code and applies human-approved fixes with a full audit trail.",
   "type": "module",
-  "license": "MIT",
-  "author": "Abdullah",
+  "license": "AGPL-3.0-only",
+  "author": "Abdullah Ibn Shahin",
   "bin": {
     "patch-pilot": "dist/bin/patch-pilot.js"
   },

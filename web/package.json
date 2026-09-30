@@ -2,6 +2,7 @@
   "name": "patch-pilot-web",
   "version": "0.1.0",
   "private": true,
+  "license": "AGPL-3.0-only",
   "type": "module",
   "description": "Local web dashboard for PatchPilot scan reports.",
   "scripts": {
