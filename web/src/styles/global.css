@@ -1011,6 +1011,123 @@ a.prow-name:hover {
   overflow-wrap: anywhere;
 }
 
+/* run history */
+
+.faint {
+  color: var(--faint);
+}
+.runs {
+  margin-top: 32px;
+}
+.hlist-runs {
+  display: grid;
+}
+.hlist-runs .plist-foot {
+  padding-left: calc(4ch + 8px);
+}
+.hrow {
+  display: grid;
+  grid-template-columns: 4ch 16ch 8ch minmax(0, 1fr) 24ch minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: 2ch;
+  padding: 3px 8px;
+}
+.hrow > * {
+  min-width: 0;
+}
+.hrow[data-nav-href] {
+  cursor: pointer;
+}
+.hrow-date {
+  color: var(--bright);
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+a.hrow-date:hover {
+  text-decoration: none;
+}
+.hrow-risk {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.hrow-counts {
+  color: var(--dim);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.hrow-model {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hrow-provider {
+  color: var(--purple);
+}
+.hrow-modelname {
+  color: var(--blue);
+}
+.hrow-problem {
+  grid-column: 4 / -1;
+  color: var(--faint);
+}
+.hrow-more {
+  grid-template-columns: 4ch minmax(0, 1fr);
+}
+.hrow.is-here .hrow-date {
+  color: var(--orange);
+}
+.hrow[data-nav-href]:hover,
+.hrow.is-selected {
+  background: var(--orange);
+  color: var(--on-orange);
+}
+.hrow[data-nav-href]:hover *,
+.hrow.is-selected * {
+  color: var(--on-orange) !important;
+}
+.hrow[data-nav-href]:hover .chip,
+.hrow.is-selected .chip {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--on-orange);
+}
+.chip-latest,
+.chip-here {
+  --c: var(--orange);
+}
+.chip-past {
+  --c: var(--purple);
+}
+.run-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 1ch;
+}
+.run-diff {
+  font-size: 12px;
+}
+.run-steps {
+  color: var(--dim);
+}
+.tag-now-critical {
+  --c: var(--critical);
+}
+.tag-now-high {
+  --c: var(--high);
+}
+.tag-now-medium {
+  --c: var(--medium);
+}
+.tag-now-low {
+  --c: var(--low);
+}
+.tag-now-noise,
+.tag-now-unrated {
+  --c: var(--noise);
+}
+
 /* narrow */
 
 @media (max-width: 980px) {
@@ -1132,6 +1249,45 @@ a.prow-name:hover {
   }
   .hlist-date {
     display: none;
+  }
+  .hrow {
+    grid-template-columns: 4ch minmax(0, 1fr) auto;
+    grid-template-areas:
+      'tree date mark'
+      '. risk risk'
+      '. counts counts'
+      '. model model';
+    column-gap: 1ch;
+    row-gap: 2px;
+    padding: 6px 4px;
+  }
+  .hrow > .tree-glyph {
+    grid-area: tree;
+  }
+  .hrow-date {
+    grid-area: date;
+  }
+  .hrow-mark {
+    grid-area: mark;
+  }
+  .hrow-risk {
+    grid-area: risk;
+  }
+  .hrow-counts {
+    grid-area: counts;
+  }
+  .hrow-model {
+    grid-area: model;
+  }
+  .hrow-problem {
+    grid-area: risk;
+  }
+  .hrow-more {
+    grid-template-columns: 4ch minmax(0, 1fr);
+    grid-template-areas: none;
+  }
+  .hlist-runs .plist-foot {
+    padding-left: calc(5ch + 4px);
   }
   .keyhints .keyhint:nth-child(n + 8) {
     display: none;

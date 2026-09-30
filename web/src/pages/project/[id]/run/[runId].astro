@@ -1,0 +1,223 @@
+---
+import os from 'node:os';
+import Base from '../../../../layouts/Base.astro';
+import FindingCard from '../../../../components/FindingCard.astro';
+import RunHistory from '../../../../components/RunHistory.astro';
+import { compareToLatest, isRunId, listRuns, readRun, summarizeReport } from '../../../../lib/history.ts';
+import { getFindings, getProject, RISK_ORDER } from '../../../../lib/queries.ts';
+import { syncReports } from '../../../../lib/sync.ts';
+import type { ReportJson } from '../../../../lib/report.ts';
+
+syncReports();
+const id = Number(Astro.params.id);
+const project = Number.isInteger(id) ? getProject(id) : null;
+if (!project) {
+  return new Response('Project not found. It may have been removed from the dashboard.', { status: 404 });
+}
+const runId = Astro.params.runId;
+const run = isRunId(runId) ? readRun(project.root, runId) : null;
+if (!run) {
+  return new Response('Run not found. Its folder in .patch-pilot/history may have been removed or has no readable report.json.', { status: 404 });
+}
+
+let latestReport: ReportJson | null = null;
+try {
+  latestReport = project.report_json ? (JSON.parse(project.report_json) as ReportJson) : null;
+} catch {
+  latestReport = null;
+}
+const pastRuns = listRuns(project.root);
+const latestRun = { ...summarizeReport('latest', latestReport), at: latestReport?.generatedAt ?? project.report_generated_at ?? project.updated_at };
+// step over runs without a readable report
+const readable = pastRuns.filter((r) => !r.problem);
+const index = readable.findIndex((r) => r.id === run.summary.id);
+const newer = index > 0 ? readable[index - 1] : null;
+const older = index >= 0 && index < readable.length - 1 ? readable[index + 1] : null;
+const newerHref = newer ? `/project/${project.id}/run/${newer.id}` : `/project/${project.id}`;
+const olderHref = older ? `/project/${project.id}/run/${older.id}` : null;
+
+const { report, findings, summary } = run;
+const comparison = compareToLatest(findings, getFindings(project.id));
+const home = os.homedir();
+const tildePath = project.root.startsWith(home) ? `~${project.root.slice(home.length)}` : project.root;
+
+function fmtDate(iso: string | null | undefined): string {
+  if (!iso) return '-';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const p = (n: number): string => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+const inv = report.investigation ?? null;
+const groups = RISK_ORDER.map((risk) => ({ risk, items: findings.filter((f) => (f.risk ?? 'Noise') === risk) })).filter((g) => g.items.length > 0);
+const unrated = findings.filter((f) => f.risk && !(RISK_ORDER as readonly string[]).includes(f.risk));
+const counts = report.counts ?? {};
+const meta: [string, string][] = [
+  ['run', summary.id],
+  ['scanned', fmtDate(report.scannedAt ?? report.generatedAt)],
+  ['lockfile', report.project?.lockfile ? `${report.project.lockfile} v${report.project.lockfileVersion ?? '?'}` : '-'],
+  [
+    'dependencies',
+    counts.dependencies == null
+      ? '-'
+      : `${counts.dependencies}${counts.direct != null && counts.dev != null ? ` (${counts.direct} direct, ${counts.dev} dev)` : ''}`,
+  ],
+  ['vulnerable pkgs', counts.vulnerablePackages == null ? '-' : String(counts.vulnerablePackages)],
+  ['advisories', report.vulnSource?.label ?? '-'],
+  ['patch-pilot', report.patchPilotVersion ?? '-'],
+];
+const changed = comparison.fixed + comparison.riskChanged + comparison.added;
+const plural = (n: number, one: string, many = `${one}s`): string => `${n} ${n === 1 ? one : many}`;
+---
+
+<Base
+  title={`${project.name} · ${fmtDate(summary.at)}`}
+  crumbs={[{ label: 'projects', href: '/' }, { label: project.name, href: `/project/${project.id}` }, { label: `run ${fmtDate(summary.at)}` }]}
+  keys={[
+    ['j k', 'move'],
+    ['ENTER', 'evidence'],
+    ['p n', 'older / newer run'],
+    ['/', 'filter'],
+    ['ESC', 'back'],
+  ]}
+>
+  <section class="phead">
+    <p class="run-banner">
+      <span class="chip chip-past">past run</span>
+      <span class="bright">{fmtDate(summary.at)}</span>
+      <span class="sep">·</span>
+      <a href={`/project/${project.id}`} id="back-latest">← back to latest</a>
+    </p>
+    <h1 class="ptitle">{project.name}</h1>
+    <p class="ppath" title={project.root}>{tildePath}</p>
+    <p class="labels">
+      {RISK_ORDER.map((r) => (
+        <a href={`#risk-${r.toLowerCase()}`} class={`label label-${r.toLowerCase()}${summary.byRisk[r] === 0 ? ' is-zero' : ''}`}>
+          {summary.byRisk[r]} {r.toLowerCase()}
+        </a>
+      ))}
+      {summary.accepted > 0 && <span class="label label-dim">{summary.accepted} accepted</span>}
+      <span class="label label-dim">{summary.cves} cves</span>
+    </p>
+    <p class="run-diff">
+      <span class="dim">vs latest:</span>{' '}
+      {changed === 0 ? (
+        <span class="dim">same findings and risks</span>
+      ) : (
+        <>
+          {comparison.fixed > 0 && <span class="ok">{comparison.fixed} fixed</span>}
+          {comparison.fixed > 0 && comparison.riskChanged + comparison.added > 0 && <span class="sep"> · </span>}
+          {comparison.riskChanged > 0 && <span class="warn">{comparison.riskChanged} risk changed</span>}
+          {comparison.riskChanged > 0 && comparison.added > 0 && <span class="sep"> · </span>}
+          {comparison.added > 0 && <span class="fail">{comparison.added} new</span>}
+        </>
+      )}
+    </p>
+  </section>
+
+  <div class="pgrid">
+    <div class="pmain">
+      <div class="section-bar">
+        <h2 class="tab"><span class="tab-icon">▤</span> vulnerabilities <span class="tab-count">{findings.length}</span></h2>
+        {findings.length > 0 && (
+          <label class="filter">
+            <span class="prompt">/</span>
+            <input id="ffilter" type="search" placeholder="filter by cve or package" autocomplete="off" spellcheck="false" />
+          </label>
+        )}
+      </div>
+
+      {findings.length === 0 ? (
+        <div class="empty">
+          {summary.cves ? (
+            <p class="bright">{plural(summary.cves, 'cve')} found, none investigated in this run</p>
+          ) : (
+            <p class="bright"><span class="ok">✓</span> no vulnerabilities in this run</p>
+          )}
+        </div>
+      ) : (
+        <>
+          {groups.map((g) => (
+            <section class="rgroup" id={`risk-${g.risk.toLowerCase()}`} data-group>
+              <h3 class={`rgroup-head c-${g.risk.toLowerCase()}`}>
+                <span class="rgroup-mark">■</span> {g.risk.toLowerCase()} <span class="tab-count">{g.items.length}</span>
+              </h3>
+              {g.items.map((f) => <FindingCard finding={f} change={comparison.changes.get(f)} />)}
+            </section>
+          ))}
+          {unrated.length > 0 && (
+            <section class="rgroup" data-group>
+              <h3 class="rgroup-head dim"><span class="rgroup-mark">■</span> other <span class="tab-count">{unrated.length}</span></h3>
+              {unrated.map((f) => <FindingCard finding={f} change={comparison.changes.get(f)} />)}
+            </section>
+          )}
+          <p class="plist-foot" id="ffilter-empty" hidden>no vulnerability matches the filter</p>
+        </>
+      )}
+
+      <RunHistory projectId={project.id} latest={latestRun} runs={pastRuns} current={summary.id} />
+    </div>
+
+    <aside class="pside">
+      <div class="card">
+        <h3 class="card-title"><span class="tab-icon">◷</span> this run</h3>
+        <dl class="kv">
+          {meta.map(([k, v]) => (
+            <div><dt>{k}</dt><dd>{v}</dd></div>
+          ))}
+        </dl>
+        <p class="run-steps">
+          {olderHref ? <a href={olderHref} id="run-older"><kbd>[p]</kbd> older</a> : <span class="faint">[p] older</span>}
+          <span class="sep"> · </span>
+          <a href={newerHref} id="run-newer"><kbd>[n]</kbd> {newer ? 'newer' : 'latest'}</a>
+        </p>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title"><span class="tab-icon">✦</span> investigation</h3>
+        {inv ? (
+          <>
+            <p class="tags">
+              {inv.provider && <span class="tag tag-accent">{inv.provider}</span>}
+              {(inv.models && inv.models.length > 0 ? inv.models : inv.model ? [inv.model] : []).map((m) => (
+                <span class="tag tag-blue">{m}</span>
+              ))}
+              {inv.complete === false ? <span class="tag tag-warn">incomplete</span> : <span class="tag tag-ok">complete</span>}
+            </p>
+            <dl class="kv">
+              <div><dt>verdicts</dt><dd>{inv.verdicts ?? summary.investigated}</dd></div>
+              {inv.cached != null && <div><dt>cached</dt><dd>{inv.cached}</dd></div>}
+              {inv.adjusted != null && <div><dt>adjusted</dt><dd>{inv.adjusted}</dd></div>}
+              {inv.forced != null && <div><dt>forced</dt><dd>{inv.forced}</dd></div>}
+            </dl>
+          </>
+        ) : (
+          <p class="dim">not investigated</p>
+        )}
+      </div>
+
+      <div class="card">
+        <h3 class="card-title"><span class="tab-icon">↳</span> source</h3>
+        <p class="src-path">{tildePath}/.patch-pilot/history/{summary.id}/report.json</p>
+        <p class="dim">archived by the cli before the next scan; read only here</p>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    import { setupFindingNav } from '../../../../components/findingNav.ts';
+
+    const follow = (id: string): void => {
+      const link = document.getElementById(id) as HTMLAnchorElement | null;
+      if (link) window.location.href = link.href;
+    };
+    setupFindingNav({
+      escapeHref: (document.getElementById('back-latest') as HTMLAnchorElement | null)?.href ?? '/',
+      keys: {
+        p: () => follow('run-older'),
+        n: () => follow('run-newer'),
+      },
+    });
+  </script>
+</Base>

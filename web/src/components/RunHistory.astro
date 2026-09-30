@@ -1,0 +1,106 @@
+---
+import { RISK_ORDER } from '../lib/queries.ts';
+import type { RunSummary } from '../lib/history.ts';
+
+interface Props {
+  projectId: number;
+  latest: RunSummary | null;
+  runs: RunSummary[];
+  // run page: the run being viewed
+  current?: string;
+}
+const { projectId, latest, runs, current } = Astro.props;
+
+const SHOWN = 30;
+const shown = runs.slice(0, SHOWN);
+const hiddenCount = runs.length - shown.length;
+const rows: { run: RunSummary; latest: boolean }[] = [
+  ...(latest ? [{ run: latest, latest: true }] : []),
+  ...shown.map((run) => ({ run, latest: false })),
+];
+
+function fmtDate(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const p = (n: number): string => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+const plural = (n: number, one: string, many = `${one}s`): string => `${n} ${n === 1 ? one : many}`;
+const tree = (i: number): string => (i === rows.length - 1 && hiddenCount === 0 ? '└──' : '├──');
+const hrefFor = (row: { run: RunSummary; latest: boolean }): string | null =>
+  row.latest ? (current ? `/project/${projectId}` : null) : row.run.problem ? null : `/project/${projectId}/run/${row.run.id}`;
+---
+
+<section class="section runs" id="runs">
+  <div class="section-bar">
+    <h2 class="tab"><span class="tab-icon">◷</span> runs <span class="tab-count">{rows.length + hiddenCount}</span></h2>
+  </div>
+  {rows.length === 0 ? (
+    <div class="empty">
+      <p class="dim">no runs recorded yet</p>
+    </div>
+  ) : (
+    <div class="hlist-runs" role="list">
+      {rows.map((row, i) => {
+        const href = hrefFor(row);
+        const risks = RISK_ORDER.filter((r) => row.run.byRisk[r] > 0);
+        const here = row.latest ? !current : row.run.id === current;
+        return (
+          <div
+            class:list={['hrow', { 'is-here': here, 'is-broken': row.run.problem }]}
+            role="listitem"
+            data-nav-href={href ?? undefined}
+            aria-current={here ? 'page' : undefined}
+          >
+            <span class="tree-glyph">{tree(i)}</span>
+            {href ? (
+              <a class="hrow-date" href={href} title={row.run.at}>{fmtDate(row.run.at)}</a>
+            ) : (
+              <span class="hrow-date" title={row.run.at}>{fmtDate(row.run.at)}</span>
+            )}
+            <span class="hrow-mark">
+              {row.latest ? <span class="chip chip-latest">latest</span> : here ? <span class="chip chip-here">viewing</span> : null}
+            </span>
+            {row.run.problem ? (
+              <span class="hrow-problem">{row.run.problem === 'missing' ? 'no report.json kept' : 'report.json unreadable'}</span>
+            ) : (
+              <>
+                <span class="hrow-risk">
+                  {risks.length === 0 ? (
+                    <span class="chip chip-ok">clean</span>
+                  ) : (
+                    risks.map((r) => <span class={`chip chip-${r.toLowerCase()}`}>{row.run.byRisk[r]} {r.toLowerCase()}</span>)
+                  )}
+                </span>
+                <span class="hrow-counts">
+                  {plural(row.run.cves, 'cve')}<span class="sep"> · </span>{row.run.investigated} investigated
+                </span>
+                <span class="hrow-model" title={[row.run.provider, row.run.model, row.run.incomplete ? 'incomplete' : null].filter(Boolean).join(' ')}>
+                  {row.run.provider || row.run.model ? (
+                    <>
+                      {row.run.provider && <span class="hrow-provider">{row.run.provider}</span>}
+                      {row.run.model && row.run.model !== row.run.provider && <span class="hrow-modelname"> {row.run.model}</span>}
+                      {row.run.incomplete && <span class="warn"> · incomplete</span>}
+                    </>
+                  ) : (
+                    <span class="faint">not investigated</span>
+                  )}
+                </span>
+              </>
+            )}
+          </div>
+        );
+      })}
+      {runs.length === 0 && (
+        <p class="plist-foot">no earlier runs kept yet. the next <code>patch-pilot</code> scan archives this one to .patch-pilot/history</p>
+      )}
+      {hiddenCount > 0 && (
+        <div class="hrow hrow-more">
+          <span class="tree-glyph">└──</span>
+          <span class="dim">{plural(hiddenCount, 'older run')} in .patch-pilot/history</span>
+        </div>
+      )}
+    </div>
+  )}
+</section>

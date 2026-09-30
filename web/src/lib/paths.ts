@@ -21,3 +21,8 @@ export function reportFileFor(projectRoot: string): string {
 export function statusFileFor(projectRoot: string): string {
   return path.join(projectRoot, '.patch-pilot', 'status.json');
 }
+
+// archived runs, one folder per run id
+export function historyDirFor(projectRoot: string): string {
+  return path.join(projectRoot, '.patch-pilot', 'history');
+}

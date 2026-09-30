@@ -3,7 +3,7 @@ import path from 'node:path';
 import { getDb, setMeta } from './db.ts';
 import { candidatePaths, isDirectory } from './discover.ts';
 import { reportFileFor } from './paths.ts';
-import { parseReport, type ReportFinding, type ReportJson } from './report.ts';
+import { parseReport, toFindingRow, type ReportFinding, type ReportJson } from './report.ts';
 
 export interface SyncError {
   path: string;
@@ -118,32 +118,33 @@ export function syncReports(): SyncOutcome {
     }
 
     findings.forEach((finding: ReportFinding, index: number) => {
+      const row = toFindingRow(finding, index, projectId);
       insertFinding.run(
-        projectId,
-        finding.vulnId ?? finding.cve ?? `unknown-${index}`,
-        finding.cve ?? finding.vulnId ?? 'unknown',
-        finding.package ?? 'unknown',
-        finding.version ?? null,
-        finding.summary ?? null,
-        finding.ghsa ?? null,
-        finding.cvss ?? null,
-        finding.affectedRange ?? null,
-        JSON.stringify(finding.fixedVersions ?? []),
-        finding.direct === undefined || finding.direct === null ? null : finding.direct ? 1 : 0,
-        finding.devOnly === undefined || finding.devOnly === null ? null : finding.devOnly ? 1 : 0,
-        finding.risk ?? null,
-        finding.reachable ?? null,
-        finding.confidence ?? null,
-        finding.reasoning ?? null,
-        JSON.stringify(finding.evidence ?? []),
-        finding.recommendation?.action ?? null,
-        finding.recommendation?.text ?? null,
-        finding.recommendation?.targetVersion ?? null,
-        finding.recommendation?.majorBump === undefined ? null : finding.recommendation.majorBump ? 1 : 0,
-        JSON.stringify(finding.badges ?? []),
-        JSON.stringify(finding.references ?? []),
-        finding.accepted ? 1 : 0,
-        index,
+        row.project_id,
+        row.vuln_id,
+        row.cve,
+        row.package,
+        row.version,
+        row.summary,
+        row.ghsa,
+        row.cvss,
+        row.affected_range,
+        row.fixed_versions,
+        row.direct,
+        row.dev_only,
+        row.risk,
+        row.reachable,
+        row.confidence,
+        row.reasoning,
+        row.evidence,
+        row.recommendation_action,
+        row.recommendation_text,
+        row.target_version,
+        row.major_bump,
+        row.badges,
+        row.references,
+        row.accepted,
+        row.sort_index,
       );
     });
   });

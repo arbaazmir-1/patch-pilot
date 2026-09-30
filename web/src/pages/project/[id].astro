@@ -5,6 +5,8 @@ import FindingCard from '../../components/FindingCard.astro';
 import RunLine from '../../components/RunLine.astro';
 import Checklist from '../../components/Checklist.astro';
 import StatusPoller from '../../components/StatusPoller.astro';
+import RunHistory from '../../components/RunHistory.astro';
+import { listRuns, summarizeReport } from '../../lib/history.ts';
 import { getFindings, getProject, riskCount, RISK_ORDER } from '../../lib/queries.ts';
 import { readRunStatus, type ProjectRunStatus } from '../../lib/status.ts';
 import { syncReports } from '../../lib/sync.ts';
@@ -25,6 +27,9 @@ try {
 } catch {
   report = null;
 }
+
+const pastRuns = listRuns(project.root);
+const latestRun = { ...summarizeReport('latest', report), at: report?.generatedAt ?? project.report_generated_at ?? project.updated_at };
 
 const status = readRunStatus(project.root);
 const runs: ProjectRunStatus[] = status ? [{ root: project.root, name: project.name, projectId: project.id, status }] : [];
@@ -64,6 +69,7 @@ const meta: [string, string][] = [
   keys={[
     ['j k', 'move'],
     ['ENTER', 'evidence'],
+    ...(pastRuns.length > 0 ? ([['h', 'runs']] as [string, string][]) : []),
     ['/', 'filter'],
     ['ESC', 'back'],
   ]}
@@ -131,6 +137,8 @@ const meta: [string, string][] = [
           <p class="plist-foot" id="ffilter-empty" hidden>no vulnerability matches the filter</p>
         </>
       )}
+
+      <RunHistory projectId={project.id} latest={latestRun} runs={pastRuns} />
     </div>
 
     <aside class="pside">
@@ -187,89 +195,16 @@ const meta: [string, string][] = [
   <StatusPoller runs={runs} scope="project" root={project.root} />
 
   <script>
-    // keyboard nav
-    const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-finding]'));
-    const groups = Array.from(document.querySelectorAll<HTMLElement>('[data-group]'));
-    const input = document.getElementById('ffilter') as HTMLInputElement | null;
-    const empty = document.getElementById('ffilter-empty');
-    let selected = -1;
+    import { setupFindingNav } from '../../components/findingNav.ts';
 
-    const visible = (): HTMLElement[] => cards.filter((c) => !c.hidden);
-
-    function select(index: number, scroll = true): void {
-      const list = visible();
-      cards.forEach((c) => c.classList.remove('is-selected'));
-      if (list.length === 0) {
-        selected = -1;
-        return;
-      }
-      selected = Math.max(0, Math.min(index, list.length - 1));
-      const card = list[selected]!;
-      card.classList.add('is-selected');
-      if (scroll) card.scrollIntoView({ block: 'nearest' });
-    }
-
-    input?.addEventListener('input', () => {
-      const q = input.value.trim().toLowerCase();
-      for (const card of cards) card.hidden = !(card.dataset.search ?? '').includes(q);
-      for (const group of groups) group.hidden = !group.querySelector('[data-finding]:not([hidden])');
-      if (empty) empty.hidden = visible().length > 0;
-      selected = -1;
-      cards.forEach((c) => c.classList.remove('is-selected'));
-    });
-
-    cards.forEach((card) => {
-      card.addEventListener('click', () => {
-        const i = visible().indexOf(card);
-        if (i !== selected) select(i, false);
-      });
-    });
-
-    document.addEventListener('keydown', (event) => {
-      if (event.metaKey || event.ctrlKey || event.altKey) return;
-      if (document.activeElement instanceof HTMLInputElement) {
-        if (event.key === 'Escape') {
-          if (input) {
-            input.value = '';
-            input.dispatchEvent(new Event('input'));
-          }
-          (document.activeElement as HTMLInputElement).blur();
-        } else if (event.key === 'Enter' || event.key === 'ArrowDown') {
-          event.preventDefault();
-          (document.activeElement as HTMLInputElement).blur();
-          select(0);
-        }
-        return;
-      }
-      switch (event.key) {
-        case 'ArrowDown':
-        case 'j':
-          event.preventDefault();
-          select(selected + 1);
-          break;
-        case 'ArrowUp':
-        case 'k':
-          event.preventDefault();
-          select(selected <= 0 ? 0 : selected - 1);
-          break;
-        case 'Enter': {
-          const focus = document.activeElement;
-          if (focus instanceof HTMLAnchorElement || focus instanceof HTMLButtonElement || focus instanceof HTMLElement && focus.tagName === 'SUMMARY') break;
-          const details = visible()[selected]?.querySelector('details');
-          if (details) {
-            event.preventDefault();
-            details.open = !details.open;
-          }
-          break;
-        }
-        case '/':
-          event.preventDefault();
-          input?.focus();
-          break;
-        case 'Escape':
-          window.location.href = '/';
-          break;
-      }
+    setupFindingNav({
+      escapeHref: '/',
+      keys: {
+        h: (nav) => {
+          const first = document.querySelector<HTMLElement>('#runs [data-nav-href]');
+          if (first) nav.selectElement(first);
+        },
+      },
     });
   </script>
 </Base>

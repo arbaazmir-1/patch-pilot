@@ -1,10 +1,13 @@
 ---
+import type { FindingChange } from '../lib/history.ts';
 import type { FindingRow } from '../lib/queries.ts';
 
 interface Props {
   finding: FindingRow;
+  // past run pages: how this finding looks in the latest run
+  change?: FindingChange | undefined;
 }
-const { finding: f } = Astro.props;
+const { finding: f, change } = Astro.props;
 
 function pct(confidence: number | null): string {
   if (confidence === null || confidence === undefined) return '-';
@@ -58,6 +61,12 @@ const tree = (i: number, n: number): string => (i === n - 1 ? '└──' : '├
   {f.summary && <p class="finding-summary">{f.summary}</p>}
 
   <div class="tags">
+    {change?.kind === 'fixed' && <span class="tag tag-ok" title="not in the latest run">✓ fixed in latest</span>}
+    {change?.kind === 'risk' && (
+      <span class={`tag tag-now tag-now-${change.now.toLowerCase()}`} title="risk in the latest run">
+        {change.worse ? '↑' : '↓'} now {change.now.toLowerCase()}
+      </span>
+    )}
     {f.reachable && <span class={`tag tag-reach-${f.reachable}`}>{f.reachable}</span>}
     {f.direct === 1 && <span class="tag">direct</span>}
     {f.direct === 0 && <span class="tag">transitive</span>}
