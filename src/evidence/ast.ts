@@ -1,18 +1,20 @@
 // import and use evidence per file
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import type ts from 'typescript';
+// ts 7 has no js api yet, parse with the ts 6 compat package
+import type ts from '@typescript/typescript6';
 import type { DynamicAccess, ImportKind } from '../types.ts';
 
 // lazy
 
+const TYPESCRIPT_API_PACKAGE = '@typescript/typescript6';
 const requireModule = createRequire(import.meta.url);
 let tsModule: typeof ts | null = null;
 // SyntaxKind is a getter, cache it
 let kinds: typeof ts.SyntaxKind | null = null;
 
 export function typescript(): typeof ts {
-  if (tsModule === null) tsModule = requireModule('typescript') as typeof ts;
+  if (tsModule === null) tsModule = requireModule(TYPESCRIPT_API_PACKAGE) as typeof ts;
   return tsModule;
 }
 
