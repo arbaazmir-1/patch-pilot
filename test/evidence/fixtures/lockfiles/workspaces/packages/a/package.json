@@ -1,0 +1,11 @@
+{
+  "name": "@patchpilot-fixture/a",
+  "version": "1.0.0",
+  "dependencies": {
+    "is-odd": "3.0.1",
+    "left-pad": "1.3.0"
+  },
+  "devDependencies": {
+    "has-flag": "4.0.0"
+  }
+}

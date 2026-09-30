@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+<head><title>Upgrading to marked 4: the default export is gone</title></head>
+<body>
+<nav><a href="/">Home</a> <a href="/about">About</a></nav>
+<main>
+<h1>Upgrading to marked 4: the default export is gone</h1>
+<p>We upgraded a documentation site from marked 0.3 to marked 4 last week.</p>
+<p>Marked 4 removed the default export, so <code>require('marked')</code> no longer returns a function. Calling it throws <code>TypeError: marked is not a function</code>.</p>
+<p>The fix is one line: destructure the named export with <code>const { marked } = require('marked')</code>. The function itself still works, so <code>marked(markdown)</code> keeps rendering.</p>
+<p>We also enjoyed the new logo.</p>
+</main>
+<footer>Copyright 2022</footer>
+</body>
+</html>

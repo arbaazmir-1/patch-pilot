@@ -1,0 +1,17 @@
+---
+interface Props {
+  keys: [string, string][];
+}
+const { keys } = Astro.props;
+---
+
+{keys.length > 0 && (
+  <p class="keyhints">
+    {keys.map(([key, label], i) => (
+      <>
+        {i > 0 && <span class="sep"> · </span>}
+        <span class="keyhint"><kbd>[{key}]</kbd>{' '}{label}</span>
+      </>
+    ))}
+  </p>
+)}

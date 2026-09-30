@@ -1,0 +1,10 @@
+// Rendering options for vulnerable-app (JSON5: comments and trailing commas are fine).
+{
+  title: 'PatchPilot fixture',
+  render: {
+    gfm: true,
+    breaks: false,
+    sanitize: true,
+  },
+  output: { wrap: true },
+}

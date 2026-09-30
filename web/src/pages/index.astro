@@ -1,0 +1,363 @@
+---
+import os from 'node:os';
+import Base from '../layouts/Base.astro';
+import PlaneLogo from '../components/PlaneLogo.astro';
+import RunLine from '../components/RunLine.astro';
+import Checklist from '../components/Checklist.astro';
+import StatusPoller from '../components/StatusPoller.astro';
+import { getMeta } from '../lib/db.ts';
+import { listHiddenProjects, listProjects, riskCount, RISK_ORDER, type ProjectRow, type RiskLevel } from '../lib/queries.ts';
+import { syncReports } from '../lib/sync.ts';
+import { candidatePaths } from '../lib/discover.ts';
+import { listRunStatuses } from '../lib/status.ts';
+import { ago } from '../components/runStatus.ts';
+
+// fresh on every visit: re-read trusted.json and report files (cheap, local)
+const outcome = syncReports();
+const projects = listProjects();
+const hidden = listHiddenProjects();
+const candidates = candidatePaths();
+const trustedCount = candidates.filter((c) => c.source === 'trusted').length;
+const watchCount = candidates.length - trustedCount;
+const lastSync = getMeta('last_sync_at');
+const runs = listRunStatuses();
+const runByRoot = new Map(runs.map((r) => [r.root, r]));
+const listedIds = new Set(projects.map((p) => p.id));
+const orphanRuns = runs.filter((r) => r.projectId === null || !listedIds.has(r.projectId));
+
+const params = Astro.url.searchParams;
+const flash = params.get('flash');
+const home = os.homedir();
+
+function fmtDate(iso: string | null | undefined): string {
+  if (!iso) return '-';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const p = (n: number): string => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+function shortPath(root: string): string {
+  const tilde = root.startsWith(home) ? `~${root.slice(home.length)}` : root;
+  return tilde.length > 46 ? `${tilde.slice(0, 12)}…${tilde.slice(-33)}` : tilde;
+}
+
+function searchText(p: ProjectRow): string {
+  return `${p.name} ${p.root}`.toLowerCase();
+}
+
+const risky = (p: ProjectRow): RiskLevel[] => RISK_ORDER.filter((r) => riskCount(p, r) > 0);
+const totals = Object.fromEntries(RISK_ORDER.map((r) => [r, projects.reduce((n, p) => n + riskCount(p, r), 0)])) as Record<RiskLevel, number>;
+const totalVulns = projects.reduce((n, p) => n + (p.total_vulnerabilities ?? 0), 0);
+const totalInvestigated = projects.reduce((n, p) => n + (p.investigated ?? 0), 0);
+const errorCount = Number(params.get('errors') ?? 0) || 0;
+const plural = (n: number, one: string, many = `${one}s`): string => `${n} ${n === 1 ? one : many}`;
+---
+
+<Base
+  title="projects"
+  crumbs={[{ label: 'projects' }]}
+  keys={[
+    ['↑↓ j k', 'navigate'],
+    ['ENTER', 'open'],
+    ['/', 'filter'],
+    ['r', 're-scan'],
+    ['ESC', 'clear'],
+  ]}
+>
+  <section class="hero">
+    <PlaneLogo size="large" />
+    <div class="hero-text">
+      <h1 class="wordmark">patch pilot</h1>
+      <p class="hero-sub">investigates npm vulnerabilities, decides what is real, patches safely</p>
+      <p class="labels">
+        <span class="label label-p1">1 take in evidence</span>
+        <span class="label label-p2">2 investigate and decide</span>
+        <span class="label label-p3">3 act safely</span>
+      </p>
+      <dl class="stats">
+        <div><dt>projects</dt><dd>{projects.length}</dd></div>
+        <div><dt>cves</dt><dd>{totalVulns}</dd></div>
+        <div><dt>critical</dt><dd class="c-critical">{totals.Critical}</dd></div>
+        <div><dt>high</dt><dd class="c-high">{totals.High}</dd></div>
+        <div><dt>medium</dt><dd class="c-medium">{totals.Medium}</dd></div>
+        <div><dt>low</dt><dd class="c-low">{totals.Low}</dd></div>
+      </dl>
+      <p class="hero-meta">
+        {plural(trustedCount, 'trusted dir')} · {plural(watchCount, 'added dir')}
+        {lastSync && <> · synced <span title={lastSync}>{ago(lastSync)}</span></>}
+      </p>
+    </div>
+  </section>
+
+  <div class="flashes">
+    {flash === 'sync' && (
+      <p class="flash ok">
+        <span class="flash-glyph">✓</span> synced · {params.get('updated') ?? 0} updated · {params.get('unchanged') ?? 0} unchanged ·
+        {' '}{params.get('missing') ?? 0} without a report
+        {errorCount > 0 && <span class="fail"> · {errorCount} failed (see below)</span>}
+      </p>
+    )}
+    {flash === 'added' && <p class="flash ok"><span class="flash-glyph">✓</span> added <b>{params.get('path')}</b> and synced</p>}
+    {flash === 'watch-error' && (
+      <p class="flash err">
+        <span class="flash-glyph">✗</span> could not add <b>{params.get('path') || '(empty)'}</b>: {params.get('reason')}
+      </p>
+    )}
+    {flash === 'watch-removed' && <p class="flash ok"><span class="flash-glyph">✓</span> removed <b>{params.get('path')}</b> from watched directories</p>}
+    {flash === 'removed' && <p class="flash ok"><span class="flash-glyph">✓</span> removed <b>{params.get('name')}</b> from the dashboard (no files were touched)</p>}
+    {flash === 'unhidden' && <p class="flash ok"><span class="flash-glyph">✓</span> restored <b>{params.get('path')}</b> and synced</p>}
+    {outcome.errors.map((e) => (
+      <p class="flash err"><span class="flash-glyph">✗</span> <b>{e.path}</b>: {e.message}</p>
+    ))}
+  </div>
+
+  {orphanRuns.length > 0 && (
+    <section class="section">
+      <h2 class="tab"><span class="tab-icon">◉</span> running now <span class="tab-count">{orphanRuns.length}</span></h2>
+      <div class="run-grid">
+        {orphanRuns.map((r) => (
+          <div class="card run-card">
+            <p class="run-card-title"><b>{r.name}</b> <span class="dim" title={r.root}>{shortPath(r.root)}</span></p>
+            <Checklist root={r.root} status={r.status} />
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="section">
+    <div class="section-bar">
+      <h2 class="tab"><span class="tab-icon">▤</span> projects <span class="tab-count">{projects.length}</span></h2>
+      <label class="filter">
+        <span class="prompt">/</span>
+        <input id="filter" type="search" placeholder="filter by name or path" autocomplete="off" spellcheck="false" />
+      </label>
+      <form method="POST" action="/api/refresh" id="refresh-form">
+        <button type="submit" class="btn btn-primary"><kbd>r</kbd> re-scan reports</button>
+      </form>
+    </div>
+
+    {projects.length === 0 ? (
+      <div class="empty">
+        <p class="bright">no patch-pilot reports found yet</p>
+        <ul class="tree">
+          <li><span class="tree-glyph">├──</span><span>run <code>patch-pilot</code> in a project; trusted directories are picked up automatically</span></li>
+          <li><span class="tree-glyph">└──</span><span>or add a directory below</span></li>
+        </ul>
+      </div>
+    ) : (
+      <div class="plist" role="list">
+        <div class="prow prow-head" aria-hidden="true">
+          <span class="tree-glyph"></span>
+          <span class="prow-name">name</span>
+          <span class="prow-path">path</span>
+          <span class="prow-risk">patch pilot risk</span>
+          <span class="prow-vulns">cves</span>
+          <span class="prow-date">scanned</span>
+          <span class="prow-act"></span>
+        </div>
+        {projects.map((p, i) => {
+          const run = runByRoot.get(p.root);
+          return (
+            <div class="prow" role="listitem" data-nav-row data-href={`/project/${p.id}`} data-search={searchText(p)}>
+              <span class="tree-glyph" data-tree>{i === projects.length - 1 ? '└──' : '├──'}</span>
+              <a class="prow-name" href={`/project/${p.id}`}>{p.name}</a>
+              <span class="prow-path" title={p.root}>{shortPath(p.root)}</span>
+              <span class="prow-risk">
+                {risky(p).length === 0 ? (
+                  <span class="chip chip-ok">clean</span>
+                ) : (
+                  risky(p).map((r) => <span class={`chip chip-${r.toLowerCase()}`}>{riskCount(p, r)} {r.toLowerCase()}</span>)
+                )}
+              </span>
+              <span class="prow-vulns">
+                <b>{p.total_vulnerabilities ?? 0}</b>
+                <span class="dim"> / {p.investigated ?? 0} inv</span>
+              </span>
+              <span class="prow-date" title={p.scanned_at ?? p.report_generated_at ?? ''}>{fmtDate(p.scanned_at ?? p.report_generated_at)}</span>
+              <form method="POST" action="/api/project-remove" class="prow-act" data-confirm={`Remove ${p.name} from the dashboard? The project itself is not touched.`}>
+                <input type="hidden" name="id" value={p.id} />
+                <button type="submit" class="btn-x" title="remove from dashboard" aria-label={`remove ${p.name}`}>✗</button>
+              </form>
+              {run && (
+                <div class="prow-run">
+                  <span class="tree-glyph" data-tree-cont>{i === projects.length - 1 ? '    ' : '│   '}</span>
+                  <RunLine root={p.root} status={run.status} />
+                </div>
+              )}
+            </div>
+          );
+        })}
+        <p class="plist-foot" id="plist-empty" hidden>no project matches the filter</p>
+        <div class="prow prow-total" aria-hidden="true">
+          <span class="tree-glyph"></span>
+          <span class="prow-name">{plural(projects.length, 'project')}</span>
+          <span class="prow-path"></span>
+          <span class="prow-risk">
+            {RISK_ORDER.filter((r) => totals[r] > 0).map((r) => <span class={`chip chip-${r.toLowerCase()}`}>{totals[r]} {r.toLowerCase()}</span>)}
+          </span>
+          <span class="prow-vulns"><b>{totalVulns}</b><span class="dim"> / {totalInvestigated} inv</span></span>
+          <span class="prow-date"></span>
+          <span class="prow-act"></span>
+        </div>
+      </div>
+    )}
+  </section>
+
+  <section class="section">
+    <h2 class="tab"><span class="tab-icon">+</span> add directory</h2>
+    <form method="POST" action="/api/watch" class="cmdline">
+      <span class="prompt">$</span>
+      <span class="cmd">watch</span>
+      <input type="text" name="path" placeholder="/absolute/path/to/project" required autocomplete="off" spellcheck="false" />
+      <button type="submit" class="btn">add</button>
+    </form>
+  </section>
+
+  {hidden.length > 0 && (
+    <section class="section">
+      <h2 class="tab"><span class="tab-icon">◌</span> hidden <span class="tab-count">{hidden.length}</span></h2>
+      <ul class="hlist">
+        {hidden.map((h, i) => (
+          <li>
+            <span class="tree-glyph">{i === hidden.length - 1 ? '└──' : '├──'}</span>
+            <span class="hlist-path" title={h.root}>{shortPath(h.root)}</span>
+            <span class="hlist-date">hidden {fmtDate(h.hidden_at)}</span>
+            <form method="POST" action="/api/project-unhide">
+              <input type="hidden" name="root" value={h.root} />
+              <button type="submit" class="btn btn-small">restore</button>
+            </form>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <StatusPoller runs={runs} scope="all" />
+
+  <script>
+    // keyboard nav
+    const input = document.getElementById('filter') as HTMLInputElement | null;
+    const rows = Array.from(document.querySelectorAll<HTMLElement>('[data-nav-row]'));
+    const empty = document.getElementById('plist-empty');
+    let selected = -1;
+    document.querySelector('.plist')?.classList.add('js-nav');
+
+    const visible = (): HTMLElement[] => rows.filter((r) => !r.hidden);
+
+    function select(index: number, scroll = true): void {
+      const list = visible();
+      rows.forEach((r) => r.classList.remove('is-selected'));
+      if (list.length === 0) {
+        selected = -1;
+        return;
+      }
+      selected = Math.max(0, Math.min(index, list.length - 1));
+      const row = list[selected]!;
+      row.classList.add('is-selected');
+      if (scroll) row.scrollIntoView({ block: 'nearest' });
+    }
+
+    function retree(): void {
+      const list = visible();
+      list.forEach((r, i) => {
+        const last = i === list.length - 1;
+        const glyph = r.querySelector<HTMLElement>('[data-tree]');
+        const cont = r.querySelector<HTMLElement>('[data-tree-cont]');
+        if (glyph) glyph.textContent = last ? '└──' : '├──';
+        if (cont) cont.textContent = last ? '    ' : '│   ';
+      });
+      if (empty) empty.hidden = list.length > 0 || rows.length === 0;
+    }
+
+    input?.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      for (const row of rows) row.hidden = !(row.dataset.search ?? '').includes(q);
+      retree();
+      select(0, false);
+    });
+
+    rows.forEach((row) => {
+      row.addEventListener('mousemove', () => {
+        const i = visible().indexOf(row);
+        if (i !== selected) select(i, false);
+      });
+      row.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement;
+        if (target.closest('a, button, form')) return;
+        window.location.href = row.dataset.href ?? '/';
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      const typing = document.activeElement instanceof HTMLInputElement;
+      if (typing) {
+        if (event.key === 'Escape' && input && document.activeElement === input) {
+          input.value = '';
+          input.dispatchEvent(new Event('input'));
+          input.blur();
+        } else if ((event.key === 'ArrowDown' || event.key === 'Enter') && input && document.activeElement === input) {
+          event.preventDefault();
+          input.blur();
+          if (event.key === 'Enter' && selected >= 0) window.location.href = visible()[selected]?.dataset.href ?? '/';
+          else select(Math.max(0, selected));
+        }
+        return;
+      }
+      switch (event.key) {
+        case 'ArrowDown':
+        case 'j':
+          event.preventDefault();
+          select(selected + 1);
+          break;
+        case 'ArrowUp':
+        case 'k':
+          event.preventDefault();
+          select(selected <= 0 ? 0 : selected - 1);
+          break;
+        case 'Home':
+        case 'g':
+          select(0);
+          break;
+        case 'End':
+        case 'G':
+          select(visible().length - 1);
+          break;
+        case 'Enter': {
+          const row = visible()[selected];
+          const focus = document.activeElement;
+          if (row && !(focus instanceof HTMLButtonElement) && !(focus instanceof HTMLAnchorElement)) {
+            event.preventDefault();
+            window.location.href = row.dataset.href ?? '/';
+          }
+          break;
+        }
+        case '/':
+          event.preventDefault();
+          input?.focus();
+          break;
+        case 'r':
+          (document.getElementById('refresh-form') as HTMLFormElement | null)?.requestSubmit();
+          break;
+        case 'Escape':
+          if (input && input.value) {
+            input.value = '';
+            input.dispatchEvent(new Event('input'));
+          }
+          rows.forEach((r) => r.classList.remove('is-selected'));
+          selected = -1;
+          break;
+      }
+    });
+
+    if (rows.length > 0) select(0, false);
+
+    document.querySelectorAll<HTMLFormElement>('form[data-confirm]').forEach((form) => {
+      form.addEventListener('submit', (event) => {
+        if (!window.confirm(form.dataset.confirm ?? 'Are you sure?')) event.preventDefault();
+      });
+    });
+  </script>
+</Base>

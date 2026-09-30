@@ -1,0 +1,12 @@
+---
+import type { RunStatus } from '../lib/status.ts';
+import { checklistHtml } from './runStatus.ts';
+
+interface Props {
+  root: string;
+  status: RunStatus;
+}
+const { root, status } = Astro.props;
+---
+
+<div class="checklist" data-run-root={root} data-run-kind="checklist" data-state={status.state} set:html={checklistHtml(status)} />

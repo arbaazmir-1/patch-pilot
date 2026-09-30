@@ -1,0 +1,614 @@
+[
+ {
+  "tag_name": "v4.0.12",
+  "name": "v4.0.12",
+  "body": "## [4.0.12](https://github.com/markedjs/marked/compare/v4.0.11...v4.0.12) (2022-01-27)\r\n\r\n\r\n### Bug Fixes\r\n\r\n* fix nbsp after table ([#2372](https://github.com/markedjs/marked/pull/2372)) ([ed66bf8](https://github.com/markedjs/marked/commit/ed66bf8abdb2638cc3b9e20fdfd0afad061a2ee0))\r\n\r\n\r\n\r\n",
+  "published_at": "2022-01-27T04:12:18Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v4.0.12",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v4.0.11",
+  "name": "v4.0.11",
+  "body": "## [4.0.11](https://github.com/markedjs/marked/compare/v4.0.10...v4.0.11) (2022-01-26)\n\n\n### Bug Fixes\n\n* fix blank line after table header ([#2332](https://github.com/markedjs/marked/issues/2332)) ([6e1f923](https://github.com/markedjs/marked/commit/6e1f9235dca5d8732046506c435b25e6788a1d4f))\n\n\n\n",
+  "published_at": "2022-01-26T21:52:32Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v4.0.11",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v4.0.10",
+  "name": "v4.0.10",
+  "body": "## [4.0.10](https://github.com/markedjs/marked/compare/v4.0.9...v4.0.10) (2022-01-13)\n\n\n### Bug Fixes\n\n* **security:** fix redos vulnerabilities ([8f80657](https://github.com/markedjs/marked/commit/8f806573a3f6c6b7a39b8cdb66ab5ebb8d55a5f5))\n\n\n\n",
+  "published_at": "2022-01-13T02:03:37Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v4.0.10",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v4.0.9",
+  "name": "v4.0.9",
+  "body": "## [4.0.9](https://github.com/markedjs/marked/compare/v4.0.8...v4.0.9) (2022-01-06)\n\n\n### Bug Fixes\n\n* retain line breaks in tokens properly ([#2341](https://github.com/markedjs/marked/issues/2341)) ([a9696e2](https://github.com/markedjs/marked/commit/a9696e28989c0bea2077885bab1844525e18a031))\n\n\n\n",
+  "published_at": "2022-01-06T15:33:43Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v4.0.9",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v4.0.8",
+  "name": "v4.0.8",
+  "body": "## [4.0.8](https://github.com/markedjs/marked/compare/v4.0.7...v4.0.8) (2021-12-19)\n\n\n### Bug Fixes\n\n* spaces on a newline after a table ([#2319](https://github.com/markedjs/marked/issues/2319)) ([f82ea2c](https://github.com/markedjs/marked/commit/f82ea2cf1be0a3ad3337bcafe1c4dd3182334bb9))\n\n\n\n",
+  "published_at": "2021-12-19T00:23:00Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v4.0.8",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v4.0.7",
+  "name": "v4.0.7",
+  "body": "## [4.0.7](https://github.com/markedjs/marked/compare/v4.0.6...v4.0.7) (2021-12-09)\n\n\n### Bug Fixes\n\n* Fix every third list item broken ([#2318](https://github.com/markedjs/marked/issues/2318)) ([346b162](https://github.com/markedjs/marked/commit/346b162bb787d3b7fb1d4879c859f64155c6ca3c)), closes [#2314](https://github.com/markedjs/marked/issues/2314)\n\n\n\n",
+  "published_at": "2021-12-09T23:59:58Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v4.0.7",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v4.0.6",
+  "name": "v4.0.6",
+  "body": "## [4.0.6](https://github.com/markedjs/marked/compare/v4.0.5...v4.0.6) (2021-12-02)\n\n\n### Bug Fixes\n\n* speed up parsing long lists ([#2302](https://github.com/markedjs/marked/issues/2302)) ([e0005d8](https://github.com/markedjs/marked/commit/e0005d8232a08827f5e99b8b35b09728b2b07503))\n\n\n\n",
+  "published_at": "2021-12-02T03:19:54Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v4.0.6",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v4.0.5",
+  "name": "v4.0.5",
+  "body": "## [4.0.5](https://github.com/markedjs/marked/compare/v4.0.4...v4.0.5) (2021-11-25)\n\n\n### Bug Fixes\n\n* table after paragraph without blank line ([#2298](https://github.com/markedjs/marked/issues/2298)) ([5714212](https://github.com/markedjs/marked/commit/5714212afd4a9ee0864fff70bad034f7c0842a3c))\n\n\n\n",
+  "published_at": "2021-11-25T00:12:21Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v4.0.5",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v4.0.4",
+  "name": "v4.0.4",
+  "body": "## [4.0.4](https://github.com/markedjs/marked/compare/v4.0.3...v4.0.4) (2021-11-19)\n\n\n### Bug Fixes\n\n* fix cli ([#2294](https://github.com/markedjs/marked/issues/2294)) ([ab2977a](https://github.com/markedjs/marked/commit/ab2977a3363230df51ccbb2b3f8bf46389c50283))\n\n\n\n",
+  "published_at": "2021-11-19T14:09:21Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v4.0.4",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v4.0.3",
+  "name": "v4.0.3",
+  "body": "## [4.0.3](https://github.com/markedjs/marked/compare/v4.0.2...v4.0.3) (2021-11-13)\n\n\n### Bug Fixes\n\n* build min from umd ([#2283](https://github.com/markedjs/marked/issues/2283)) ([ea26ea9](https://github.com/markedjs/marked/commit/ea26ea9bdf7aad4e4c645f85e8e816e80a2be6c2))\n\n\n\n",
+  "published_at": "2021-11-13T04:33:54Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v4.0.3",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v4.0.2",
+  "name": "v4.0.2",
+  "body": "## [4.0.2](https://github.com/markedjs/marked/compare/v4.0.1...v4.0.2) (2021-11-12)\n\n\n### Bug Fixes\n\n* Create separate CJS and UMD builds ([#2281](https://github.com/markedjs/marked/issues/2281)) ([62faaf4](https://github.com/markedjs/marked/commit/62faaf4c912151dfe361d0459d5e89a439c38fd4))\n\n\n\n",
+  "published_at": "2021-11-12T21:39:41Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v4.0.2",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v4.0.1",
+  "name": "v4.0.1",
+  "body": "## [4.0.1](https://github.com/markedjs/marked/compare/v4.0.0...v4.0.1) (2021-11-11)\n\n\n### Bug Fixes\n\n* Set commonJS code as `main` in `package.json` ([#2276](https://github.com/markedjs/marked/issues/2276)) ([7e636d5](https://github.com/markedjs/marked/commit/7e636d5a0b04b43f2b67a2abb2b8ae35a5122a42))\n\n\n\n",
+  "published_at": "2021-11-11T02:35:17Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v4.0.1",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v4.0.0",
+  "name": "v4.0.0",
+  "body": "# [4.0.0](https://github.com/markedjs/marked/compare/v3.0.8...v4.0.0) (2021-11-02)\r\n\r\n\r\n### Bug Fixes\r\n\r\n* Convert to ESM ([#2227](https://github.com/markedjs/marked/issues/2227)) ([4afb228](https://github.com/markedjs/marked/commit/4afb228d956a415624c4e5554bb8f25d047676fe))\r\n\r\n\r\n### BREAKING CHANGES\r\n\r\n* Default export removed. Use `import { marked } from 'marked'` or `const { marked } = require('marked')` instead.\r\n* `/lib/marked.js` removed. Use `/marked.min.js` in script tag instead.\r\n* When using marked in a script tag use `marked.parse(...)` instead of `marked(...)`\r\n\r\n\r\n\r\n",
+  "published_at": "2021-11-02T14:42:34Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v4.0.0",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v3.0.8",
+  "name": "v3.0.8",
+  "body": "## [3.0.8](https://github.com/markedjs/marked/compare/v3.0.7...v3.0.8) (2021-10-24)\n\n\n### Bug Fixes\n\n* walkTokens uses marked as this ([#2251](https://github.com/markedjs/marked/issues/2251)) ([2da5885](https://github.com/markedjs/marked/commit/2da588598992065d7bf54a740d2011f8326d46cd))\n\n\n\n",
+  "published_at": "2021-10-24T05:05:37Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v3.0.8",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v3.0.7",
+  "name": "v3.0.7",
+  "body": "## [3.0.7](https://github.com/markedjs/marked/compare/v3.0.6...v3.0.7) (2021-10-07)\r\n\r\n\r\n### Bug Fixes\r\n\r\n* use named exports only for ESM build ([#2226](https://github.com/markedjs/marked/pull/2226))\r\n\r\n\r\n\r\n",
+  "published_at": "2021-10-07T14:02:56Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v3.0.7",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v3.0.6",
+  "name": "v3.0.6",
+  "body": "## [3.0.6](https://github.com/markedjs/marked/compare/v3.0.5...v3.0.6) (2021-10-06)\n\n\n### Bug Fixes\n\n* Remove esm interop ([#2225](https://github.com/markedjs/marked/issues/2225)) ([4bc9121](https://github.com/markedjs/marked/commit/4bc91215a07df5644c581925a70beda95703f693))\n\n\n\n",
+  "published_at": "2021-10-06T21:57:14Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v3.0.6",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v3.0.5",
+  "name": "v3.0.5",
+  "body": "## [3.0.5](https://github.com/markedjs/marked/compare/v3.0.4...v3.0.5) (2021-10-06)\n\n\n### Bug Fixes\n\n* Expose named exports for ESM build ([#2223](https://github.com/markedjs/marked/issues/2223)) ([3959651](https://github.com/markedjs/marked/commit/39596513544112b628921efe95b8b3fb04ab38e7))\n\n\n\n",
+  "published_at": "2021-10-06T20:34:19Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v3.0.5",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v3.0.4",
+  "name": "v3.0.4",
+  "body": "## [3.0.4](https://github.com/markedjs/marked/compare/v3.0.3...v3.0.4) (2021-09-14)\r\n\r\n\r\n### Bug Fixes\r\n\r\n* fix detection of orphaned emStrong delimiters ([#2203](https://github.com/markedjs/marked/issues/2203)) ([7792adc](https://github.com/markedjs/marked/commit/7792adcfe694ea442c6a4e794ac161c27d4fc89a))\r\n\r\n\r\n\r\n",
+  "published_at": "2021-09-14T17:50:12Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v3.0.4",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v3.0.3",
+  "name": "v3.0.3",
+  "body": "## [3.0.3](https://github.com/markedjs/marked/compare/v3.0.2...v3.0.3) (2021-09-08)\n\n\n### Bug Fixes\n\n* fix space at end of table line ([#2201](https://github.com/markedjs/marked/issues/2201)) ([910f0f0](https://github.com/markedjs/marked/commit/910f0f035617f7e2dd7e4f7a08c3d01d73c7f453))\n\n\n\n",
+  "published_at": "2021-09-08T20:22:24Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v3.0.3",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v3.0.2",
+  "name": "v3.0.2",
+  "body": "## [3.0.2](https://github.com/markedjs/marked/compare/v3.0.1...v3.0.2) (2021-08-25)\n\n\n### Bug Fixes\n\n* stop table at lines with only whitespace ([#2188](https://github.com/markedjs/marked/issues/2188)) ([21268ab](https://github.com/markedjs/marked/commit/21268abfba4359772daa83adcaac8e053cba8657))\n\n\n\n",
+  "published_at": "2021-08-25T02:25:27Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v3.0.2",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v3.0.1",
+  "name": "v3.0.1",
+  "body": "## [3.0.1](https://github.com/markedjs/marked/compare/v3.0.0...v3.0.1) (2021-08-23)\n\n\n### Bug Fixes\n\n* fix gfm urls after link ([#2186](https://github.com/markedjs/marked/issues/2186)) ([e03b5c1](https://github.com/markedjs/marked/commit/e03b5c1f8d87b0875ff644d15f6ac16489c7a1cf))\n\n\n\n",
+  "published_at": "2021-08-23T18:49:03Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v3.0.1",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v3.0.0",
+  "name": "v3.0.0",
+  "body": "# [3.0.0](https://github.com/markedjs/marked/compare/v2.1.3...v3.0.0) (2021-08-16)\r\n\r\n\r\n### Bug Fixes\r\n\r\n* Tokenizers lex their own child tokens ([#2124](https://github.com/markedjs/marked/issues/2124)) ([288f1cb](https://github.com/markedjs/marked/commit/288f1cbe2f55881972c0f594ddb9910888986bee))\r\n* Add module field to package.json ([#2143](https://github.com/markedjs/marked/issues/2143)) ([edc2e6d](https://github.com/markedjs/marked/commit/edc2e6dc129364b127c8a41dc6a83dd88daffba4))\r\n* Drop node 10 support ([#2157](https://github.com/markedjs/marked/issues/2157)) ([433b16f](https://github.com/markedjs/marked/commit/433b16fa3ac8ddcaead519b7f4e284137f7fac03))\r\n* Full Commonmark compliance for Lists ([#2112](https://github.com/markedjs/marked/issues/2112)) ([eb33d3b](https://github.com/markedjs/marked/commit/eb33d3b3a9f735ee9bee251d26bf779880dc3114))\r\n* Refactor table tokens ([#2166](https://github.com/markedjs/marked/issues/2166)) ([bc400ac](https://github.com/markedjs/marked/commit/bc400ac789c76e915df82b0998d3fd12c89da2e8))\r\n\r\n\r\n### BREAKING CHANGES\r\n\r\n* Drop support for node 10.\r\n* Add module field to package.json\r\n\r\n---\r\n\r\n* Tokenizers will create their own tokens with `this.lexer.inline(text, tokens)`. The `inline` function will queue the token creation until after all block tokens are created.\r\n* Extensions tokenizer `this` object will include the `lexer` as a property. `this.inlineTokens` becomes `this.lexer.inline`.\r\n* Extensions renderer `this` object will include the `parser` as a property. `this.parseInline` becomes `this.parser.parseInline`.\r\n* `tag` and `inlineText` tokenizer function signatures have changed.\r\n\r\n---\r\n\r\n* `nptable` tokenizer is removed and merged with `table` tokenizer.\r\n* `table` tokens `header` property changed to contain an array of objects for each header cell with `text` and `tokens` properties.\r\n* `table` tokens `cells` property changed to `rows` and is an array of rows where each row contains an array of objects for each cell with `text` and `tokens` properties.\r\n\r\nv2 `table` token:\r\n\r\n```json\r\n{\r\n  \"type\": \"table\",\r\n  \"align\": [null, null],\r\n  \"raw\": \"| a | b |\\n|---|---|\\n| 1 | 2 |\\n\",\r\n  \"header\": [\"a\", \"b\"],\r\n  \"cells\": [[\"1\", \"2\"]],\r\n  \"tokens\": {\r\n    \"header\": [\r\n      [{ \"type\": \"text\", \"raw\": \"a\", \"text\": \"a\" }],\r\n      [{ \"type\": \"text\", \"raw\": \"b\", \"text\": \"b\" }]\r\n    ],\r\n    \"cells\": [[\r\n      [{ \"type\": \"text\", \"raw\": \"1\", \"text\": \"1\" }],\r\n      [{ \"type\": \"text\", \"raw\": \"2\", \"text\": \"2\" }]\r\n    ]]\r\n  }\r\n}\r\n```\r\n\r\nv3 `table` token:\r\n\r\n```json\r\n{\r\n  \"type\": \"table\",\r\n  \"align\": [null, null],\r\n  \"raw\": \"| a | b |\\n|---|---|\\n| 1 | 2 |\\n\",\r\n  \"header\": [\r\n    {\r\n      \"text\": \"a\",\r\n      \"tokens\": [{ \"type\": \"text\", \"raw\": \"a\", \"text\": \"a\" }]\r\n    },\r\n    {\r\n      \"text\": \"b\",\r\n      \"tokens\": [{ \"type\": \"text\", \"raw\": \"b\", \"text\": \"b\" }]\r\n    }\r\n  ],\r\n  \"rows\": [\r\n    {\r\n      \"text\": \"1\",\r\n      \"tokens\": [{ \"type\": \"text\", \"raw\": \"1\", \"text\": \"1\" }]\r\n    },\r\n    {\r\n      \"text\": \"2\",\r\n      \"tokens\": [{ \"type\": \"text\", \"raw\": \"2\", \"text\": \"2\" }]\r\n    }\r\n  ]\r\n}\r\n```\r\n\r\n\r\n\r\n",
+  "published_at": "2021-08-16T03:09:34Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v3.0.0",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v2.1.3",
+  "name": "v2.1.3",
+  "body": "## [2.1.3](https://github.com/markedjs/marked/compare/v2.1.2...v2.1.3) (2021-06-25)\n\n\n### Bug Fixes\n\n* update commonmark spec to v0.30 ([#2113](https://github.com/markedjs/marked/issues/2113)) ([62d6a0e](https://github.com/markedjs/marked/commit/62d6a0e3257f9e8a710300e71a09ab01263b4731))\n\n\n\n",
+  "published_at": "2021-06-25T20:15:56Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v2.1.3",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v2.1.2",
+  "name": "v2.1.2",
+  "body": "## [2.1.2](https://github.com/markedjs/marked/compare/v2.1.1...v2.1.2) (2021-06-22)\n\n\n### Bug Fixes\n\n* add Node.js 10 to CI and loosen `engines` field ([#2119](https://github.com/markedjs/marked/issues/2119)) ([8659353](https://github.com/markedjs/marked/commit/8659353bcb998e751a90306344acf7d69e26874c))\n\n\n\n",
+  "published_at": "2021-06-22T17:27:19Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v2.1.2",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v2.1.1",
+  "name": "v2.1.1",
+  "body": "## [2.1.1](https://github.com/markedjs/marked/compare/v2.1.0...v2.1.1) (2021-06-16)\n\n\n### Bug Fixes\n\n* fix node v12 ([#2109](https://github.com/markedjs/marked/issues/2109)) ([af14068](https://github.com/markedjs/marked/commit/af14068b99618242c9dee6147ea3432f7903322e))\n\n\n\n",
+  "published_at": "2021-06-16T13:50:23Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v2.1.1",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v2.1.0",
+  "name": "v2.1.0",
+  "body": "# [2.1.0](https://github.com/markedjs/marked/compare/v2.0.7...v2.1.0) (2021-06-15)\n\n\n### Features\n\n* Custom Tokenizer/Renderer extensions ([#2043](https://github.com/markedjs/marked/issues/2043)) ([5be9d6d](https://github.com/markedjs/marked/commit/5be9d6d70ea35be6398ee35958fb8ac955a89fbe))\n\n\n\n",
+  "published_at": "2021-06-15T23:23:41Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v2.1.0",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v2.0.7",
+  "name": "v2.0.7",
+  "body": "## [2.0.7](https://github.com/markedjs/marked/compare/v2.0.6...v2.0.7) (2021-06-01)\n\n\n### Bug Fixes\n\n* em strong ([#2075](https://github.com/markedjs/marked/issues/2075)) ([825a9f8](https://github.com/markedjs/marked/commit/825a9f82af05448d85618bbac6ade8fbf9df286b))\n\n\n\n",
+  "published_at": "2021-06-01T19:28:10Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v2.0.7",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v2.0.6",
+  "name": "v2.0.6",
+  "body": "## [2.0.6](https://github.com/markedjs/marked/compare/v2.0.5...v2.0.6) (2021-05-27)\n\n\n### Bug Fixes\n\n* fix autolink email after single space ([#2073](https://github.com/markedjs/marked/issues/2073)) ([6c9a899](https://github.com/markedjs/marked/commit/6c9a8999ddb8ca9c975120ac323cdad9a421db97))\n\n\n\n",
+  "published_at": "2021-05-27T16:17:17Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v2.0.6",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v2.0.5",
+  "name": "v2.0.5",
+  "body": "## [2.0.5](https://github.com/markedjs/marked/compare/v2.0.4...v2.0.5) (2021-05-21)\n\n\n### Bug Fixes\n\n* call walkTokens when calling marked with a callback([#2060](https://github.com/markedjs/marked/issues/2060)) ([1d97308](https://github.com/markedjs/marked/commit/1d973084abda13ee0143f2d3a1812733f0666488))\n\n\n\n",
+  "published_at": "2021-05-21T20:54:32Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v2.0.5",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v2.0.4",
+  "name": "v2.0.4",
+  "body": "## [2.0.4](https://github.com/markedjs/marked/compare/v2.0.3...v2.0.4) (2021-05-20)\n\n\n### Bug Fixes\n\n* Fix indented markdown in html ([#2052](https://github.com/markedjs/marked/issues/2052)) ([6435ac9](https://github.com/markedjs/marked/commit/6435ac98896212b4f117b024cccd4c7e186a8b21))\n\n\n\n",
+  "published_at": "2021-05-20T13:44:16Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v2.0.4",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v2.0.3",
+  "name": "v2.0.3",
+  "body": "## [2.0.3](https://github.com/markedjs/marked/compare/v2.0.2...v2.0.3) (2021-04-11)\n\n\n### Bug Fixes\n\n* actually add a `type` property to the `def` token ([#2002](https://github.com/markedjs/marked/issues/2002)) ([47e65cf](https://github.com/markedjs/marked/commit/47e65cfb63e8ea8acceb676f59d8d37d346ebcaf))\n\n\n\n",
+  "published_at": "2021-04-11T19:09:27Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v2.0.3",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v2.0.2",
+  "name": "v2.0.2",
+  "body": "## [2.0.2](https://github.com/markedjs/marked/compare/v2.0.1...v2.0.2) (2021-04-10)\n\n\n### Bug Fixes\n\n* add type property on def token ([#2001](https://github.com/markedjs/marked/issues/2001)) ([009427f](https://github.com/markedjs/marked/commit/009427f65dadd5dff9ec0189e008677aea9fbcfa))\n\n\n\n",
+  "published_at": "2021-04-10T20:23:42Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v2.0.2",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v2.0.1",
+  "name": "v2.0.1",
+  "body": "## [2.0.1](https://github.com/markedjs/marked/compare/v2.0.0...v2.0.1) (2021-02-27)\n\n\n### Bug Fixes\n\n* fix items between lists ([#1936](https://github.com/markedjs/marked/issues/1936)) ([46cdfc1](https://github.com/markedjs/marked/commit/46cdfc1ecec44660afc9040cb76de276a0ad7d5f))\n\n\n\n",
+  "published_at": "2021-02-27T05:52:56Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v2.0.1",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v2.0.0",
+  "name": "v2.0.0",
+  "body": "# [2.0.0](https://github.com/markedjs/marked/compare/v1.2.9...v2.0.0) (2021-02-07)\r\n\r\n\r\n### Bug Fixes\r\n\r\n* Join adjacent inlineText tokens ([#1926](https://github.com/markedjs/marked/issues/1926)) ([f848e77](https://github.com/markedjs/marked/commit/f848e7703956a6c37871432a7e128f51b1700aa0))\r\n* Total rework of Emphasis/Strong ([#1864](https://github.com/markedjs/marked/issues/1864)) ([7293251](https://github.com/markedjs/marked/commit/7293251c438e3ee968970f7609f1a27f9007bccd))\r\n\r\n\r\n### BREAKING CHANGES\r\n\r\n* `em` and `strong` tokenizers have been merged into one `emStrong` tokenizer.\r\n* `code` and `text` tokenizers do not get passed all tokens as a second parameter.\r\n* No longer supporting IE 11. IE 11 may still work but we are not committed to making sure it works with every update. We still provide an es5 version in `lib/marked.js` but some pollyfills may be needed for IE 11 in the future.\r\n\r\n\r\n",
+  "published_at": "2021-02-07T22:26:39Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v2.0.0",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v1.2.9",
+  "name": "v1.2.9",
+  "body": "## [1.2.9](https://github.com/markedjs/marked/compare/v1.2.8...v1.2.9) (2021-02-03)\n\n\n### Bug Fixes\n\n* allow sublist to be single space in pedantic ([#1924](https://github.com/markedjs/marked/issues/1924)) ([1e36afd](https://github.com/markedjs/marked/commit/1e36afde553c5ba521ea10ad19a008c57f402715))\n\n\n\n",
+  "published_at": "2021-02-03T19:48:10Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v1.2.9",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v1.2.8",
+  "name": "v1.2.8",
+  "body": "## [1.2.8](https://github.com/markedjs/marked/compare/v1.2.7...v1.2.8) (2021-01-26)\n\n\n### Bug Fixes\n\n* leave whitespace only lines alone ([#1889](https://github.com/markedjs/marked/issues/1889)) ([53c79ee](https://github.com/markedjs/marked/commit/53c79ee9196bfd06ad15aad8904a7a4d61e0f400))\n\n\n\n",
+  "published_at": "2021-01-26T14:21:55Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v1.2.8",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v1.2.7",
+  "name": "v1.2.7",
+  "body": "## [1.2.7](https://github.com/markedjs/marked/compare/v1.2.6...v1.2.7) (2020-12-15)\n\n\n### Bug Fixes\n\n* Replace use of startsWith and endsWith with regex for IE11 ([#1877](https://github.com/markedjs/marked/issues/1877)) ([4fdde20](https://github.com/markedjs/marked/commit/4fdde20b9e9aa93fa5a38aceb3f69666cb7fec80)), closes [#1876](https://github.com/markedjs/marked/issues/1876)\n\n\n\n",
+  "published_at": "2020-12-15T20:16:01Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v1.2.7",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v1.2.6",
+  "name": "v1.2.6",
+  "body": "## [1.2.6](https://github.com/markedjs/marked/compare/v1.2.5...v1.2.6) (2020-12-10)\r\n\r\n\r\n### Bug Fixes\r\n\r\n* fix atx heading and make regex safe ([#1853](https://github.com/markedjs/marked/issues/1853)) ([70ee29c](https://github.com/markedjs/marked/commit/70ee29c02b6812ecc185b8dbe6d3ff1b06e7ff4d))\r\n  **possible breaking change**: When using the block.heading rule the text provided in capture group 2 will not be trimmed of whitespace.\r\n* fix link with angle brackets around href ([#1851](https://github.com/markedjs/marked/issues/1851)) ([656c3e4](https://github.com/markedjs/marked/commit/656c3e4aba6a00eb3664ff7e829878ed9222c339))\r\n\r\n\r\n",
+  "published_at": "2020-12-10T16:30:32Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v1.2.6",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v1.2.5",
+  "name": "v1.2.5",
+  "body": "## [1.2.5](https://github.com/markedjs/marked/compare/v1.2.4...v1.2.5) (2020-11-19)\n\n\n### Bug Fixes\n\n* fix em and strong starting with special char ([#1832](https://github.com/markedjs/marked/issues/1832)) ([f9bc93b](https://github.com/markedjs/marked/commit/f9bc93b2bbcbecd15bf8a838dc47fe38b9392f69))\n* task lists not rendered when GFM is disabled ([#1825](https://github.com/markedjs/marked/issues/1825)) ([3942e89](https://github.com/markedjs/marked/commit/3942e894cf008873ffa222dacb6338aa40b5930a)), closes [#1823](https://github.com/markedjs/marked/issues/1823)\n\n\n\n",
+  "published_at": "2020-11-19T14:32:29Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v1.2.5",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v1.2.4",
+  "name": "v1.2.4",
+  "body": "## [1.2.4](https://github.com/markedjs/marked/compare/v1.2.3...v1.2.4) (2020-11-15)\r\n\r\n\r\n### Bug Fixes\r\n\r\n* no strikethrough on different number of tildes ([#1821](https://github.com/markedjs/marked/issues/1821)) ([d79f210](https://github.com/markedjs/marked/commit/d79f210aba670aab650b51f4ba0882e37949c330))\r\n\r\n**Possible Breaking Change**: When using the inline.del rule the text is provided in capture group 2 instead of 1.\r\n\r\n\r\n\r\n",
+  "published_at": "2020-11-15T02:05:19Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v1.2.4",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v1.2.3",
+  "name": "v1.2.3",
+  "body": "## [1.2.3](https://github.com/markedjs/marked/compare/v1.2.2...v1.2.3) (2020-11-04)\n\n\n### Bug Fixes\n\n* list alignment ([#1810](https://github.com/markedjs/marked/issues/1810)) ([5f9cafd](https://github.com/markedjs/marked/commit/5f9cafd49c2a2af85cc5f7720ed4be94f04ce338))\n\n\n\n",
+  "published_at": "2020-11-04T21:25:06Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v1.2.3",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v1.2.2",
+  "name": "v1.2.2",
+  "body": "## [1.2.2](https://github.com/markedjs/marked/compare/v1.2.1...v1.2.2) (2020-10-21)\n\n\n### Bug Fixes\n\n* remove string.repeat for ie11 ([#1772](https://github.com/markedjs/marked/issues/1772)) ([2707070](https://github.com/markedjs/marked/commit/27070705d3b58d3d4c78a35b89e4532d2e64c37b))\n\n\n\n",
+  "published_at": "2020-10-21T14:58:22Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v1.2.2",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v1.2.1",
+  "name": "v1.2.1",
+  "body": "re-release of v 1.1.2 since semantic release picked up the wrong version",
+  "published_at": "2020-10-21T14:53:07Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v1.2.1",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v1.1.2",
+  "name": "v1.1.2",
+  "body": "## [1.1.2](https://github.com/markedjs/marked/compare/v1.1.1...v1.1.2) (2020-10-21)\n\n\n### Bug Fixes\n\n* fix indented code in list item ([#1762](https://github.com/markedjs/marked/issues/1762)) ([6355ac2](https://github.com/markedjs/marked/commit/6355ac2d6fb7b8c00697e30f93135df351cf7089))\n\n\n\n",
+  "published_at": "2020-10-21T14:40:40Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v1.1.2",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v1.2.0",
+  "name": "1.2.0",
+  "body": "## Features\r\n- Add dry run capabilities to default slugger #1728\r\n- Parse inline #1761\r\n\r\n## Fixes\r\n- Fix html comments #1739 \r\n- Fix line break #1746\r\n- Fix indented tables to follow gfm spec #1748 \r\n- Fix underscore adjacent to asterisk #1755\r\n\r\n## Dependencies\r\n- Regenerate lock file #1736\r\n\r\n## Documentation\r\n- Add api dingus for babelmark #1742\r\n- Update docs to use static build step and clean URLs via Vercel #1749\r\n\r\n",
+  "published_at": "2020-09-28T05:09:37Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v1.2.0",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v1.1.1",
+  "name": "1.1.1",
+  "body": "## Fixes\r\n\r\n- Fix image links with escaped brackets #1683\r\n- Fix async highlight not async #1685\r\n- Fix ordered lists that use `)` delimiter #1704\r\n- Pass many more Em and Strong tests #1686 (Thanks @calculuschild)\r\n\r\n## Docs\r\n- Add favicon #1710\r\n- Decode hash #1712\r\n- Clarify level of support for Markdown flavors #1720\r\n- Fix quick ref #1729\r\n\r\n## Scripts\r\n- Add `npm run rules` #1726",
+  "published_at": "2020-07-14T01:36:58Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v1.1.1",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v1.1.0",
+  "name": "1.1.0",
+  "body": "## Features\r\n\r\n- Add `walkTokens` option #1664 \r\n\r\n## Fixes\r\n\r\n- Fix `renderer.code` includes space at beginning of each line of code #1645\r\n- Fix codespan newline #1652 \r\n- Fix comma after underscore emphasis #1660\r\n- Fix loose task list with no tokens #1674 \r\n- Add `browser` field in `package.json` pointing to es5 output #1661\r\n- Add newline to rendered code with language #1670 \r\n- Fix async highlighter walking all tokens #1664\r\n\r\n## Docs\r\n\r\n- Add `tokenizer` to option docs #1662\r\n",
+  "published_at": "2020-05-16T21:44:23Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v1.1.0",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v1.0.0",
+  "name": "1.0.0",
+  "body": "## Breaking changes\r\n\r\n- Add inline tokens to `marked.lexer` output #1627\r\n- Treat escape token same way as plain text tokens #1642 \r\n- Add `Tokenizer` to allow extending token creation #1637\r\n\r\n## Features\r\n\r\n- Add `marked.use()` method to extend options #1646 \r\n\r\n## Fixes\r\n\r\n- Fix intra-word emphasis can match the wrong asterisks #1636\r\n- Fix italics modifier (`_`) breaks links containing underscores #1641 \r\n- Fix closing delimited * incorrect for consecutive ocurrences #1644\r\n\r\n## Docs\r\n\r\n- Fix lexer data token in demo #1638\r\n\r\n## CI\r\n\r\n- Move to GitHub Actions #1635 \r\n- Update devDependencies #1648\r\n\r\n",
+  "published_at": "2020-04-21T01:06:07Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v1.0.0",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.8.2",
+  "name": "0.8.2",
+  "body": "## Fixes\r\n\r\n- Add html to TextRenderer for html in headings #1622 \r\n- Remove html tags in heading ids #1622\r\n\r\n## Docs\r\n\r\n- Update comment about GitHub breaks #1620\r\n",
+  "published_at": "2020-03-22T15:41:58Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.8.2",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.8.1",
+  "name": "0.8.1",
+  "body": "## Fixes\r\n\r\n- Fix `marked --help` #1588\r\n- Fix GFM Example 116 code fences #1600\r\n- Send inline html to renderer #1602 (fixes #1601)\r\n- Improve docs example for invoking highlight.js #1603\r\n- Fix block-level elements breaking tables #1598 (fixes #1467)\r\n- break nptables on block-level structures #1617\r\n\r\n",
+  "published_at": "2020-03-18T21:42:17Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.8.1",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.8.0",
+  "name": "0.8.0",
+  "body": "## Breaking changes\r\n\r\n- Remove substitutions #1532\r\n- Separate source into modules #1563 #1572 #1573 #1575 #1576 #1581\r\n\r\n## Fixes\r\n\r\n- Fix relative urls in `baseUrl` option #1526 \r\n- Loose task list #1535\r\n- Fix image parentheses #1557\r\n- remove module field & update devDependencies #1581\r\n\r\n## Docs\r\n\r\n- Update examples with es6+ #1521\r\n- Fix link to USING_PRO.md page #1552\r\n- Fix typo in USING_ADVANCED.md #1558\r\n- Node worker threads are stable #1555\r\n\r\n## Dev Dependencies\r\n\r\n- Update deps #1516\r\n- Update eslint #1542\r\n- Update htmldiffer async matcher #1543",
+  "published_at": "2019-12-12T20:48:35Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.8.0",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.7.0",
+  "name": "0.7.0",
+  "body": "## Security\r\n- Sanitize `paragraph` and `text` tokens #1504\r\n- Fix ReDOS for links with backticks (issue #1493) #1515 \r\n\r\n## Breaking Changes\r\n- Deprecate `sanitize` and `sanitizer` options #1504\r\n- Move `fences` to CommonMark #1511\r\n- Move `tables` to GFM #1511 \r\n- Remove `tables` option #1511 \r\n- Single backtick in link text needs to be escaped #1515 \r\n\r\n## Fixes\r\n- Fix parentheses around a link #1509\r\n- Fix headings (issue #1510) #1511\r\n\r\n## Tests\r\n- Run tests with correct options #1511",
+  "published_at": "2019-07-06T04:14:01Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.7.0",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.6.3",
+  "name": "0.6.3",
+  "body": "## Fixes\r\n\r\n- Fix nested blockquotes #1464\r\n- Fix `<em>` issue with mixed content #1451\r\n- revert #1464 #1497\r\n- Fix `breaks: true` #1507 \r\n\r\n## Docs \r\n\r\n- add docs for workers #1432\r\n- Add security policy #1492\r\n- Update supported spec versions #1491\r\n- Update test folder descriptions #1506\r\n\r\n## DevOps\r\n\r\n- Use latest commit for demo master #1457\r\n- Update tests to commonmark 0.29 #1465 \r\n- Update tests to GFM 0.29 #1470 \r\n- Fix commonmark spec 57 and 40 (headings) #1475",
+  "published_at": "2019-06-30T02:12:50Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.6.3",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.6.2",
+  "name": "0.6.2",
+  "body": "## Security\r\n\r\n- Link redos #1426 \r\n- Text redos #1460\r\n\r\n## Fixes\r\n\r\n- Links parens #1435 \r\n- New line after table with escaped pipe #1439 \r\n- List item tables #1446 \r\n\r\n## Enhancements\r\n\r\n- Pass token boolean to the `listitem` function #1440\r\n- Allow html without \\n after #1438\r\n\r\n## CLI\r\n\r\n- Update man page to include `--test` and fix argv parameters #1442 \r\n- Add a `--version` flag to print marked version #1448\r\n\r\n## Testing\r\n\r\n- Normalize marked tests #1444 \r\n- Update tests to node 4 syntax #1449",
+  "published_at": "2019-04-05T14:32:50Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.6.2",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.6.1",
+  "name": "0.6.1",
+  "body": "## Fixes\r\n\r\n- Fix parenthesis url redos #1414\r\n\r\n## Docs\r\n\r\n- Update demo site to use a worker #1418 \r\n- Update devDependencies to last stable #1409\r\n- Update documentation about extending Renderer #1417\r\n- Remove `--save` option as it isn't required anymore #1422\r\n- Add snyk badge #1420",
+  "published_at": "2019-02-19T20:03:19Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.6.1",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.6.0",
+  "name": "0.6.0",
+  "body": "## Breaking Changes\r\n\r\n- Drop support for Node v0.10 and old browsers such as Internet Explorer\r\n    - You should not have any problems if using Node 4+ or a modern browser\r\n- Add parameter `slugger` to `Renderer.prototype.heading` method  #1401\r\n    - You should not have any problems if you do not override this method\r\n\r\n## New Features\r\n\r\n- Add new export `marked.Slugger` #1401\r\n\r\n## Fixes\r\n\r\n- Fix emphasis followed by a punctuation #1383 \r\n- Fix bold around autolink email address #1385\r\n- Make autolinks case insensitive #1384\r\n- Make code fences compliant with Commonmark spec #1387 \r\n- Make blockquote paragraph continuation compliant with Commonmark spec #1394\r\n- Make ordered list marker length compliant with Commonmark spec #1391 \r\n- Make empty list items compliant with Commonmark spec #1395 \r\n- Make tag escaping compliant with Commonmark spec #1397 \r\n- Make strong/bold compliant with Commonmark spec #1400\r\n- Fix handling of adjacent lists #684\r\n- Add better error handling when token type cannot be found #1005 \r\n- Fix duplicate heading id and non-latin characters #1401\r\n\r\n## CLI\r\n\r\n- Pretty print ENOENT errors on cli #1396\r\n- Update repo url in man #1403\r\n\r\n## Docs\r\n\r\n- Fix `breaks` option description #1381 \r\n- Update docs to include \"Since\" version #1382 \r\n- Add defibrillator badge for @mccraveiro #1392\r\n\r\n## Tests\r\n\r\n- Remove old test covered by gfm/cm #1389",
+  "published_at": "2019-01-01T00:49:02Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.6.0",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.5.2",
+  "name": "0.5.2",
+  "body": "## Bug Fixes\r\n\r\n- Fix emphasis closing by single _ (part of left-flanking run) #1351 \r\n- Make URL handling consistent between links and images #1359\r\n\r\n## Other\r\n\r\n- Add missing semicolons, add lint rule #1340\r\n- Make Steven (@styfle) a npm publisher #1346 \r\n- Fix typo in docs: re*s*ponsibility #1364\r\n- Add the ability to specify options on the [demo page](https://marked.js.org/demo/) as JSON #1357 \r\n    - Show red border when JSON options are invalid #1360\r\n- Move license file back to root dir #1356\r\n- Fix builds: remove node v0.10 from travis matrix #1366\r\n    - This does not a break compatibility in this release but it will a future release\r\n- Add `files` key to package.json to prevent publishing unused files #1367",
+  "published_at": "2018-11-20T00:05:24Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.5.2",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.5.1",
+  "name": "0.5.1",
+  "body": "## Security\r\n\r\n- Fix inline code regex and prevent REDOS #1337 \r\n- Use `@markedjs/html-differ` to prevent REDOS #1331 \r\n\r\n## Bug Fixes\r\n\r\n- Fix typographic substitution in (pre|code|kbd|script) blocks when smartypants=true #1335\r\n- Fix auto-linking email address #1338\r\n\r\n## Other\r\n- Refactor the `escape()` function to improve performance 10-20% #975\r\n- Update copyright in source code #1326 \r\n- Update benchmark tests #1019\r\n- Add dependency badges to readme #1333",
+  "published_at": "2018-09-26T01:50:19Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.5.1",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.5.0",
+  "name": "0.5.0",
+  "body": "## Security\r\n\r\n- Use rtrim, not unsafe /X+$/ #1260 \r\n\r\n## Breaking Changes\r\n\r\n- Fix GFM empty table cells #1262 \r\n- Fix GFM extended auto-linking requiring multiple backpedals #1293 \r\n- Fix GFM strikethrough compatibility #1258\r\n- Fix issues link references and prototypes #1299 \r\n- Fix hard line break when backslash at EOL #1303 \r\n- Fix hyperlinks with parenthesis #1305 \r\n- Fix loose lists #1304\r\n- Fix strong and em #1315\r\n\r\n## Docs\r\n\r\n- Fix typo in USING_ADVANCED.md #1276 \r\n- Add pictures to AUTHORS.md #1272 \r\n- Change badge to latest version of marked #1300 \r\n- Change badges from shields.io to badgen.net #1317\r\n- Use iframe to sandbox generated html #1295 \r\n- Add additional links into readme #1310 \r\n- Add missing parameters for renderer methods #1311 \r\n- Add undocumented option descriptions #1312\r\n- Add navigation sidebar to the docs #1316 \r\n\r\n## CI\r\n\r\n- Change travis clone depth to 3 #1270",
+  "published_at": "2018-08-16T22:02:25Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.5.0",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "0.4.0",
+  "name": "0.4.0",
+  "body": "## Security Fixes\r\n\r\n- Fix unsafe `heading` regex (#1224)\r\n- Fix unsafe `link` regex (#1223, #1227)\r\n\r\n## New Features\r\n- Add [option](https://marked.js.org/#/USING_ADVANCED.md) to disable heading ids (#1190)\r\n- Add support for [GFM Task Lists](https://github.github.com/gfm/#task-list-items-extension-) to comply with the GFM spec (#1250)\r\n\r\n## Breaking Changes\r\n- Fix escaping pipes in tables (#1239)\r\n- Fix html output for tables to match GFM spec (#1245)\r\n- Fix many bugs to reach parity with CommonMark spec (#1135)\r\n- Fix new Renderer() so it uses default options (#1203)\r\n- Fix text and paragraph return types (#1248) (#1249)\r\n- Fix `<em>` less than 3 chars (#1181)\r\n- Fix `<pre>` code blocks so there is no more trailing `\\n` (#1266)\r\n- Fix default langPrefix to follow CommonMark standard `language-` (#1265)\r\n\r\n## CLI Changes\r\n\r\n- Add string argument to CLI (#1182)\r\n- Change CLI stdio to remove warning (#994)\r\n\r\n## Other changes\r\n\r\n- Lint all the things (#1185)\r\n- Improved testing and DevOps (#1160, #1210, #1220, #1228, #1219, #1256)\r\n- Update documentation and demos (#1196, #1197, #1204, #1207, #1221, #1233, #1217, #1240, #1244, #1253)",
+  "published_at": "2018-05-21T13:04:08Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/0.4.0",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.3.19",
+  "name": "0.3.18 minified required new release",
+  "body": "0.3.18 did not have changes to min. ",
+  "published_at": "2018-03-26T02:57:49Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.3.19",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.3.18",
+  "name": "Minor fixes and updated docs",
+  "body": "- Supported Markdown flavors: CommonMark 0.28 and GitHub Flavored Markdown 0.28\r\n- Updates to our CI pipeline; we're all green! #1098 with the caveat that there is a test that needs to get sorted (help us out #1092)\r\n- Start ordered lists using the initial numbers from markdown lists (#1144)\r\n- Added GitHub Pages site for documentation https://marked.js.org/ (#1138)",
+  "published_at": "2018-03-22T17:00:58Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.3.18",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.3.17",
+  "name": "Processes and tools",
+  "body": "- The elephant in the room: A security vulnerability was discovered and fixed. Please note, if something breaks due to these changes, it was not our intent, and please let us know by submitting a PR or issue to course correct (the nature of the zero-major release and having security as a number one priority) #1083 \r\n- The other elephant in the room: We missed publishing a 0.3.16 release to GitHub; so, trying to make up for that a bit.\r\n- Updates to the project documentation and operations, you should check it out, just start with the README and you should be good.\r\n- New release PR template available #1076 \r\n- Updates to default PR and Issue templates #1076 \r\n- Lint checks + tests + continuous integration using Travis #1020\r\n- Updated testing output #1085 & #1087 ",
+  "published_at": "2018-02-27T13:07:14Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.3.17",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "0.3.15",
+  "name": "Fix capturing parens",
+  "body": "Fixes unintended breaking change from v0.3.14",
+  "published_at": "2018-02-19T04:38:23Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/0.3.15",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "0.3.14",
+  "name": "New year, new home",
+  "body": "- Marked has a new home under the MarkedJS org! Other advances soon to come.\r\n- Updated minifier.\r\n- Various parser fixes",
+  "published_at": "2018-02-16T13:39:52Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/0.3.14",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.3.12",
+  "name": "New Year, new Marked!",
+  "body": "- Addresses issue where some users might not have been able to update due to missing `use strict` #991 \r\n- Parser fix #977 \r\n- New way to perform tests with options and running individual tests #1002 \r\n- Improved test cases\r\n- Improved links",
+  "published_at": "2018-01-09T00:11:10Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.3.12",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "0.3.9",
+  "name": "Merry XSSmas",
+  "body": "We think with this version we have addressed most, if not all, known security vulnerabilities. If you find more, please let us know.",
+  "published_at": "2017-12-23T18:07:55Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/0.3.9",
+  "draft": false,
+  "prerelease": false
+ },
+ {
+  "tag_name": "v0.3.7",
+  "name": "XSS",
+  "body": "Should fix XSS issue discovered.",
+  "published_at": "2017-12-01T18:09:20Z",
+  "html_url": "https://github.com/markedjs/marked/releases/tag/v0.3.7",
+  "draft": false,
+  "prerelease": false
+ }
+]

@@ -1,0 +1,10 @@
+{
+  "name": "migration-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PatchPilot codemod test fixture: renders user Markdown with marked 0.3.6.",
+  "main": "src/render.js",
+  "dependencies": {
+    "marked": "0.3.6"
+  }
+}

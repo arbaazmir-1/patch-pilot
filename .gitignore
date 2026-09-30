@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.patch-pilot/
+*.db
+.DS_Store
+coverage/
+examples/vulnerable-app/node_modules/
+.env
+.env.local
+.env.*.local

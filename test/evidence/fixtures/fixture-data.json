@@ -1,0 +1,4499 @@
+{
+ "note": "Real OSV.dev and npm registry responses captured 2026-09-24 for examples/vulnerable-app (packuments trimmed to versions, deprecations and engines.node).",
+ "querybatch": {
+  "decode-uri-component@0.2.0": [
+   {
+    "id": "GHSA-vcc3-ghjq-m6fr",
+    "modified": "2026-09-10T03:51:14.713899Z"
+   },
+   {
+    "id": "GHSA-w573-4hg7-7wgq",
+    "modified": "2023-11-08T04:10:14.135716Z"
+   }
+  ],
+  "filter-obj@1.1.0": [],
+  "json5@2.2.0": [
+   {
+    "id": "GHSA-9c47-m6qq-7p4h",
+    "modified": "2026-09-10T03:49:56.250129Z"
+   }
+  ],
+  "lodash@4.17.20": [
+   {
+    "id": "GHSA-29mw-wpgm-hmr9",
+    "modified": "2025-09-29T21:12:31.102523Z"
+   },
+   {
+    "id": "GHSA-35jh-r3h4-6jhm",
+    "modified": "2026-09-10T03:49:04.067984Z"
+   },
+   {
+    "id": "GHSA-f23m-r3pf-42rh",
+    "modified": "2026-09-10T03:50:44.050013Z"
+   },
+   {
+    "id": "GHSA-r5fr-rjxr-66jc",
+    "modified": "2026-09-10T03:51:02.970455Z"
+   },
+   {
+    "id": "GHSA-xxjr-mmjv-4gpg",
+    "modified": "2026-09-10T03:50:33.722177Z"
+   }
+  ],
+  "marked@0.3.6": [
+   {
+    "id": "GHSA-5v2h-r2cx-5xgj",
+    "modified": "2026-09-10T03:49:10.576912Z"
+   },
+   {
+    "id": "GHSA-7px7-7xjx-hxm8",
+    "modified": "2023-11-08T03:58:46.365782Z"
+   },
+   {
+    "id": "GHSA-p9wx-2529-fp83",
+    "modified": "2025-05-27T15:27:40.131270Z"
+   },
+   {
+    "id": "GHSA-rrrm-qjm4-v8hf",
+    "modified": "2026-09-10T03:49:11.241428Z"
+   },
+   {
+    "id": "GHSA-x5pg-88wf-qq4p",
+    "modified": "2023-11-08T03:59:05.647192Z"
+   }
+  ],
+  "minimist@1.2.5": [
+   {
+    "id": "GHSA-xvch-5gv4-984h",
+    "modified": "2026-03-13T22:11:59.523514Z"
+   }
+  ],
+  "query-string@6.14.1": [],
+  "semver@5.7.1": [
+   {
+    "id": "GHSA-c2qf-rxjj-qqgw",
+    "modified": "2026-09-10T03:50:02.224637Z"
+   }
+  ],
+  "split-on-first@1.1.0": [],
+  "strict-uri-encode@2.0.0": []
+ },
+ "records": [
+  {
+   "id": "GHSA-29mw-wpgm-hmr9",
+   "summary": "Regular Expression Denial of Service (ReDoS) in lodash",
+   "details": "All versions of package lodash prior to 4.17.21 are vulnerable to Regular Expression Denial of Service (ReDoS) via the `toNumber`, `trim` and `trimEnd` functions. \n\nSteps to reproduce (provided by reporter Liyuan Chen):\n```js\nvar lo = require('lodash');\n\nfunction build_blank(n) {\n    var ret = \"1\"\n    for (var i = 0; i < n; i++) {\n        ret += \" \"\n    }\n    return ret + \"1\";\n}\nvar s = build_blank(50000) var time0 = Date.now();\nlo.trim(s) \nvar time_cost0 = Date.now() - time0;\nconsole.log(\"time_cost0: \" + time_cost0);\nvar time1 = Date.now();\nlo.toNumber(s) var time_cost1 = Date.now() - time1;\nconsole.log(\"time_cost1: \" + time_cost1);\nvar time2 = Date.now();\nlo.trimEnd(s);\nvar time_cost2 = Date.now() - time2;\nconsole.log(\"time_cost2: \" + time_cost2);\n```",
+   "aliases": [
+    "CVE-2020-28500"
+   ],
+   "modified": "2025-09-29T21:12:31.102523Z",
+   "published": "2022-01-06T20:30:46Z",
+   "database_specific": {
+    "severity": "MODERATE",
+    "github_reviewed": true,
+    "github_reviewed_at": "2021-03-19T22:45:28Z",
+    "nvd_published_at": "2021-02-15T11:15:00Z",
+    "cwe_ids": [
+     "CWE-1333",
+     "CWE-400"
+    ]
+   },
+   "references": [
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2020-28500"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/github/advisory-database/pull/6139"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/lodash/lodash/pull/5065"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/lodash/lodash/pull/5065/commits/02906b8191d3c100c193fe6f7b27d1c40f200bb7"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/lodash/lodash/commit/c4847ebe7d14540bb28a8b932a9ce1b9ecbfee1a"
+    },
+    {
+     "type": "WEB",
+     "url": "https://www.oracle.com/security-alerts/cpuoct2021.html"
+    },
+    {
+     "type": "WEB",
+     "url": "https://www.oracle.com/security-alerts/cpujul2022.html"
+    },
+    {
+     "type": "WEB",
+     "url": "https://www.oracle.com/security-alerts/cpujan2022.html"
+    },
+    {
+     "type": "WEB",
+     "url": "https://www.oracle.com//security-alerts/cpujul2021.html"
+    },
+    {
+     "type": "WEB",
+     "url": "https://snyk.io/vuln/SNYK-JS-LODASH-1018905"
+    },
+    {
+     "type": "WEB",
+     "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-1074893"
+    },
+    {
+     "type": "WEB",
+     "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWERGITHUBLODASH-1074895"
+    },
+    {
+     "type": "WEB",
+     "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-1074892"
+    },
+    {
+     "type": "WEB",
+     "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARS-1074894"
+    },
+    {
+     "type": "WEB",
+     "url": "https://snyk.io/vuln/SNYK-JAVA-ORGFUJIONWEBJARS-1074896"
+    },
+    {
+     "type": "WEB",
+     "url": "https://security.netapp.com/advisory/ntap-20210312-0006"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/lodash-rails/CVE-2020-28500.yml"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/lodash/lodash/blob/npm/trimEnd.js%23L8"
+    },
+    {
+     "type": "PACKAGE",
+     "url": "https://github.com/lodash/lodash"
+    },
+    {
+     "type": "WEB",
+     "url": "https://cert-portal.siemens.com/productcert/pdf/ssa-637483.pdf"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "lodash",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "4.0.0"
+        },
+        {
+         "fixed": "4.17.21"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2022/01/GHSA-29mw-wpgm-hmr9/GHSA-29mw-wpgm-hmr9.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash-es",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash-es"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "4.0.0"
+        },
+        {
+         "fixed": "4.17.21"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2022/01/GHSA-29mw-wpgm-hmr9/GHSA-29mw-wpgm-hmr9.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash.trimend",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash.trimend"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "4.0.0"
+        },
+        {
+         "last_affected": "4.5.1"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2022/01/GHSA-29mw-wpgm-hmr9/GHSA-29mw-wpgm-hmr9.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash.trim",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash.trim"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "4.0.0"
+        },
+        {
+         "last_affected": "4.5.1"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2022/01/GHSA-29mw-wpgm-hmr9/GHSA-29mw-wpgm-hmr9.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash-rails",
+      "ecosystem": "RubyGems",
+      "purl": "pkg:gem/lodash-rails"
+     },
+     "ranges": [
+      {
+       "type": "ECOSYSTEM",
+       "events": [
+        {
+         "introduced": "4.0.0"
+        },
+        {
+         "fixed": "4.17.21"
+        }
+       ]
+      }
+     ],
+     "versions": [
+      "4.0.0",
+      "4.11.2",
+      "4.12.0",
+      "4.13.1",
+      "4.14.1",
+      "4.15.0",
+      "4.16.1",
+      "4.16.3",
+      "4.16.4",
+      "4.16.6",
+      "4.17.10",
+      "4.17.11",
+      "4.17.14",
+      "4.17.15",
+      "4.17.2",
+      "4.17.4",
+      "4.17.5",
+      "4.3.0",
+      "4.5.1",
+      "4.6.1"
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2022/01/GHSA-29mw-wpgm-hmr9/GHSA-29mw-wpgm-hmr9.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V3",
+     "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+    }
+   ]
+  },
+  {
+   "id": "GHSA-35jh-r3h4-6jhm",
+   "summary": "Command Injection in lodash",
+   "details": "`lodash` versions prior to 4.17.21 are vulnerable to Command Injection via the template function.",
+   "aliases": [
+    "CVE-2021-23337",
+    "CVE-2026-4800",
+    "GHSA-r5fr-rjxr-66jc"
+   ],
+   "modified": "2026-09-10T03:49:04.067984836Z",
+   "published": "2021-05-06T16:05:51Z",
+   "database_specific": {
+    "github_reviewed": true,
+    "github_reviewed_at": "2021-03-31T23:59:26Z",
+    "nvd_published_at": "2021-02-15T13:15:00Z",
+    "cwe_ids": [
+     "CWE-77",
+     "CWE-94"
+    ],
+    "severity": "HIGH"
+   },
+   "references": [
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-23337"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/lodash/lodash/commit/3469357cff396a26c363f8c1b5a91dde28ba4b1c"
+    },
+    {
+     "type": "WEB",
+     "url": "https://www.oracle.com/security-alerts/cpuoct2021.html"
+    },
+    {
+     "type": "WEB",
+     "url": "https://www.oracle.com/security-alerts/cpujul2022.html"
+    },
+    {
+     "type": "WEB",
+     "url": "https://www.oracle.com/security-alerts/cpujan2022.html"
+    },
+    {
+     "type": "WEB",
+     "url": "https://www.oracle.com//security-alerts/cpujul2021.html"
+    },
+    {
+     "type": "WEB",
+     "url": "https://snyk.io/vuln/SNYK-JS-LODASH-1040724"
+    },
+    {
+     "type": "WEB",
+     "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-1074929"
+    },
+    {
+     "type": "WEB",
+     "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWERGITHUBLODASH-1074931"
+    },
+    {
+     "type": "WEB",
+     "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-1074928"
+    },
+    {
+     "type": "WEB",
+     "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARS-1074930"
+    },
+    {
+     "type": "WEB",
+     "url": "https://snyk.io/vuln/SNYK-JAVA-ORGFUJIONWEBJARS-1074932"
+    },
+    {
+     "type": "WEB",
+     "url": "https://security.netapp.com/advisory/ntap-20210312-0006"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/lodash-rails/CVE-2021-23337.yml"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/lodash/lodash/blob/ddfd9b11a0126db2302cb70ec9973b66baec0975/lodash.js#L14851"
+    },
+    {
+     "type": "PACKAGE",
+     "url": "https://github.com/lodash/lodash"
+    },
+    {
+     "type": "WEB",
+     "url": "https://cert-portal.siemens.com/productcert/pdf/ssa-637483.pdf"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "lodash",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "4.17.21"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2021/05/GHSA-35jh-r3h4-6jhm/GHSA-35jh-r3h4-6jhm.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash-es",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash-es"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "4.17.21"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2021/05/GHSA-35jh-r3h4-6jhm/GHSA-35jh-r3h4-6jhm.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash.template",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash.template"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "last_affected": "4.5.0"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2021/05/GHSA-35jh-r3h4-6jhm/GHSA-35jh-r3h4-6jhm.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash-template",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash-template"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "last_affected": "1.0.0"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2021/05/GHSA-35jh-r3h4-6jhm/GHSA-35jh-r3h4-6jhm.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash-rails",
+      "ecosystem": "RubyGems",
+      "purl": "pkg:gem/lodash-rails"
+     },
+     "ranges": [
+      {
+       "type": "ECOSYSTEM",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "4.17.21"
+        }
+       ]
+      }
+     ],
+     "versions": [
+      "0.10.0",
+      "0.7.0",
+      "0.8.1",
+      "0.8.2",
+      "0.9.0",
+      "0.9.1",
+      "0.9.2",
+      "1.0.0.rc.1",
+      "1.0.0.rc.2",
+      "1.0.0.rc.3",
+      "1.0.1",
+      "1.1.0",
+      "1.1.1",
+      "1.2.0",
+      "1.2.1",
+      "1.3.1",
+      "2.0.0",
+      "2.1.0",
+      "2.2.0",
+      "2.2.1",
+      "2.3.0",
+      "2.4.0",
+      "2.4.1",
+      "3.1.0",
+      "3.10.0",
+      "3.10.1",
+      "3.2.0",
+      "3.3.0",
+      "3.3.1",
+      "3.3.1.1",
+      "3.4.0",
+      "3.5.0",
+      "3.6.0",
+      "3.7.0",
+      "3.9.3",
+      "4.0.0",
+      "4.11.2",
+      "4.12.0",
+      "4.13.1",
+      "4.14.1",
+      "4.15.0",
+      "4.16.1",
+      "4.16.3",
+      "4.16.4",
+      "4.16.6",
+      "4.17.10",
+      "4.17.11",
+      "4.17.14",
+      "4.17.15",
+      "4.17.2",
+      "4.17.4",
+      "4.17.5",
+      "4.3.0",
+      "4.5.1",
+      "4.6.1"
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2021/05/GHSA-35jh-r3h4-6jhm/GHSA-35jh-r3h4-6jhm.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V3",
+     "score": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H"
+    }
+   ]
+  },
+  {
+   "id": "GHSA-5v2h-r2cx-5xgj",
+   "summary": "Inefficient Regular Expression Complexity in marked",
+   "details": "### Impact\n\n_What kind of vulnerability is it?_\n\nDenial of service.\n\nThe regular expression `inline.reflinkSearch` may cause catastrophic backtracking against some strings.\nPoC is the following.\n\n```javascript\nimport * as marked from 'marked';\n\nconsole.log(marked.parse(`[x]: x\n\n\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](`));\n```\n\n_Who is impacted?_\n\nAnyone who runs untrusted markdown through marked and does not use a worker with a time limit.\n\n### Patches\n\n_Has the problem been patched?_\n\nYes\n\n_What versions should users upgrade to?_\n\n4.0.10\n\n### Workarounds\n\n_Is there a way for users to fix or remediate the vulnerability without upgrading?_\n\nDo not run untrusted markdown through marked or run marked on a [worker](https://marked.js.org/using_advanced#workers) thread and set a reasonable time limit to prevent draining resources.\n\n### References\n\n_Are there any links users can visit to find out more?_\n\n- https://marked.js.org/using_advanced#workers\n- https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS\n\n### For more information\n\nIf you have any questions or comments about this advisory:\n\n* Open an issue in [marked](https://github.com/markedjs/marked)\n",
+   "aliases": [
+    "CVE-2022-21681"
+   ],
+   "modified": "2026-09-10T03:49:10.576912241Z",
+   "published": "2022-01-14T21:04:46Z",
+   "database_specific": {
+    "severity": "HIGH",
+    "github_reviewed": true,
+    "github_reviewed_at": "2022-01-14T19:57:17Z",
+    "nvd_published_at": "2022-01-14T17:15:00Z",
+    "cwe_ids": [
+     "CWE-1333"
+    ]
+   },
+   "references": [
+    {
+     "type": "WEB",
+     "url": "https://github.com/markedjs/marked/security/advisories/GHSA-5v2h-r2cx-5xgj"
+    },
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-21681"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/markedjs/marked/commit/8f806573a3f6c6b7a39b8cdb66ab5ebb8d55a5f5"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/markedjs/marked/commit/c4a3ccd344b6929afa8a1d50ac54a721e57012c0"
+    },
+    {
+     "type": "PACKAGE",
+     "url": "https://github.com/markedjs/marked"
+    },
+    {
+     "type": "WEB",
+     "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/AIXDMC3CSHYW3YWVSQOXAWLUYQHAO5UX"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "marked",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/marked"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "4.0.10"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2022/01/GHSA-5v2h-r2cx-5xgj/GHSA-5v2h-r2cx-5xgj.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V3",
+     "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+    }
+   ]
+  },
+  {
+   "id": "GHSA-7px7-7xjx-hxm8",
+   "summary": "Marked vulnerable to XSS from data URIs",
+   "details": "marked version 0.3.6 and earlier is vulnerable to an XSS attack in the data: URI parser.",
+   "aliases": [
+    "CVE-2017-1000427"
+   ],
+   "modified": "2023-11-08T03:58:46.365782Z",
+   "published": "2018-01-04T21:04:19Z",
+   "database_specific": {
+    "cwe_ids": [
+     "CWE-79"
+    ],
+    "severity": "MODERATE",
+    "github_reviewed": true,
+    "github_reviewed_at": "2020-06-16T21:23:14Z",
+    "nvd_published_at": null
+   },
+   "references": [
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2017-1000427"
+    },
+    {
+     "type": "ADVISORY",
+     "url": "https://github.com/advisories/GHSA-7px7-7xjx-hxm8"
+    },
+    {
+     "type": "PACKAGE",
+     "url": "https://github.com/markedjs/marked"
+    },
+    {
+     "type": "WEB",
+     "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/BO2RMVVZVV6NFTU46B5RYRK7ZCXYARZS"
+    },
+    {
+     "type": "WEB",
+     "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/M6BJG6RGDH7ZWVVAUFBFI5L32RSMQN2S"
+    },
+    {
+     "type": "WEB",
+     "url": "https://snyk.io/vuln/npm:marked:20170112"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "marked",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/marked"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "0.3.7"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2018/01/GHSA-7px7-7xjx-hxm8/GHSA-7px7-7xjx-hxm8.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V3",
+     "score": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+    }
+   ]
+  },
+  {
+   "id": "GHSA-9c47-m6qq-7p4h",
+   "summary": "Prototype Pollution in JSON5 via Parse Method",
+   "details": "The `parse` method of the JSON5 library before and including version `2.2.1` does not restrict parsing of keys named `__proto__`, allowing specially crafted strings to pollute the prototype of the resulting object.\n\nThis vulnerability pollutes the prototype of the object returned by `JSON5.parse` and not the global Object prototype, which is the commonly understood definition of Prototype Pollution. However, polluting the prototype of a single object can have significant security impact for an application if the object is later used in trusted operations.\n\n## Impact\nThis vulnerability could allow an attacker to set arbitrary and unexpected keys on the object returned from `JSON5.parse`. The actual impact will depend on how applications utilize the returned object and how they filter unwanted keys, but could include denial of service, cross-site scripting, elevation of privilege, and in extreme cases, remote code execution.\n\n## Mitigation\nThis vulnerability is patched in json5 v2.2.2 and later. A patch has also been backported for json5 v1 in versions v1.0.2 and later.\n\n## Details\n \nSuppose a developer wants to allow users and admins to perform some risky operation, but they want to restrict what non-admins can do. To accomplish this, they accept a JSON blob from the user, parse it using `JSON5.parse`, confirm that the provided data does not set some sensitive keys, and then performs the risky operation using the validated data:\n \n```js\nconst JSON5 = require('json5');\n\nconst doSomethingDangerous = (props) => {\n  if (props.isAdmin) {\n    console.log('Doing dangerous thing as admin.');\n  } else {\n    console.log('Doing dangerous thing as user.');\n  }\n};\n\nconst secCheckKeysSet = (obj, searchKeys) => {\n  let searchKeyFound = false;\n  Object.keys(obj).forEach((key) => {\n    if (searchKeys.indexOf(key) > -1) {\n      searchKeyFound = true;\n    }\n  });\n  return searchKeyFound;\n};\n\nconst props = JSON5.parse('{\"foo\": \"bar\"}');\nif (!secCheckKeysSet(props, ['isAdmin', 'isMod'])) {\n  doSomethingDangerous(props); // \"Doing dangerous thing as user.\"\n} else {\n  throw new Error('Forbidden...');\n}\n```\n \nIf the user attempts to set the `isAdmin` key, their request will be rejected:\n \n```js\nconst props = JSON5.parse('{\"foo\": \"bar\", \"isAdmin\": true}');\nif (!secCheckKeysSet(props, ['isAdmin', 'isMod'])) {\n  doSomethingDangerous(props);\n} else {\n  throw new Error('Forbidden...'); // Error: Forbidden...\n}\n```\n \nHowever, users can instead set the `__proto__` key to `{\"isAdmin\": true}`. `JSON5` will parse this key and will set the `isAdmin` key on the prototype of the returned object, allowing the user to bypass the security check and run their request as an admin:\n \n```js\nconst props = JSON5.parse('{\"foo\": \"bar\", \"__proto__\": {\"isAdmin\": true}}');\nif (!secCheckKeysSet(props, ['isAdmin', 'isMod'])) {\n  doSomethingDangerous(props); // \"Doing dangerous thing as admin.\"\n} else {\n  throw new Error('Forbidden...');\n}\n ```",
+   "aliases": [
+    "CVE-2022-46175"
+   ],
+   "modified": "2026-09-10T03:49:56.250129993Z",
+   "published": "2022-12-29T01:51:03Z",
+   "database_specific": {
+    "github_reviewed": true,
+    "github_reviewed_at": "2022-12-29T01:51:03Z",
+    "nvd_published_at": "2022-12-24T04:15:00Z",
+    "cwe_ids": [
+     "CWE-1321"
+    ],
+    "severity": "HIGH"
+   },
+   "references": [
+    {
+     "type": "WEB",
+     "url": "https://github.com/json5/json5/security/advisories/GHSA-9c47-m6qq-7p4h"
+    },
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-46175"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/json5/json5/issues/199"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/json5/json5/issues/295"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/json5/json5/pull/298"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/json5/json5/commit/62a65408408d40aeea14c7869ed327acead12972"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/json5/json5/commit/7774c1097993bc3ce9f0ac4b722a32bf7d6871c8"
+    },
+    {
+     "type": "PACKAGE",
+     "url": "https://github.com/json5/json5"
+    },
+    {
+     "type": "WEB",
+     "url": "https://lists.debian.org/debian-lts-announce/2023/11/msg00021.html"
+    },
+    {
+     "type": "WEB",
+     "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/3S26TLPLVFAJTUN3VIXFDEBEXDYO22CE"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "json5",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/json5"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "2.0.0"
+        },
+        {
+         "fixed": "2.2.2"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2022/12/GHSA-9c47-m6qq-7p4h/GHSA-9c47-m6qq-7p4h.json"
+     }
+    },
+    {
+     "package": {
+      "name": "json5",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/json5"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "1.0.2"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2022/12/GHSA-9c47-m6qq-7p4h/GHSA-9c47-m6qq-7p4h.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V3",
+     "score": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:L/A:H"
+    }
+   ]
+  },
+  {
+   "id": "GHSA-c2qf-rxjj-qqgw",
+   "summary": "semver vulnerable to Regular Expression Denial of Service",
+   "details": "Versions of the package semver before 7.5.2 on the 7.x branch, before 6.3.1 on the 6.x branch, and all other versions before 5.7.2 are vulnerable to Regular Expression Denial of Service (ReDoS) via the function new Range, when untrusted user data is provided as a range.",
+   "aliases": [
+    "CVE-2022-25883"
+   ],
+   "modified": "2026-09-10T03:50:02.224637541Z",
+   "published": "2023-06-21T06:30:28Z",
+   "database_specific": {
+    "github_reviewed_at": "2023-06-22T16:52:56Z",
+    "nvd_published_at": "2023-06-21T05:15:09Z",
+    "cwe_ids": [
+     "CWE-1333"
+    ],
+    "severity": "HIGH",
+    "github_reviewed": true
+   },
+   "references": [
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-25883"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/npm/node-semver/pull/564"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/npm/node-semver/pull/585"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/npm/node-semver/pull/593"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/npm/node-semver/commit/2f8fd41487acf380194579ecb6f8b1bbfe116be0"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/npm/node-semver/commit/717534ee353682f3bcf33e60a8af4292626d4441"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/npm/node-semver/commit/928e56d21150da0413a3333a3148b20e741a920c"
+    },
+    {
+     "type": "PACKAGE",
+     "url": "https://github.com/npm/node-semver"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/npm/node-semver/blob/main/classes/range.js#L97-L104"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/npm/node-semver/blob/main/classes/range.js%23L97-L104"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/npm/node-semver/blob/main/internal/re.js#L138"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/npm/node-semver/blob/main/internal/re.js#L160"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/npm/node-semver/blob/main/internal/re.js%23L138"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/npm/node-semver/blob/main/internal/re.js%23L160"
+    },
+    {
+     "type": "WEB",
+     "url": "https://security.netapp.com/advisory/ntap-20241025-0004"
+    },
+    {
+     "type": "WEB",
+     "url": "https://security.snyk.io/vuln/SNYK-JS-SEMVER-3247795"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "semver",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/semver"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "7.0.0"
+        },
+        {
+         "fixed": "7.5.2"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2023/06/GHSA-c2qf-rxjj-qqgw/GHSA-c2qf-rxjj-qqgw.json"
+     }
+    },
+    {
+     "package": {
+      "name": "semver",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/semver"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "6.0.0"
+        },
+        {
+         "fixed": "6.3.1"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2023/06/GHSA-c2qf-rxjj-qqgw/GHSA-c2qf-rxjj-qqgw.json"
+     }
+    },
+    {
+     "package": {
+      "name": "semver",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/semver"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "2.0.0-alpha"
+        },
+        {
+         "fixed": "5.7.2"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2023/06/GHSA-c2qf-rxjj-qqgw/GHSA-c2qf-rxjj-qqgw.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V3",
+     "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+    }
+   ]
+  },
+  {
+   "id": "GHSA-f23m-r3pf-42rh",
+   "summary": "lodash vulnerable to Prototype Pollution via array path bypass in `_.unset` and `_.omit`",
+   "details": "### Impact\n\nLodash versions 4.17.23 and earlier are vulnerable to prototype pollution in the `_.unset` and `_.omit` functions. The fix for [CVE-2025-13465](https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg) only guards against string key members, so an attacker can bypass the check by passing array-wrapped path segments. This allows deletion of properties from built-in prototypes such as `Object.prototype`, `Number.prototype`, and `String.prototype`.\n\nThe issue permits deletion of prototype properties but does not allow overwriting their original behavior.\n\n### Patches\n\nThis issue is patched in 4.18.0.\n\n### Workarounds\n\nNone. Upgrade to the patched version.",
+   "aliases": [
+    "CVE-2025-13465",
+    "CVE-2026-2950",
+    "GHSA-xxjr-mmjv-4gpg"
+   ],
+   "modified": "2026-09-10T03:50:44.050013812Z",
+   "published": "2026-04-01T23:50:27Z",
+   "database_specific": {
+    "severity": "MODERATE",
+    "github_reviewed": true,
+    "github_reviewed_at": "2026-04-01T23:50:27Z",
+    "nvd_published_at": "2026-03-31T20:16:26Z",
+    "cwe_ids": [
+     "CWE-1321"
+    ]
+   },
+   "references": [
+    {
+     "type": "WEB",
+     "url": "https://github.com/lodash/lodash/security/advisories/GHSA-f23m-r3pf-42rh"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg"
+    },
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-2950"
+    },
+    {
+     "type": "PACKAGE",
+     "url": "https://github.com/lodash/lodash"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "lodash",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "4.18.0"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/04/GHSA-f23m-r3pf-42rh/GHSA-f23m-r3pf-42rh.json",
+      "last_known_affected_version_range": "<= 4.17.23"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash-es",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash-es"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "4.18.0"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "last_known_affected_version_range": "<= 4.17.23",
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/04/GHSA-f23m-r3pf-42rh/GHSA-f23m-r3pf-42rh.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash-amd",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash-amd"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "4.18.0"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "last_known_affected_version_range": "<= 4.17.23",
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/04/GHSA-f23m-r3pf-42rh/GHSA-f23m-r3pf-42rh.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash.unset",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash.unset"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "4.0.0"
+        },
+        {
+         "fixed": "4.18.0"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/04/GHSA-f23m-r3pf-42rh/GHSA-f23m-r3pf-42rh.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V3",
+     "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L"
+    }
+   ]
+  },
+  {
+   "id": "GHSA-p9wx-2529-fp83",
+   "summary": "Marked allows Regular Expression Denial of Service (ReDoS) attacks",
+   "details": "Marked prior to version 0.3.17 is vulnerable to a Regular Expression Denial of Service (ReDoS) attack due to catastrophic backtracking in several regular expressions used for parsing HTML tags and markdown links. An attacker can exploit this vulnerability by providing specially crafted markdown input, such as deeply nested or repetitively structured brackets or tag attributes, which cause the parser to hang and lead to a Denial of Service.",
+   "aliases": [
+    "CVE-2018-25110"
+   ],
+   "modified": "2025-05-27T15:27:40.131270Z",
+   "published": "2025-05-23T15:31:16Z",
+   "database_specific": {
+    "severity": "MODERATE",
+    "github_reviewed": true,
+    "github_reviewed_at": "2025-05-27T15:03:47Z",
+    "nvd_published_at": "2025-05-23T15:15:20Z",
+    "cwe_ids": [
+     "CWE-1333"
+    ]
+   },
+   "references": [
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2018-25110"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/markedjs/marked/issues/1070"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/markedjs/marked/pull/1083"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/markedjs/marked/commit/20bfc106013ed45713a21672ad4a34df94dcd485"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/Checkmarx/Vulnerabilities-Proofs-of-Concept/tree/main/2018/CVE-2018-25110"
+    },
+    {
+     "type": "PACKAGE",
+     "url": "https://github.com/markedjs/marked"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "marked",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/marked"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "0.3.17"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/05/GHSA-p9wx-2529-fp83/GHSA-p9wx-2529-fp83.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V4",
+     "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N"
+    }
+   ]
+  },
+  {
+   "id": "GHSA-r5fr-rjxr-66jc",
+   "summary": "lodash vulnerable to Code Injection via `_.template` imports key names",
+   "details": "### Impact\n\nThe fix for [CVE-2021-23337](https://github.com/advisories/GHSA-35jh-r3h4-6jhm) added validation for the `variable` option in `_.template` but did not apply the same validation to `options.imports` key names. Both paths flow into the same `Function()` constructor sink.\n\nWhen an application passes untrusted input as `options.imports` key names, an attacker can inject default-parameter expressions that execute arbitrary code at template compilation time.\n\nAdditionally, `_.template` uses `assignInWith` to merge imports, which enumerates inherited properties via `for..in`. If `Object.prototype` has been polluted by any other vector, the polluted keys are copied into the imports object and passed to `Function()`.\n\n### Patches\n\nUsers should upgrade to version 4.18.0.\n\nThe fix applies two changes:\n1. Validate `importsKeys` against the existing `reForbiddenIdentifierChars` regex (same check already used for the `variable` option)\n2. Replace `assignInWith` with `assignWith` when merging imports, so only own properties are enumerated\n\n### Workarounds\n\nDo not pass untrusted input as key names in `options.imports`. Only use developer-controlled, static key names.",
+   "aliases": [
+    "CVE-2021-23337",
+    "CVE-2026-4800",
+    "GHSA-35jh-r3h4-6jhm"
+   ],
+   "modified": "2026-09-10T03:51:02.970455926Z",
+   "published": "2026-04-01T23:51:12Z",
+   "database_specific": {
+    "cwe_ids": [
+     "CWE-94"
+    ],
+    "severity": "HIGH",
+    "github_reviewed": true,
+    "github_reviewed_at": "2026-04-01T23:51:12Z",
+    "nvd_published_at": "2026-03-31T20:16:29Z"
+   },
+   "references": [
+    {
+     "type": "WEB",
+     "url": "https://github.com/lodash/lodash/security/advisories/GHSA-r5fr-rjxr-66jc"
+    },
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-4800"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/lodash/lodash/commit/3469357cff396a26c363f8c1b5a91dde28ba4b1c"
+    },
+    {
+     "type": "WEB",
+     "url": "https://cna.openjsf.org/security-advisories.html"
+    },
+    {
+     "type": "ADVISORY",
+     "url": "https://github.com/advisories/GHSA-35jh-r3h4-6jhm"
+    },
+    {
+     "type": "PACKAGE",
+     "url": "https://github.com/lodash/lodash"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "lodash",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "4.0.0"
+        },
+        {
+         "fixed": "4.18.0"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "last_known_affected_version_range": "<= 4.17.23",
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/04/GHSA-r5fr-rjxr-66jc/GHSA-r5fr-rjxr-66jc.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash-es",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash-es"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "4.0.0"
+        },
+        {
+         "fixed": "4.18.0"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "last_known_affected_version_range": "<= 4.17.23",
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/04/GHSA-r5fr-rjxr-66jc/GHSA-r5fr-rjxr-66jc.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash-amd",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash-amd"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "4.0.0"
+        },
+        {
+         "fixed": "4.18.0"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "last_known_affected_version_range": "<= 4.17.23",
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/04/GHSA-r5fr-rjxr-66jc/GHSA-r5fr-rjxr-66jc.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash.template",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash.template"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "4.0.0"
+        },
+        {
+         "fixed": "4.18.0"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/04/GHSA-r5fr-rjxr-66jc/GHSA-r5fr-rjxr-66jc.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V3",
+     "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H"
+    }
+   ]
+  },
+  {
+   "id": "GHSA-rrrm-qjm4-v8hf",
+   "summary": "Inefficient Regular Expression Complexity in marked",
+   "details": "### Impact\n\n_What kind of vulnerability is it?_\n\nDenial of service.\n\nThe regular expression `block.def` may cause catastrophic backtracking against some strings.\nPoC is the following.\n\n```javascript\nimport * as marked from \"marked\";\n\nmarked.parse(`[x]:${' '.repeat(1500)}x ${' '.repeat(1500)} x`);\n```\n\n_Who is impacted?_\n\nAnyone who runs untrusted markdown through marked and does not use a worker with a time limit.\n\n### Patches\n\n_Has the problem been patched?_\n\nYes\n\n_What versions should users upgrade to?_\n\n4.0.10\n\n### Workarounds\n\n_Is there a way for users to fix or remediate the vulnerability without upgrading?_\n\nDo not run untrusted markdown through marked or run marked on a [worker](https://marked.js.org/using_advanced#workers) thread and set a reasonable time limit to prevent draining resources.\n\n### References\n\n_Are there any links users can visit to find out more?_\n\n- https://marked.js.org/using_advanced#workers\n- https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS\n\n### For more information\n\nIf you have any questions or comments about this advisory:\n\n* Open an issue in [marked](https://github.com/markedjs/marked)\n",
+   "aliases": [
+    "CVE-2022-21680"
+   ],
+   "modified": "2026-09-10T03:49:11.241428213Z",
+   "published": "2022-01-14T21:04:41Z",
+   "database_specific": {
+    "cwe_ids": [
+     "CWE-1333",
+     "CWE-400"
+    ],
+    "severity": "HIGH",
+    "github_reviewed": true,
+    "github_reviewed_at": "2022-01-14T19:56:20Z",
+    "nvd_published_at": "2022-01-14T17:15:00Z"
+   },
+   "references": [
+    {
+     "type": "WEB",
+     "url": "https://github.com/markedjs/marked/security/advisories/GHSA-rrrm-qjm4-v8hf"
+    },
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-21680"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/markedjs/marked/commit/c4a3ccd344b6929afa8a1d50ac54a721e57012c0"
+    },
+    {
+     "type": "PACKAGE",
+     "url": "https://github.com/markedjs/marked"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/markedjs/marked/releases/tag/v4.0.10"
+    },
+    {
+     "type": "WEB",
+     "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/AIXDMC3CSHYW3YWVSQOXAWLUYQHAO5UX"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "marked",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/marked"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "4.0.10"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2022/01/GHSA-rrrm-qjm4-v8hf/GHSA-rrrm-qjm4-v8hf.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V3",
+     "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+    }
+   ]
+  },
+  {
+   "id": "GHSA-vcc3-ghjq-m6fr",
+   "summary": "decode-uri-component: Denial of service via exponential decoding of malformed percent-encoded input",
+   "details": "### Impact\nAn attacker who can supply input to `decodeUriComponent()` (directly or via a dependency that uses this package on URL/query/path data) can cause excessive CPU usage and application unresponsiveness. This is an availability issue; there is no known memory corruption, data disclosure, or remote code execution impact.\n\n### Patches\nUpgrade to `decode-uri-component@0.5.0`.\n\n### Workarounds\nLimit the size of the input.",
+   "aliases": [
+    "CVE-2026-45822"
+   ],
+   "modified": "2026-09-10T03:51:14.713899943Z",
+   "published": "2026-08-31T22:10:20Z",
+   "database_specific": {
+    "cwe_ids": [
+     "CWE-1176",
+     "CWE-400",
+     "CWE-405",
+     "CWE-407"
+    ],
+    "severity": "MODERATE",
+    "github_reviewed": true,
+    "github_reviewed_at": "2026-08-31T22:10:20Z",
+    "nvd_published_at": "2026-06-30T09:16:25Z"
+   },
+   "references": [
+    {
+     "type": "WEB",
+     "url": "https://github.com/SamVerschueren/decode-uri-component/security/advisories/GHSA-vcc3-ghjq-m6fr"
+    },
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-45822"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/SamVerschueren/decode-uri-component/commit/fa479dafeede7bedf04e5c89aa78f2a78c664005"
+    },
+    {
+     "type": "PACKAGE",
+     "url": "https://github.com/SamVerschueren/decode-uri-component"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/SamVerschueren/decode-uri-component/blob/00662938dc7c6241547ae8abce7785cc13ffd3f6/index.js"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/SamVerschueren/decode-uri-component/releases/tag/v0.5.0"
+    },
+    {
+     "type": "WEB",
+     "url": "https://www.npmjs.com/package/decode-uri-component"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "decode-uri-component",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/decode-uri-component"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "0.5.0"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "last_known_affected_version_range": "<= 0.4.2",
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/08/GHSA-vcc3-ghjq-m6fr/GHSA-vcc3-ghjq-m6fr.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V4",
+     "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:U/S:N/AU:Y/R:U/V:D/RE:M/U:Amber"
+    }
+   ]
+  },
+  {
+   "id": "GHSA-w573-4hg7-7wgq",
+   "summary": "decode-uri-component vulnerable to Denial of Service (DoS)",
+   "details": "decode-uri-component 0.2.0 is vulnerable to Improper Input Validation resulting in DoS.",
+   "aliases": [
+    "CVE-2022-38900"
+   ],
+   "modified": "2023-11-08T04:10:14.135716Z",
+   "published": "2022-11-28T15:30:24Z",
+   "database_specific": {
+    "github_reviewed": true,
+    "github_reviewed_at": "2022-11-28T23:35:59Z",
+    "nvd_published_at": "2022-11-28T13:15:00Z",
+    "cwe_ids": [
+     "CWE-20"
+    ],
+    "severity": "HIGH"
+   },
+   "references": [
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-38900"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/SamVerschueren/decode-uri-component/issues/5"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/sindresorhus/query-string/issues/345"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/SamVerschueren/decode-uri-component/commit/746ca5dcb6667c5d364e782d53c542830e4c10b9"
+    },
+    {
+     "type": "PACKAGE",
+     "url": "https://github.com/SamVerschueren/decode-uri-component"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/SamVerschueren/decode-uri-component/releases/tag/v0.2.1"
+    },
+    {
+     "type": "WEB",
+     "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/ERN6YE3DS7NBW7UH44SCJBMNC2NWQ7SM"
+    },
+    {
+     "type": "WEB",
+     "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/KAC5KQ2SEWAMQ6UZAUBZ5KXKEOESH375"
+    },
+    {
+     "type": "WEB",
+     "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/QABOUA2I542UTANVZIVFKWMRYVHLV32D"
+    },
+    {
+     "type": "WEB",
+     "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/UW4SCMT3SEUFVIL7YIADQ5K36GJEO6I5"
+    },
+    {
+     "type": "WEB",
+     "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/VNV2GNZXOTEDAJRFH3ZYWRUBGIVL7BSU"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "decode-uri-component",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/decode-uri-component"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "0.2.1"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2022/11/GHSA-w573-4hg7-7wgq/GHSA-w573-4hg7-7wgq.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V3",
+     "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+    }
+   ]
+  },
+  {
+   "id": "GHSA-x5pg-88wf-qq4p",
+   "summary": "Regular Expression Denial of Service in marked",
+   "details": "Affected versions of `marked` are vulnerable to a regular expression denial of service. \n\nThe amplification in this vulnerability is significant, with 1,000 characters resulting in the event loop being blocked for around 6 seconds.\n\n\n## Recommendation\n\nUpdate to version 0.3.9 or later.",
+   "aliases": [
+    "CVE-2017-16114"
+   ],
+   "modified": "2023-11-08T03:59:05.647192Z",
+   "published": "2018-07-24T20:10:52Z",
+   "database_specific": {
+    "nvd_published_at": null,
+    "cwe_ids": [
+     "CWE-400"
+    ],
+    "severity": "HIGH",
+    "github_reviewed": true,
+    "github_reviewed_at": "2020-06-16T22:02:12Z"
+   },
+   "references": [
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2017-16114"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/chjj/marked/issues/937"
+    },
+    {
+     "type": "ADVISORY",
+     "url": "https://github.com/advisories/GHSA-x5pg-88wf-qq4p"
+    },
+    {
+     "type": "WEB",
+     "url": "https://www.npmjs.com/advisories/531"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "marked",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/marked"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "0.3.9"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2018/07/GHSA-x5pg-88wf-qq4p/GHSA-x5pg-88wf-qq4p.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V3",
+     "score": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+    }
+   ]
+  },
+  {
+   "id": "GHSA-xvch-5gv4-984h",
+   "summary": "Prototype Pollution in minimist",
+   "details": "Minimist prior to 1.2.6 and 0.2.4 is vulnerable to Prototype Pollution via file `index.js`, function `setKey()` (lines 69-95).",
+   "aliases": [
+    "CVE-2021-44906"
+   ],
+   "modified": "2026-03-13T22:11:59.523514Z",
+   "published": "2022-03-18T00:01:09Z",
+   "database_specific": {
+    "nvd_published_at": "2022-03-17T16:15:00Z",
+    "cwe_ids": [
+     "CWE-1321"
+    ],
+    "severity": "CRITICAL",
+    "github_reviewed": true,
+    "github_reviewed_at": "2022-03-18T23:13:40Z"
+   },
+   "references": [
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-44906"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/minimistjs/minimist/issues/11"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/substack/minimist/issues/164"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/minimistjs/minimist/pull/24"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/minimistjs/minimist/commit/34e20b8461118608703d6485326abbb8e35e1703"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/minimistjs/minimist/commit/bc8ecee43875261f4f17eb20b1243d3ed15e70eb"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/minimistjs/minimist/commit/c2b981977fa834b223b408cfb860f933c9811e4d"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/minimistjs/minimist/commit/ef9153fc52b6cea0744b2239921c5dcae4697f11"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/Marynk/JavaScript-vulnerability-detection/blob/main/minimist%20PoC.zip"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/minimistjs/minimist/commits/v0.2.4"
+    },
+    {
+     "type": "PACKAGE",
+     "url": "https://github.com/substack/minimist"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/substack/minimist/blob/master/index.js#L69"
+    },
+    {
+     "type": "WEB",
+     "url": "https://security.netapp.com/advisory/ntap-20240621-0006"
+    },
+    {
+     "type": "WEB",
+     "url": "https://snyk.io/vuln/SNYK-JS-MINIMIST-559764"
+    },
+    {
+     "type": "WEB",
+     "url": "https://stackoverflow.com/questions/8588563/adding-custom-properties-to-a-function/20278068#20278068"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "minimist",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/minimist"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "1.0.0"
+        },
+        {
+         "fixed": "1.2.6"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2022/03/GHSA-xvch-5gv4-984h/GHSA-xvch-5gv4-984h.json"
+     }
+    },
+    {
+     "package": {
+      "name": "minimist",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/minimist"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "0"
+        },
+        {
+         "fixed": "0.2.4"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2022/03/GHSA-xvch-5gv4-984h/GHSA-xvch-5gv4-984h.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V3",
+     "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+    }
+   ]
+  },
+  {
+   "id": "GHSA-xxjr-mmjv-4gpg",
+   "summary": "Lodash has Prototype Pollution Vulnerability in `_.unset` and `_.omit` functions",
+   "details": "### Impact\n\nLodash versions 4.0.0 through 4.17.22 are vulnerable to prototype pollution in the `_.unset` and `_.omit` functions. An attacker can pass crafted paths which cause Lodash to delete methods from global prototypes. \n\nThe issue permits deletion of properties but does not allow overwriting their original behavior.  \n\n### Patches\n\nThis issue is patched on 4.17.23.",
+   "aliases": [
+    "CVE-2025-13465",
+    "CVE-2026-2950",
+    "GHSA-f23m-r3pf-42rh"
+   ],
+   "modified": "2026-09-10T03:50:33.722177022Z",
+   "published": "2026-01-21T23:01:22Z",
+   "database_specific": {
+    "nvd_published_at": "2026-01-21T20:16:05Z",
+    "cwe_ids": [
+     "CWE-1321"
+    ],
+    "severity": "MODERATE",
+    "github_reviewed": true,
+    "github_reviewed_at": "2026-01-21T23:01:22Z"
+   },
+   "references": [
+    {
+     "type": "WEB",
+     "url": "https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg"
+    },
+    {
+     "type": "ADVISORY",
+     "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-13465"
+    },
+    {
+     "type": "WEB",
+     "url": "https://github.com/lodash/lodash/commit/edadd452146f7e4bad4ea684e955708931d84d81"
+    },
+    {
+     "type": "WEB",
+     "url": "https://cert-portal.siemens.com/productcert/html/ssa-253495.html"
+    },
+    {
+     "type": "PACKAGE",
+     "url": "https://github.com/lodash/lodash"
+    }
+   ],
+   "affected": [
+    {
+     "package": {
+      "name": "lodash",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "4.0.0"
+        },
+        {
+         "fixed": "4.17.23"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "last_known_affected_version_range": "<= 4.17.22",
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/01/GHSA-xxjr-mmjv-4gpg/GHSA-xxjr-mmjv-4gpg.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash.unset",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash.unset"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "4.0.0"
+        },
+        {
+         "last_affected": "4.5.2"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/01/GHSA-xxjr-mmjv-4gpg/GHSA-xxjr-mmjv-4gpg.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash-es",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash-es"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "4.0.0"
+        },
+        {
+         "fixed": "4.17.23"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "last_known_affected_version_range": "<= 4.17.22",
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/01/GHSA-xxjr-mmjv-4gpg/GHSA-xxjr-mmjv-4gpg.json"
+     }
+    },
+    {
+     "package": {
+      "name": "lodash-amd",
+      "ecosystem": "npm",
+      "purl": "pkg:npm/lodash-amd"
+     },
+     "ranges": [
+      {
+       "type": "SEMVER",
+       "events": [
+        {
+         "introduced": "4.0.0"
+        },
+        {
+         "fixed": "4.17.23"
+        }
+       ]
+      }
+     ],
+     "database_specific": {
+      "last_known_affected_version_range": "<= 4.17.22",
+      "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/01/GHSA-xxjr-mmjv-4gpg/GHSA-xxjr-mmjv-4gpg.json"
+     }
+    }
+   ],
+   "schema_version": "1.9.0",
+   "severity": [
+    {
+     "type": "CVSS_V3",
+     "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L"
+    },
+    {
+     "type": "CVSS_V4",
+     "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:L/VA:L/SC:H/SI:H/SA:H/E:P"
+    }
+   ]
+  }
+ ],
+ "packuments": {
+  "decode-uri-component": {
+   "name": "decode-uri-component",
+   "dist-tags": {
+    "latest": "0.5.0"
+   },
+   "versions": {
+    "0.1.0": {
+     "version": "0.1.0",
+     "engines": {
+      "node": ">=4"
+     }
+    },
+    "0.2.0": {
+     "version": "0.2.0",
+     "engines": {
+      "node": ">=0.10"
+     }
+    },
+    "0.2.1": {
+     "version": "0.2.1",
+     "engines": {
+      "node": ">=0.10"
+     }
+    },
+    "0.2.2": {
+     "version": "0.2.2",
+     "engines": {
+      "node": ">=0.10"
+     }
+    },
+    "0.3.0": {
+     "version": "0.3.0",
+     "engines": {
+      "node": ">=0.10"
+     }
+    },
+    "0.4.0": {
+     "version": "0.4.0",
+     "engines": {
+      "node": ">=14.16"
+     }
+    },
+    "0.4.1": {
+     "version": "0.4.1",
+     "engines": {
+      "node": ">=14.16"
+     }
+    },
+    "0.5.0": {
+     "version": "0.5.0",
+     "engines": {
+      "node": ">=14.16"
+     }
+    }
+   }
+  },
+  "json5": {
+   "name": "json5",
+   "dist-tags": {
+    "latest": "2.2.3"
+   },
+   "versions": {
+    "0.0.0": {
+     "version": "0.0.0",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.0.1": {
+     "version": "0.0.1",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.1.0": {
+     "version": "0.1.0",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.2.0": {
+     "version": "0.2.0",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.4.0": {
+     "version": "0.4.0"
+    },
+    "0.5.0": {
+     "version": "0.5.0"
+    },
+    "0.5.1": {
+     "version": "0.5.1"
+    },
+    "1.0.0-dates": {
+     "version": "1.0.0-dates"
+    },
+    "1.0.0-regexps": {
+     "version": "1.0.0-regexps"
+    },
+    "1.0.0-beta": {
+     "version": "1.0.0-beta"
+    },
+    "1.0.0-dates-2": {
+     "version": "1.0.0-dates-2"
+    },
+    "1.0.0-regexps-2": {
+     "version": "1.0.0-regexps-2"
+    },
+    "1.0.0-beta-2": {
+     "version": "1.0.0-beta-2"
+    },
+    "1.0.0-beta.4": {
+     "version": "1.0.0-beta.4"
+    },
+    "1.0.0": {
+     "version": "1.0.0"
+    },
+    "1.0.1": {
+     "version": "1.0.1"
+    },
+    "2.0.0": {
+     "version": "2.0.0",
+     "engines": {
+      "node": ">=6"
+     }
+    },
+    "2.0.1": {
+     "version": "2.0.1",
+     "engines": {
+      "node": ">=6"
+     }
+    },
+    "2.1.0": {
+     "version": "2.1.0",
+     "engines": {
+      "node": ">=6"
+     }
+    },
+    "2.1.1": {
+     "version": "2.1.1",
+     "engines": {
+      "node": ">=6"
+     }
+    },
+    "2.1.2": {
+     "version": "2.1.2",
+     "engines": {
+      "node": ">=6"
+     }
+    },
+    "2.1.3": {
+     "version": "2.1.3",
+     "engines": {
+      "node": ">=6"
+     }
+    },
+    "2.2.0": {
+     "version": "2.2.0",
+     "engines": {
+      "node": ">=6"
+     }
+    },
+    "2.2.1": {
+     "version": "2.2.1",
+     "engines": {
+      "node": ">=6"
+     }
+    },
+    "2.2.2": {
+     "version": "2.2.2",
+     "engines": {
+      "node": ">=6"
+     }
+    },
+    "1.0.2": {
+     "version": "1.0.2"
+    },
+    "2.2.3": {
+     "version": "2.2.3",
+     "engines": {
+      "node": ">=6"
+     }
+    }
+   }
+  },
+  "lodash": {
+   "name": "lodash",
+   "dist-tags": {
+    "latest": "4.18.1"
+   },
+   "versions": {
+    "0.1.0": {
+     "version": "0.1.0"
+    },
+    "0.2.0": {
+     "version": "0.2.0"
+    },
+    "0.2.1": {
+     "version": "0.2.1"
+    },
+    "0.2.2": {
+     "version": "0.2.2"
+    },
+    "0.3.0": {
+     "version": "0.3.0"
+    },
+    "0.3.1": {
+     "version": "0.3.1"
+    },
+    "0.3.2": {
+     "version": "0.3.2"
+    },
+    "0.4.0": {
+     "version": "0.4.0"
+    },
+    "0.4.1": {
+     "version": "0.4.1"
+    },
+    "0.4.2": {
+     "version": "0.4.2"
+    },
+    "0.5.0-rc.1": {
+     "version": "0.5.0-rc.1"
+    },
+    "0.5.0": {
+     "version": "0.5.0"
+    },
+    "0.5.1": {
+     "version": "0.5.1"
+    },
+    "0.5.2": {
+     "version": "0.5.2"
+    },
+    "0.6.0": {
+     "version": "0.6.0"
+    },
+    "0.6.1": {
+     "version": "0.6.1"
+    },
+    "0.7.0": {
+     "version": "0.7.0"
+    },
+    "0.8.0": {
+     "version": "0.8.0"
+    },
+    "0.8.1": {
+     "version": "0.8.1"
+    },
+    "0.8.2": {
+     "version": "0.8.2"
+    },
+    "0.9.0": {
+     "version": "0.9.0"
+    },
+    "0.9.1": {
+     "version": "0.9.1"
+    },
+    "0.9.2": {
+     "version": "0.9.2"
+    },
+    "0.10.0": {
+     "version": "0.10.0"
+    },
+    "1.0.0-rc.1": {
+     "version": "1.0.0-rc.1"
+    },
+    "1.0.0-rc.2": {
+     "version": "1.0.0-rc.2"
+    },
+    "1.0.0-rc.3": {
+     "version": "1.0.0-rc.3"
+    },
+    "1.0.0": {
+     "version": "1.0.0"
+    },
+    "1.0.1": {
+     "version": "1.0.1"
+    },
+    "1.1.0": {
+     "version": "1.1.0"
+    },
+    "1.1.1": {
+     "version": "1.1.1"
+    },
+    "1.2.0": {
+     "version": "1.2.0"
+    },
+    "1.2.1": {
+     "version": "1.2.1"
+    },
+    "1.3.0": {
+     "version": "1.3.0"
+    },
+    "1.3.1": {
+     "version": "1.3.1"
+    },
+    "2.0.0": {
+     "version": "2.0.0"
+    },
+    "2.1.0": {
+     "version": "2.1.0"
+    },
+    "2.2.0": {
+     "version": "2.2.0"
+    },
+    "2.2.1": {
+     "version": "2.2.1"
+    },
+    "2.3.0": {
+     "version": "2.3.0"
+    },
+    "2.4.0": {
+     "version": "2.4.0"
+    },
+    "2.4.1": {
+     "version": "2.4.1"
+    },
+    "3.0.0": {
+     "version": "3.0.0"
+    },
+    "3.0.1": {
+     "version": "3.0.1"
+    },
+    "3.1.0": {
+     "version": "3.1.0"
+    },
+    "3.2.0": {
+     "version": "3.2.0"
+    },
+    "3.3.0": {
+     "version": "3.3.0"
+    },
+    "3.3.1": {
+     "version": "3.3.1"
+    },
+    "3.4.0": {
+     "version": "3.4.0"
+    },
+    "3.5.0": {
+     "version": "3.5.0"
+    },
+    "3.6.0": {
+     "version": "3.6.0"
+    },
+    "1.0.2": {
+     "version": "1.0.2"
+    },
+    "3.7.0": {
+     "version": "3.7.0"
+    },
+    "2.4.2": {
+     "version": "2.4.2"
+    },
+    "3.8.0": {
+     "version": "3.8.0"
+    },
+    "3.9.0": {
+     "version": "3.9.0"
+    },
+    "3.9.1": {
+     "version": "3.9.1"
+    },
+    "3.9.2": {
+     "version": "3.9.2"
+    },
+    "3.9.3": {
+     "version": "3.9.3"
+    },
+    "3.10.0": {
+     "version": "3.10.0"
+    },
+    "3.10.1": {
+     "version": "3.10.1"
+    },
+    "4.0.0": {
+     "version": "4.0.0"
+    },
+    "4.0.1": {
+     "version": "4.0.1"
+    },
+    "4.1.0": {
+     "version": "4.1.0"
+    },
+    "4.2.0": {
+     "version": "4.2.0"
+    },
+    "4.2.1": {
+     "version": "4.2.1"
+    },
+    "4.3.0": {
+     "version": "4.3.0"
+    },
+    "4.4.0": {
+     "version": "4.4.0"
+    },
+    "4.5.0": {
+     "version": "4.5.0"
+    },
+    "4.5.1": {
+     "version": "4.5.1"
+    },
+    "4.6.0": {
+     "version": "4.6.0"
+    },
+    "4.6.1": {
+     "version": "4.6.1"
+    },
+    "4.7.0": {
+     "version": "4.7.0"
+    },
+    "4.8.0": {
+     "version": "4.8.0"
+    },
+    "4.8.1": {
+     "version": "4.8.1"
+    },
+    "4.8.2": {
+     "version": "4.8.2"
+    },
+    "4.9.0": {
+     "version": "4.9.0"
+    },
+    "4.10.0": {
+     "version": "4.10.0"
+    },
+    "4.11.0": {
+     "version": "4.11.0"
+    },
+    "4.11.1": {
+     "version": "4.11.1"
+    },
+    "4.11.2": {
+     "version": "4.11.2"
+    },
+    "4.12.0": {
+     "version": "4.12.0"
+    },
+    "4.13.0": {
+     "version": "4.13.0"
+    },
+    "4.13.1": {
+     "version": "4.13.1"
+    },
+    "4.14.0": {
+     "version": "4.14.0"
+    },
+    "4.14.1": {
+     "version": "4.14.1"
+    },
+    "4.14.2": {
+     "version": "4.14.2"
+    },
+    "4.15.0": {
+     "version": "4.15.0"
+    },
+    "4.16.0": {
+     "version": "4.16.0"
+    },
+    "4.16.1": {
+     "version": "4.16.1"
+    },
+    "4.16.2": {
+     "version": "4.16.2"
+    },
+    "4.16.3": {
+     "version": "4.16.3"
+    },
+    "4.16.4": {
+     "version": "4.16.4"
+    },
+    "4.16.5": {
+     "version": "4.16.5"
+    },
+    "4.16.6": {
+     "version": "4.16.6"
+    },
+    "4.17.0": {
+     "version": "4.17.0"
+    },
+    "4.17.1": {
+     "version": "4.17.1"
+    },
+    "4.17.2": {
+     "version": "4.17.2"
+    },
+    "4.17.3": {
+     "version": "4.17.3"
+    },
+    "4.17.4": {
+     "version": "4.17.4"
+    },
+    "4.17.5": {
+     "version": "4.17.5"
+    },
+    "4.17.9": {
+     "version": "4.17.9"
+    },
+    "4.17.10": {
+     "version": "4.17.10"
+    },
+    "4.17.11": {
+     "version": "4.17.11"
+    },
+    "4.17.12": {
+     "version": "4.17.12"
+    },
+    "4.17.13": {
+     "version": "4.17.13"
+    },
+    "4.17.14": {
+     "version": "4.17.14"
+    },
+    "4.17.15": {
+     "version": "4.17.15"
+    },
+    "4.17.16": {
+     "version": "4.17.16"
+    },
+    "4.17.17": {
+     "version": "4.17.17"
+    },
+    "4.17.18": {
+     "version": "4.17.18"
+    },
+    "4.17.19": {
+     "version": "4.17.19"
+    },
+    "4.17.20": {
+     "version": "4.17.20"
+    },
+    "4.17.21": {
+     "version": "4.17.21"
+    },
+    "4.17.23": {
+     "version": "4.17.23"
+    },
+    "4.18.0": {
+     "version": "4.18.0",
+     "deprecated": "Bad release. Please use lodash@4.17.21 instead."
+    },
+    "4.18.1": {
+     "version": "4.18.1"
+    }
+   }
+  },
+  "marked": {
+   "name": "marked",
+   "dist-tags": {
+    "latest": "18.0.14"
+   },
+   "versions": {
+    "0.0.1": {
+     "version": "0.0.1",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.0.2": {
+     "version": "0.0.2",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.0.3": {
+     "version": "0.0.3",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.0.4": {
+     "version": "0.0.4",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.0.5": {
+     "version": "0.0.5",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.0.6": {
+     "version": "0.0.6",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.0.7": {
+     "version": "0.0.7",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.0.8": {
+     "version": "0.0.8",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.0.9": {
+     "version": "0.0.9",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.1.0": {
+     "version": "0.1.0",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.1.1": {
+     "version": "0.1.1",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.1.2": {
+     "version": "0.1.2",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.1.3": {
+     "version": "0.1.3",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.1.4": {
+     "version": "0.1.4",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.1.5": {
+     "version": "0.1.5",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.1.6": {
+     "version": "0.1.6",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.1.7": {
+     "version": "0.1.7",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.1.8": {
+     "version": "0.1.8",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.1.9": {
+     "version": "0.1.9",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.2.0": {
+     "version": "0.2.0",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.2.1": {
+     "version": "0.2.1",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.2.2": {
+     "version": "0.2.2",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.2.2-1": {
+     "version": "0.2.2-1",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.2.3": {
+     "version": "0.2.3",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.2.4": {
+     "version": "0.2.4",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.2.4-1": {
+     "version": "0.2.4-1",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.2.5": {
+     "version": "0.2.5",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "0.2.6": {
+     "version": "0.2.6"
+    },
+    "0.2.7": {
+     "version": "0.2.7"
+    },
+    "0.2.8": {
+     "version": "0.2.8"
+    },
+    "0.2.9": {
+     "version": "0.2.9"
+    },
+    "0.2.10": {
+     "version": "0.2.10"
+    },
+    "0.3.0": {
+     "version": "0.3.0"
+    },
+    "0.3.1": {
+     "version": "0.3.1"
+    },
+    "0.3.2": {
+     "version": "0.3.2"
+    },
+    "0.3.3": {
+     "version": "0.3.3"
+    },
+    "0.3.4": {
+     "version": "0.3.4"
+    },
+    "0.3.5": {
+     "version": "0.3.5"
+    },
+    "0.3.6": {
+     "version": "0.3.6"
+    },
+    "0.3.7": {
+     "version": "0.3.7"
+    },
+    "0.3.9": {
+     "version": "0.3.9"
+    },
+    "0.3.12": {
+     "version": "0.3.12"
+    },
+    "0.3.13": {
+     "version": "0.3.13"
+    },
+    "0.3.14": {
+     "version": "0.3.14"
+    },
+    "0.3.15": {
+     "version": "0.3.15"
+    },
+    "0.3.16": {
+     "version": "0.3.16"
+    },
+    "0.3.17": {
+     "version": "0.3.17",
+     "engines": {
+      "node": ">=0.10.0"
+     }
+    },
+    "0.3.18": {
+     "version": "0.3.18",
+     "engines": {
+      "node": ">=0.10.0"
+     }
+    },
+    "0.3.19": {
+     "version": "0.3.19",
+     "engines": {
+      "node": ">=0.10.0"
+     }
+    },
+    "0.4.0": {
+     "version": "0.4.0",
+     "engines": {
+      "node": ">=0.10.0"
+     }
+    },
+    "0.5.0": {
+     "version": "0.5.0",
+     "engines": {
+      "node": ">=0.10.0"
+     }
+    },
+    "0.5.1": {
+     "version": "0.5.1",
+     "engines": {
+      "node": ">=0.10.0"
+     }
+    },
+    "0.5.2": {
+     "version": "0.5.2",
+     "engines": {
+      "node": ">=0.10.0"
+     }
+    },
+    "0.6.0": {
+     "version": "0.6.0",
+     "engines": {
+      "node": ">=0.10.0"
+     }
+    },
+    "0.6.1": {
+     "version": "0.6.1",
+     "engines": {
+      "node": ">=0.10.0"
+     }
+    },
+    "0.6.2": {
+     "version": "0.6.2",
+     "engines": {
+      "node": ">=0.10.0"
+     }
+    },
+    "0.6.3": {
+     "version": "0.6.3",
+     "engines": {
+      "node": ">=0.10.0"
+     }
+    },
+    "0.7.0": {
+     "version": "0.7.0",
+     "engines": {
+      "node": ">=0.10.0"
+     }
+    },
+    "0.8.0": {
+     "version": "0.8.0",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "0.8.1": {
+     "version": "0.8.1",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "0.8.2": {
+     "version": "0.8.2",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "1.0.0": {
+     "version": "1.0.0",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "1.1.0": {
+     "version": "1.1.0",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "1.1.1": {
+     "version": "1.1.1",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "1.2.0": {
+     "version": "1.2.0",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "1.1.2": {
+     "version": "1.1.2",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "1.2.1": {
+     "version": "1.2.1",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "1.2.2": {
+     "version": "1.2.2",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "1.2.3": {
+     "version": "1.2.3",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "1.2.4": {
+     "version": "1.2.4",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "1.2.5": {
+     "version": "1.2.5",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "1.2.6": {
+     "version": "1.2.6",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "1.2.7": {
+     "version": "1.2.7",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "1.2.8": {
+     "version": "1.2.8",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "1.2.9": {
+     "version": "1.2.9",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "2.0.0": {
+     "version": "2.0.0",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "2.0.1": {
+     "version": "2.0.1",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "2.0.2": {
+     "version": "2.0.2",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "2.0.3": {
+     "version": "2.0.3",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "2.0.4": {
+     "version": "2.0.4",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "2.0.5": {
+     "version": "2.0.5",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "2.0.6": {
+     "version": "2.0.6",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "2.0.7": {
+     "version": "2.0.7",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "2.1.0": {
+     "version": "2.1.0",
+     "engines": {
+      "node": ">= 8.16.2"
+     }
+    },
+    "2.1.1": {
+     "version": "2.1.1",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "2.1.2": {
+     "version": "2.1.2",
+     "engines": {
+      "node": ">= 10"
+     }
+    },
+    "2.1.3": {
+     "version": "2.1.3",
+     "engines": {
+      "node": ">= 10"
+     }
+    },
+    "3.0.0": {
+     "version": "3.0.0",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "3.0.1": {
+     "version": "3.0.1",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "3.0.2": {
+     "version": "3.0.2",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "3.0.3": {
+     "version": "3.0.3",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "3.0.4": {
+     "version": "3.0.4",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "3.0.5": {
+     "version": "3.0.5",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "3.0.6": {
+     "version": "3.0.6",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "3.0.7": {
+     "version": "3.0.7",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "3.0.8": {
+     "version": "3.0.8",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.0": {
+     "version": "4.0.0",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.1": {
+     "version": "4.0.1",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.2": {
+     "version": "4.0.2",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.3": {
+     "version": "4.0.3",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.4": {
+     "version": "4.0.4",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.5": {
+     "version": "4.0.5",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.6": {
+     "version": "4.0.6",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.7": {
+     "version": "4.0.7",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.8": {
+     "version": "4.0.8",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.9": {
+     "version": "4.0.9",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.10": {
+     "version": "4.0.10",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.11": {
+     "version": "4.0.11",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.12": {
+     "version": "4.0.12",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.13": {
+     "version": "4.0.13",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.14": {
+     "version": "4.0.14",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.15": {
+     "version": "4.0.15",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.16": {
+     "version": "4.0.16",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.17": {
+     "version": "4.0.17",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.18": {
+     "version": "4.0.18",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.0.19": {
+     "version": "4.0.19",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.1.0": {
+     "version": "4.1.0",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.1.1": {
+     "version": "4.1.1",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.2.0": {
+     "version": "4.2.0",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.2.1": {
+     "version": "4.2.1",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.2.2": {
+     "version": "4.2.2",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.2.3": {
+     "version": "4.2.3",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.2.4": {
+     "version": "4.2.4",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.2.5": {
+     "version": "4.2.5",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.2.6": {
+     "version": "4.2.6",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.2.7": {
+     "version": "4.2.7",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.2.8": {
+     "version": "4.2.8",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.2.9": {
+     "version": "4.2.9",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.2.10": {
+     "version": "4.2.10",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.2.11": {
+     "version": "4.2.11",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.2.12": {
+     "version": "4.2.12",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "4.3.0": {
+     "version": "4.3.0",
+     "engines": {
+      "node": ">= 12"
+     }
+    },
+    "5.0.0": {
+     "version": "5.0.0",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "5.0.1": {
+     "version": "5.0.1",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "5.0.2": {
+     "version": "5.0.2",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "5.0.3": {
+     "version": "5.0.3",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "5.0.4": {
+     "version": "5.0.4",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "5.0.5": {
+     "version": "5.0.5",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "5.1.0": {
+     "version": "5.1.0",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "5.1.1": {
+     "version": "5.1.1",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "5.1.2": {
+     "version": "5.1.2",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "6.0.0": {
+     "version": "6.0.0",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "7.0.0": {
+     "version": "7.0.0",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "7.0.1": {
+     "version": "7.0.1",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "7.0.2": {
+     "version": "7.0.2",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "7.0.3": {
+     "version": "7.0.3",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "7.0.4": {
+     "version": "7.0.4",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "7.0.5": {
+     "version": "7.0.5",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "8.0.0": {
+     "version": "8.0.0",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "8.0.1": {
+     "version": "8.0.1",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "9.0.0": {
+     "version": "9.0.0",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "9.0.1": {
+     "version": "9.0.1",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "9.0.2": {
+     "version": "9.0.2",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "9.0.3": {
+     "version": "9.0.3",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "9.1.0": {
+     "version": "9.1.0",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "9.1.1": {
+     "version": "9.1.1",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "9.1.2": {
+     "version": "9.1.2",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "9.1.3": {
+     "version": "9.1.3",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "9.1.4": {
+     "version": "9.1.4",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "9.1.5": {
+     "version": "9.1.5",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "9.1.6": {
+     "version": "9.1.6",
+     "engines": {
+      "node": ">= 16"
+     }
+    },
+    "10.0.0": {
+     "version": "10.0.0",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "11.0.0": {
+     "version": "11.0.0",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "11.0.1": {
+     "version": "11.0.1",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "11.1.0": {
+     "version": "11.1.0",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "11.1.1": {
+     "version": "11.1.1",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "11.2.0": {
+     "version": "11.2.0",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "12.0.0": {
+     "version": "12.0.0",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "12.0.1": {
+     "version": "12.0.1",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "12.0.2": {
+     "version": "12.0.2",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "13.0.0": {
+     "version": "13.0.0",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "13.0.1": {
+     "version": "13.0.1",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "13.0.2": {
+     "version": "13.0.2",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "13.0.3": {
+     "version": "13.0.3",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "14.0.0": {
+     "version": "14.0.0",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "14.1.0": {
+     "version": "14.1.0",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "14.1.1": {
+     "version": "14.1.1",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "14.1.2": {
+     "version": "14.1.2",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "14.1.3": {
+     "version": "14.1.3",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "14.1.4": {
+     "version": "14.1.4",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "15.0.0": {
+     "version": "15.0.0",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "15.0.1": {
+     "version": "15.0.1",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "15.0.2": {
+     "version": "15.0.2",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "15.0.3": {
+     "version": "15.0.3",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "15.0.4": {
+     "version": "15.0.4",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "15.0.5": {
+     "version": "15.0.5",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "15.0.6": {
+     "version": "15.0.6",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "15.0.7": {
+     "version": "15.0.7",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "15.0.8": {
+     "version": "15.0.8",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "15.0.9": {
+     "version": "15.0.9",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "15.0.10": {
+     "version": "15.0.10",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "15.0.11": {
+     "version": "15.0.11",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "15.0.12": {
+     "version": "15.0.12",
+     "engines": {
+      "node": ">= 18"
+     }
+    },
+    "16.0.0": {
+     "version": "16.0.0",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "16.1.0": {
+     "version": "16.1.0",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "16.1.1": {
+     "version": "16.1.1",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "16.1.2": {
+     "version": "16.1.2",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "16.2.0": {
+     "version": "16.2.0",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "16.2.1": {
+     "version": "16.2.1",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "16.3.0": {
+     "version": "16.3.0",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "16.4.0": {
+     "version": "16.4.0",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "16.4.1": {
+     "version": "16.4.1",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "16.4.2": {
+     "version": "16.4.2",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "17.0.0": {
+     "version": "17.0.0",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "17.0.1": {
+     "version": "17.0.1",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "17.0.2": {
+     "version": "17.0.2",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "17.0.3": {
+     "version": "17.0.3",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "17.0.4": {
+     "version": "17.0.4",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "17.0.5": {
+     "version": "17.0.5",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "17.0.6": {
+     "version": "17.0.6",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.0": {
+     "version": "18.0.0",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.1": {
+     "version": "18.0.1",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.2": {
+     "version": "18.0.2",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.3": {
+     "version": "18.0.3",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.4": {
+     "version": "18.0.4",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.5": {
+     "version": "18.0.5",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.6": {
+     "version": "18.0.6",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.7": {
+     "version": "18.0.7",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.8": {
+     "version": "18.0.8",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.9": {
+     "version": "18.0.9",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.10": {
+     "version": "18.0.10",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.11": {
+     "version": "18.0.11",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.12": {
+     "version": "18.0.12",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.13": {
+     "version": "18.0.13",
+     "engines": {
+      "node": ">= 20"
+     }
+    },
+    "18.0.14": {
+     "version": "18.0.14",
+     "engines": {
+      "node": ">= 20"
+     }
+    }
+   }
+  },
+  "minimist": {
+   "name": "minimist",
+   "dist-tags": {
+    "latest": "1.2.8"
+   },
+   "versions": {
+    "0.0.0": {
+     "version": "0.0.0"
+    },
+    "0.0.1": {
+     "version": "0.0.1"
+    },
+    "0.0.2": {
+     "version": "0.0.2"
+    },
+    "0.0.3": {
+     "version": "0.0.3"
+    },
+    "0.0.4": {
+     "version": "0.0.4"
+    },
+    "0.0.5": {
+     "version": "0.0.5"
+    },
+    "0.0.6": {
+     "version": "0.0.6"
+    },
+    "0.0.7": {
+     "version": "0.0.7"
+    },
+    "0.0.8": {
+     "version": "0.0.8"
+    },
+    "0.0.9": {
+     "version": "0.0.9"
+    },
+    "0.0.10": {
+     "version": "0.0.10"
+    },
+    "0.1.0": {
+     "version": "0.1.0"
+    },
+    "0.2.0": {
+     "version": "0.2.0"
+    },
+    "1.0.0": {
+     "version": "1.0.0"
+    },
+    "1.1.0": {
+     "version": "1.1.0"
+    },
+    "1.1.1": {
+     "version": "1.1.1"
+    },
+    "1.1.2": {
+     "version": "1.1.2"
+    },
+    "1.1.3": {
+     "version": "1.1.3"
+    },
+    "1.2.0": {
+     "version": "1.2.0"
+    },
+    "1.2.1": {
+     "version": "1.2.1"
+    },
+    "1.2.2": {
+     "version": "1.2.2"
+    },
+    "1.2.3": {
+     "version": "1.2.3"
+    },
+    "1.2.4": {
+     "version": "1.2.4"
+    },
+    "0.2.1": {
+     "version": "0.2.1"
+    },
+    "1.2.5": {
+     "version": "1.2.5"
+    },
+    "1.2.6": {
+     "version": "1.2.6"
+    },
+    "1.2.7": {
+     "version": "1.2.7"
+    },
+    "0.2.2": {
+     "version": "0.2.2"
+    },
+    "0.2.3": {
+     "version": "0.2.3"
+    },
+    "1.2.8": {
+     "version": "1.2.8"
+    },
+    "0.2.4": {
+     "version": "0.2.4"
+    }
+   }
+  },
+  "semver": {
+   "name": "semver",
+   "dist-tags": {
+    "latest": "7.8.5"
+   },
+   "versions": {
+    "1.0.0": {
+     "version": "1.0.0",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.0.1": {
+     "version": "1.0.1",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.0.2": {
+     "version": "1.0.2",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.0.3": {
+     "version": "1.0.3",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.0.4": {
+     "version": "1.0.4",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.0.5": {
+     "version": "1.0.5",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.0.6": {
+     "version": "1.0.6",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.0.7": {
+     "version": "1.0.7",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.0.8": {
+     "version": "1.0.8",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.0.9": {
+     "version": "1.0.9",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.0.10": {
+     "version": "1.0.10",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.0.11": {
+     "version": "1.0.11",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.0.12": {
+     "version": "1.0.12",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.0.13": {
+     "version": "1.0.13",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.0.14": {
+     "version": "1.0.14",
+     "engines": {
+      "node": "*"
+     }
+    },
+    "1.1.0": {
+     "version": "1.1.0"
+    },
+    "1.1.1": {
+     "version": "1.1.1"
+    },
+    "1.1.2": {
+     "version": "1.1.2"
+    },
+    "1.1.3": {
+     "version": "1.1.3"
+    },
+    "1.1.4": {
+     "version": "1.1.4"
+    },
+    "2.0.0-alpha": {
+     "version": "2.0.0-alpha"
+    },
+    "2.0.0-beta": {
+     "version": "2.0.0-beta"
+    },
+    "2.0.1": {
+     "version": "2.0.1"
+    },
+    "2.0.2": {
+     "version": "2.0.2"
+    },
+    "2.0.3": {
+     "version": "2.0.3"
+    },
+    "2.0.4": {
+     "version": "2.0.4"
+    },
+    "2.0.5": {
+     "version": "2.0.5"
+    },
+    "2.0.6": {
+     "version": "2.0.6"
+    },
+    "2.0.7": {
+     "version": "2.0.7"
+    },
+    "2.0.8": {
+     "version": "2.0.8"
+    },
+    "2.0.9": {
+     "version": "2.0.9"
+    },
+    "2.0.10": {
+     "version": "2.0.10"
+    },
+    "2.0.11": {
+     "version": "2.0.11"
+    },
+    "2.1.0": {
+     "version": "2.1.0"
+    },
+    "2.2.0": {
+     "version": "2.2.0"
+    },
+    "2.2.1": {
+     "version": "2.2.1"
+    },
+    "2.3.0": {
+     "version": "2.3.0"
+    },
+    "2.3.1": {
+     "version": "2.3.1"
+    },
+    "2.3.2": {
+     "version": "2.3.2"
+    },
+    "3.0.0": {
+     "version": "3.0.0"
+    },
+    "3.0.1": {
+     "version": "3.0.1"
+    },
+    "4.0.0": {
+     "version": "4.0.0"
+    },
+    "4.0.2": {
+     "version": "4.0.2"
+    },
+    "4.0.3": {
+     "version": "4.0.3"
+    },
+    "4.1.0": {
+     "version": "4.1.0"
+    },
+    "4.1.1": {
+     "version": "4.1.1"
+    },
+    "4.2.0": {
+     "version": "4.2.0"
+    },
+    "4.2.1": {
+     "version": "4.2.1"
+    },
+    "4.2.2": {
+     "version": "4.2.2"
+    },
+    "4.3.0": {
+     "version": "4.3.0"
+    },
+    "4.3.1": {
+     "version": "4.3.1"
+    },
+    "4.3.2": {
+     "version": "4.3.2"
+    },
+    "4.3.3": {
+     "version": "4.3.3"
+    },
+    "4.3.4": {
+     "version": "4.3.4"
+    },
+    "4.3.5": {
+     "version": "4.3.5"
+    },
+    "4.3.6": {
+     "version": "4.3.6"
+    },
+    "5.0.0": {
+     "version": "5.0.0"
+    },
+    "5.0.1": {
+     "version": "5.0.1"
+    },
+    "5.0.2": {
+     "version": "5.0.2"
+    },
+    "5.0.3": {
+     "version": "5.0.3"
+    },
+    "5.1.0": {
+     "version": "5.1.0"
+    },
+    "5.1.1": {
+     "version": "5.1.1"
+    },
+    "5.2.0": {
+     "version": "5.2.0"
+    },
+    "5.3.0": {
+     "version": "5.3.0"
+    },
+    "5.4.0": {
+     "version": "5.4.0"
+    },
+    "5.4.1": {
+     "version": "5.4.1"
+    },
+    "5.5.0": {
+     "version": "5.5.0"
+    },
+    "5.5.1": {
+     "version": "5.5.1"
+    },
+    "5.6.0": {
+     "version": "5.6.0"
+    },
+    "5.7.0": {
+     "version": "5.7.0"
+    },
+    "6.0.0": {
+     "version": "6.0.0"
+    },
+    "6.1.0": {
+     "version": "6.1.0"
+    },
+    "6.1.1": {
+     "version": "6.1.1"
+    },
+    "6.1.2": {
+     "version": "6.1.2"
+    },
+    "6.1.3": {
+     "version": "6.1.3"
+    },
+    "6.2.0": {
+     "version": "6.2.0"
+    },
+    "6.3.0": {
+     "version": "6.3.0"
+    },
+    "5.7.1": {
+     "version": "5.7.1"
+    },
+    "7.0.0": {
+     "version": "7.0.0"
+    },
+    "7.1.0": {
+     "version": "7.1.0",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.1.1": {
+     "version": "7.1.1",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.1.2": {
+     "version": "7.1.2",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.1.3": {
+     "version": "7.1.3",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.2.0": {
+     "version": "7.2.0",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.2.1": {
+     "version": "7.2.1",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.2.2": {
+     "version": "7.2.2",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.2.3": {
+     "version": "7.2.3",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.3.0": {
+     "version": "7.3.0",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.3.1": {
+     "version": "7.3.1",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.3.2": {
+     "version": "7.3.2",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.3.3": {
+     "version": "7.3.3",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.3.4": {
+     "version": "7.3.4",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.3.5": {
+     "version": "7.3.5",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.3.6": {
+     "version": "7.3.6",
+     "engines": {
+      "node": "^10.0.0 || ^12.0.0 || ^14.0.0 || >=16.0.0"
+     }
+    },
+    "7.3.7": {
+     "version": "7.3.7",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.3.8": {
+     "version": "7.3.8",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.4.0": {
+     "version": "7.4.0",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.5.0": {
+     "version": "7.5.0",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.5.1": {
+     "version": "7.5.1",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.5.2": {
+     "version": "7.5.2",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.5.3": {
+     "version": "7.5.3",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.5.4": {
+     "version": "7.5.4",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "5.7.2": {
+     "version": "5.7.2"
+    },
+    "6.3.1": {
+     "version": "6.3.1"
+    },
+    "7.6.0": {
+     "version": "7.6.0",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.6.1": {
+     "version": "7.6.1",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.6.2": {
+     "version": "7.6.2",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.6.3": {
+     "version": "7.6.3",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.7.0": {
+     "version": "7.7.0",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.7.1": {
+     "version": "7.7.1",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.7.2": {
+     "version": "7.7.2",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.7.3": {
+     "version": "7.7.3",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.7.4": {
+     "version": "7.7.4",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.8.0": {
+     "version": "7.8.0",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.8.1": {
+     "version": "7.8.1",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.8.2": {
+     "version": "7.8.2",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.8.3": {
+     "version": "7.8.3",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.8.4": {
+     "version": "7.8.4",
+     "engines": {
+      "node": ">=10"
+     }
+    },
+    "7.8.5": {
+     "version": "7.8.5",
+     "engines": {
+      "node": ">=10"
+     }
+    }
+   }
+  }
+ }
+}

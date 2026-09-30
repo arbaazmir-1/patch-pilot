@@ -1,0 +1,13 @@
+---
+import type { RunStatus } from '../lib/status.ts';
+import { statusLineHtml } from './runStatus.ts';
+
+interface Props {
+  root: string;
+  status: RunStatus;
+  class?: string;
+}
+const { root, status, class: className = '' } = Astro.props;
+---
+
+<span class:list={['run', className]} data-run-root={root} data-run-kind="line" data-state={status.state} set:html={statusLineHtml(status)} />

@@ -1,0 +1,1752 @@
+{
+  "version": 1,
+  "project": {
+    "root": "/fixture/vulnerable-app",
+    "name": "vulnerable-app",
+    "lockfile": "package-lock.json",
+    "lockfileVersion": 3
+  },
+  "scannedAt": "2026-09-24T13:53:00.248Z",
+  "vulnSource": {
+    "mode": "live",
+    "fetchedAt": "2026-09-24T13:53:00.221Z",
+    "ageHours": 0
+  },
+  "counts": {
+    "dependencies": 10,
+    "direct": 6,
+    "dev": 1,
+    "vulnerablePackages": 6,
+    "vulnerabilities": 13,
+    "bySeverity": {
+      "CRITICAL": 1,
+      "HIGH": 7,
+      "MODERATE": 5,
+      "LOW": 0,
+      "UNKNOWN": 0
+    }
+  },
+  "packages": [
+    {
+      "name": "minimist",
+      "version": "1.2.5",
+      "keys": [
+        "node_modules/minimist"
+      ],
+      "isDirect": true,
+      "isDevOnly": false,
+      "depType": "dependencies",
+      "spec": "1.2.5",
+      "dependencyPaths": [
+        [
+          "minimist@1.2.5"
+        ],
+        [
+          "json5@2.2.0",
+          "minimist@1.2.5"
+        ]
+      ],
+      "dependents": [
+        {
+          "name": "json5",
+          "version": "2.2.0"
+        }
+      ],
+      "vulnIds": [
+        "GHSA-xvch-5gv4-984h"
+      ],
+      "worstSeverity": "CRITICAL",
+      "usage": {
+        "package": "minimist",
+        "imported": true,
+        "files": [
+          {
+            "path": "src/cli.js",
+            "line": 8,
+            "statement": "const parseArgs = require('minimist');",
+            "binding": "parseArgs",
+            "kind": "cjs-require",
+            "scope": "source"
+          }
+        ],
+        "scopes": {
+          "source": 1,
+          "test": 0,
+          "config": 0,
+          "scripts": 0
+        },
+        "membersUsed": {},
+        "bindingCalls": 1,
+        "scannedFiles": 5
+      },
+      "deprecated": null,
+      "latestVersion": "1.2.8"
+    },
+    {
+      "name": "marked",
+      "version": "0.3.6",
+      "keys": [
+        "node_modules/marked"
+      ],
+      "isDirect": true,
+      "isDevOnly": false,
+      "depType": "dependencies",
+      "spec": "0.3.6",
+      "dependencyPaths": [
+        [
+          "marked@0.3.6"
+        ]
+      ],
+      "dependents": [],
+      "vulnIds": [
+        "GHSA-5v2h-r2cx-5xgj",
+        "GHSA-rrrm-qjm4-v8hf",
+        "GHSA-x5pg-88wf-qq4p",
+        "GHSA-p9wx-2529-fp83",
+        "GHSA-7px7-7xjx-hxm8"
+      ],
+      "worstSeverity": "HIGH",
+      "usage": {
+        "package": "marked",
+        "imported": true,
+        "files": [
+          {
+            "path": "src/render.js",
+            "line": 5,
+            "statement": "const marked = require('marked');",
+            "binding": "marked",
+            "kind": "cjs-require",
+            "scope": "source"
+          }
+        ],
+        "scopes": {
+          "source": 1,
+          "test": 0,
+          "config": 0,
+          "scripts": 0
+        },
+        "membersUsed": {},
+        "bindingCalls": 1,
+        "scannedFiles": 5
+      },
+      "deprecated": null,
+      "latestVersion": "18.0.14"
+    },
+    {
+      "name": "lodash",
+      "version": "4.17.20",
+      "keys": [
+        "node_modules/lodash"
+      ],
+      "isDirect": true,
+      "isDevOnly": false,
+      "depType": "dependencies",
+      "spec": "4.17.20",
+      "dependencyPaths": [
+        [
+          "lodash@4.17.20"
+        ]
+      ],
+      "dependents": [],
+      "vulnIds": [
+        "GHSA-35jh-r3h4-6jhm",
+        "GHSA-xxjr-mmjv-4gpg",
+        "GHSA-29mw-wpgm-hmr9"
+      ],
+      "worstSeverity": "HIGH",
+      "usage": {
+        "package": "lodash",
+        "imported": true,
+        "files": [
+          {
+            "path": "src/config.js",
+            "line": 7,
+            "statement": "const _ = require('lodash');",
+            "binding": "_",
+            "kind": "cjs-require",
+            "scope": "source"
+          }
+        ],
+        "scopes": {
+          "source": 1,
+          "test": 0,
+          "config": 0,
+          "scripts": 0
+        },
+        "membersUsed": {
+          "get": 3,
+          "merge": 1
+        },
+        "bindingCalls": 0,
+        "scannedFiles": 5
+      },
+      "deprecated": null,
+      "latestVersion": "4.18.1"
+    },
+    {
+      "name": "decode-uri-component",
+      "version": "0.2.0",
+      "keys": [
+        "node_modules/decode-uri-component"
+      ],
+      "isDirect": false,
+      "isDevOnly": false,
+      "depType": null,
+      "spec": null,
+      "dependencyPaths": [
+        [
+          "query-string@6.14.1",
+          "decode-uri-component@0.2.0"
+        ]
+      ],
+      "dependents": [
+        {
+          "name": "query-string",
+          "version": "6.14.1"
+        }
+      ],
+      "vulnIds": [
+        "GHSA-w573-4hg7-7wgq",
+        "GHSA-vcc3-ghjq-m6fr"
+      ],
+      "worstSeverity": "HIGH",
+      "usage": {
+        "package": "decode-uri-component",
+        "imported": false,
+        "files": [],
+        "scopes": {
+          "source": 0,
+          "test": 0,
+          "config": 0,
+          "scripts": 0
+        },
+        "membersUsed": {},
+        "bindingCalls": 0,
+        "scannedFiles": 5
+      },
+      "deprecated": null,
+      "latestVersion": "0.5.0"
+    },
+    {
+      "name": "json5",
+      "version": "2.2.0",
+      "keys": [
+        "node_modules/json5"
+      ],
+      "isDirect": true,
+      "isDevOnly": false,
+      "depType": "dependencies",
+      "spec": "2.2.0",
+      "dependencyPaths": [
+        [
+          "json5@2.2.0"
+        ]
+      ],
+      "dependents": [],
+      "vulnIds": [
+        "GHSA-9c47-m6qq-7p4h"
+      ],
+      "worstSeverity": "HIGH",
+      "usage": {
+        "package": "json5",
+        "imported": true,
+        "files": [
+          {
+            "path": "src/config.js",
+            "line": 6,
+            "statement": "const JSON5 = require('json5');",
+            "binding": "JSON5",
+            "kind": "cjs-require",
+            "scope": "source"
+          }
+        ],
+        "scopes": {
+          "source": 1,
+          "test": 0,
+          "config": 0,
+          "scripts": 0
+        },
+        "membersUsed": {
+          "parse": 1
+        },
+        "bindingCalls": 0,
+        "scannedFiles": 5
+      },
+      "deprecated": null,
+      "latestVersion": "2.2.3"
+    },
+    {
+      "name": "semver",
+      "version": "5.7.1",
+      "keys": [
+        "node_modules/semver"
+      ],
+      "isDirect": true,
+      "isDevOnly": true,
+      "depType": "devDependencies",
+      "spec": "5.7.1",
+      "dependencyPaths": [
+        [
+          "semver@5.7.1"
+        ]
+      ],
+      "dependents": [],
+      "vulnIds": [
+        "GHSA-c2qf-rxjj-qqgw"
+      ],
+      "worstSeverity": "HIGH",
+      "usage": {
+        "package": "semver",
+        "imported": true,
+        "files": [
+          {
+            "path": "scripts/check-version.js",
+            "line": 4,
+            "statement": "const semver = require('semver');",
+            "binding": "semver",
+            "kind": "cjs-require",
+            "scope": "scripts"
+          }
+        ],
+        "scopes": {
+          "source": 0,
+          "test": 0,
+          "config": 0,
+          "scripts": 1
+        },
+        "membersUsed": {
+          "satisfies": 1
+        },
+        "bindingCalls": 0,
+        "scannedFiles": 5
+      },
+      "deprecated": null,
+      "latestVersion": "7.8.5"
+    }
+  ],
+  "vulnerabilities": [
+    {
+      "id": "GHSA-xvch-5gv4-984h",
+      "aliases": [
+        "CVE-2021-44906"
+      ],
+      "mergedIds": [],
+      "package": "minimist",
+      "installedVersion": "1.2.5",
+      "summary": "Prototype Pollution in minimist",
+      "detailsExcerpt": "Minimist prior to 1.2.6 and 0.2.4 is vulnerable to Prototype Pollution via file `index.js`, function `setKey()` (lines 69-95).",
+      "blamedSymbols": [
+        {
+          "name": "setKey",
+          "kind": "internal",
+          "via": "call"
+        }
+      ],
+      "severity": {
+        "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "cvssScore": 9.8,
+        "cvssVersion": "3.1",
+        "ghsa": "CRITICAL"
+      },
+      "cweIds": [
+        "CWE-1321"
+      ],
+      "malware": false,
+      "affectedRange": "<0.2.4 || >=1.0.0 <1.2.6",
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "1.0.0"
+            },
+            {
+              "fixed": "1.2.6"
+            }
+          ]
+        },
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            },
+            {
+              "fixed": "0.2.4"
+            }
+          ]
+        }
+      ],
+      "fixedVersions": [
+        "1.2.6"
+      ],
+      "recommendedFix": {
+        "version": "1.2.6",
+        "majorBump": false
+      },
+      "isDirect": true,
+      "isDevOnly": false,
+      "dependencyPaths": [
+        [
+          "minimist@1.2.5"
+        ],
+        [
+          "json5@2.2.0",
+          "minimist@1.2.5"
+        ]
+      ],
+      "references": [
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-44906"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/minimistjs/minimist/issues/11"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/substack/minimist/issues/164"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/minimistjs/minimist/pull/24"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/minimistjs/minimist/commit/34e20b8461118608703d6485326abbb8e35e1703"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/minimistjs/minimist/commit/bc8ecee43875261f4f17eb20b1243d3ed15e70eb"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/minimistjs/minimist/commit/c2b981977fa834b223b408cfb860f933c9811e4d"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/minimistjs/minimist/commit/ef9153fc52b6cea0744b2239921c5dcae4697f11"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/Marynk/JavaScript-vulnerability-detection/blob/main/minimist%20PoC.zip"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/minimistjs/minimist/commits/v0.2.4"
+        },
+        {
+          "type": "PACKAGE",
+          "url": "https://github.com/substack/minimist"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/substack/minimist/blob/master/index.js#L69"
+        },
+        {
+          "type": "WEB",
+          "url": "https://security.netapp.com/advisory/ntap-20240621-0006"
+        },
+        {
+          "type": "WEB",
+          "url": "https://snyk.io/vuln/SNYK-JS-MINIMIST-559764"
+        },
+        {
+          "type": "WEB",
+          "url": "https://stackoverflow.com/questions/8588563/adding-custom-properties-to-a-function/20278068#20278068"
+        }
+      ],
+      "published": "2022-03-18T00:01:09Z",
+      "modified": "2026-03-13T22:11:59.523514Z"
+    },
+    {
+      "id": "GHSA-5v2h-r2cx-5xgj",
+      "aliases": [
+        "CVE-2022-21681"
+      ],
+      "mergedIds": [],
+      "package": "marked",
+      "installedVersion": "0.3.6",
+      "summary": "Inefficient Regular Expression Complexity in marked",
+      "detailsExcerpt": "What kind of vulnerability is it? Denial of service. The regular expression `inline.reflinkSearch` may cause catastrophic backtracking against some strings. PoC is the following. Who is impacted? Anyone who runs untrusted markdown through marked and does not use a worker with a time limit.",
+      "blamedSymbols": [
+        {
+          "name": "parse",
+          "kind": "exported",
+          "via": "member-access"
+        },
+        {
+          "name": "inline.reflinkSearch",
+          "kind": "internal",
+          "via": "backticks"
+        }
+      ],
+      "severity": {
+        "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "cvssScore": 7.5,
+        "cvssVersion": "3.1",
+        "ghsa": "HIGH"
+      },
+      "cweIds": [
+        "CWE-1333"
+      ],
+      "malware": false,
+      "affectedRange": "<4.0.10",
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            },
+            {
+              "fixed": "4.0.10"
+            }
+          ]
+        }
+      ],
+      "fixedVersions": [
+        "4.0.10"
+      ],
+      "recommendedFix": {
+        "version": "4.0.10",
+        "majorBump": true
+      },
+      "isDirect": true,
+      "isDevOnly": false,
+      "dependencyPaths": [
+        [
+          "marked@0.3.6"
+        ]
+      ],
+      "references": [
+        {
+          "type": "WEB",
+          "url": "https://github.com/markedjs/marked/security/advisories/GHSA-5v2h-r2cx-5xgj"
+        },
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-21681"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/markedjs/marked/commit/8f806573a3f6c6b7a39b8cdb66ab5ebb8d55a5f5"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/markedjs/marked/commit/c4a3ccd344b6929afa8a1d50ac54a721e57012c0"
+        },
+        {
+          "type": "PACKAGE",
+          "url": "https://github.com/markedjs/marked"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/AIXDMC3CSHYW3YWVSQOXAWLUYQHAO5UX"
+        }
+      ],
+      "published": "2022-01-14T21:04:46Z",
+      "modified": "2026-09-10T03:49:10.576912241Z"
+    },
+    {
+      "id": "GHSA-rrrm-qjm4-v8hf",
+      "aliases": [
+        "CVE-2022-21680"
+      ],
+      "mergedIds": [],
+      "package": "marked",
+      "installedVersion": "0.3.6",
+      "summary": "Inefficient Regular Expression Complexity in marked",
+      "detailsExcerpt": "What kind of vulnerability is it? Denial of service. The regular expression `block.def` may cause catastrophic backtracking against some strings. PoC is the following. Who is impacted? Anyone who runs untrusted markdown through marked and does not use a worker with a time limit. Has the problem been patched? Yes What versions should users upgrade to? 4.0.10 Is there a way for users to fix or remediate the vulnerability without upgrading? Do not run untrusted markdown through…",
+      "blamedSymbols": [
+        {
+          "name": "parse",
+          "kind": "exported",
+          "via": "member-access"
+        },
+        {
+          "name": "block.def",
+          "kind": "internal",
+          "via": "backticks"
+        }
+      ],
+      "severity": {
+        "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "cvssScore": 7.5,
+        "cvssVersion": "3.1",
+        "ghsa": "HIGH"
+      },
+      "cweIds": [
+        "CWE-1333",
+        "CWE-400"
+      ],
+      "malware": false,
+      "affectedRange": "<4.0.10",
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            },
+            {
+              "fixed": "4.0.10"
+            }
+          ]
+        }
+      ],
+      "fixedVersions": [
+        "4.0.10"
+      ],
+      "recommendedFix": {
+        "version": "4.0.10",
+        "majorBump": true
+      },
+      "isDirect": true,
+      "isDevOnly": false,
+      "dependencyPaths": [
+        [
+          "marked@0.3.6"
+        ]
+      ],
+      "references": [
+        {
+          "type": "WEB",
+          "url": "https://github.com/markedjs/marked/security/advisories/GHSA-rrrm-qjm4-v8hf"
+        },
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-21680"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/markedjs/marked/commit/c4a3ccd344b6929afa8a1d50ac54a721e57012c0"
+        },
+        {
+          "type": "PACKAGE",
+          "url": "https://github.com/markedjs/marked"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/markedjs/marked/releases/tag/v4.0.10"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/AIXDMC3CSHYW3YWVSQOXAWLUYQHAO5UX"
+        }
+      ],
+      "published": "2022-01-14T21:04:41Z",
+      "modified": "2026-09-10T03:49:11.241428213Z"
+    },
+    {
+      "id": "GHSA-x5pg-88wf-qq4p",
+      "aliases": [
+        "CVE-2017-16114"
+      ],
+      "mergedIds": [],
+      "package": "marked",
+      "installedVersion": "0.3.6",
+      "summary": "Regular Expression Denial of Service in marked",
+      "detailsExcerpt": "Affected versions of `marked` are vulnerable to a regular expression denial of service. The amplification in this vulnerability is significant, with 1,000 characters resulting in the event loop being blocked for around 6 seconds. Update to version 0.3.9 or later.",
+      "blamedSymbols": [],
+      "severity": {
+        "cvssVector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "cvssScore": 7.5,
+        "cvssVersion": "3.0",
+        "ghsa": "HIGH"
+      },
+      "cweIds": [
+        "CWE-400"
+      ],
+      "malware": false,
+      "affectedRange": "<0.3.9",
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            },
+            {
+              "fixed": "0.3.9"
+            }
+          ]
+        }
+      ],
+      "fixedVersions": [
+        "0.3.9"
+      ],
+      "recommendedFix": {
+        "version": "0.3.9",
+        "majorBump": false
+      },
+      "isDirect": true,
+      "isDevOnly": false,
+      "dependencyPaths": [
+        [
+          "marked@0.3.6"
+        ]
+      ],
+      "references": [
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2017-16114"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/chjj/marked/issues/937"
+        },
+        {
+          "type": "ADVISORY",
+          "url": "https://github.com/advisories/GHSA-x5pg-88wf-qq4p"
+        },
+        {
+          "type": "WEB",
+          "url": "https://www.npmjs.com/advisories/531"
+        }
+      ],
+      "published": "2018-07-24T20:10:52Z",
+      "modified": "2023-11-08T03:59:05.647192Z"
+    },
+    {
+      "id": "GHSA-p9wx-2529-fp83",
+      "aliases": [
+        "CVE-2018-25110"
+      ],
+      "mergedIds": [],
+      "package": "marked",
+      "installedVersion": "0.3.6",
+      "summary": "Marked allows Regular Expression Denial of Service (ReDoS) attacks",
+      "detailsExcerpt": "Marked prior to version 0.3.17 is vulnerable to a Regular Expression Denial of Service (ReDoS) attack due to catastrophic backtracking in several regular expressions used for parsing HTML tags and markdown links. An attacker can exploit this vulnerability by providing specially crafted markdown input, such as deeply nested or repetitively structured brackets or tag attributes, which cause the parser to hang and lead to a Denial of Service.",
+      "blamedSymbols": [],
+      "severity": {
+        "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N",
+        "cvssScore": 6.9,
+        "cvssVersion": "4.0",
+        "ghsa": "MODERATE"
+      },
+      "cweIds": [
+        "CWE-1333"
+      ],
+      "malware": false,
+      "affectedRange": "<0.3.17",
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            },
+            {
+              "fixed": "0.3.17"
+            }
+          ]
+        }
+      ],
+      "fixedVersions": [
+        "0.3.17"
+      ],
+      "recommendedFix": {
+        "version": "0.3.17",
+        "majorBump": false
+      },
+      "isDirect": true,
+      "isDevOnly": false,
+      "dependencyPaths": [
+        [
+          "marked@0.3.6"
+        ]
+      ],
+      "references": [
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2018-25110"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/markedjs/marked/issues/1070"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/markedjs/marked/pull/1083"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/markedjs/marked/commit/20bfc106013ed45713a21672ad4a34df94dcd485"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/Checkmarx/Vulnerabilities-Proofs-of-Concept/tree/main/2018/CVE-2018-25110"
+        },
+        {
+          "type": "PACKAGE",
+          "url": "https://github.com/markedjs/marked"
+        }
+      ],
+      "published": "2025-05-23T15:31:16Z",
+      "modified": "2025-05-27T15:27:40.131270Z"
+    },
+    {
+      "id": "GHSA-7px7-7xjx-hxm8",
+      "aliases": [
+        "CVE-2017-1000427"
+      ],
+      "mergedIds": [],
+      "package": "marked",
+      "installedVersion": "0.3.6",
+      "summary": "Marked vulnerable to XSS from data URIs",
+      "detailsExcerpt": "marked version 0.3.6 and earlier is vulnerable to an XSS attack in the data: URI parser.",
+      "blamedSymbols": [],
+      "severity": {
+        "cvssVector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "cvssScore": 6.1,
+        "cvssVersion": "3.0",
+        "ghsa": "MODERATE"
+      },
+      "cweIds": [
+        "CWE-79"
+      ],
+      "malware": false,
+      "affectedRange": "<0.3.7",
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            },
+            {
+              "fixed": "0.3.7"
+            }
+          ]
+        }
+      ],
+      "fixedVersions": [
+        "0.3.7"
+      ],
+      "recommendedFix": {
+        "version": "0.3.7",
+        "majorBump": false
+      },
+      "isDirect": true,
+      "isDevOnly": false,
+      "dependencyPaths": [
+        [
+          "marked@0.3.6"
+        ]
+      ],
+      "references": [
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2017-1000427"
+        },
+        {
+          "type": "ADVISORY",
+          "url": "https://github.com/advisories/GHSA-7px7-7xjx-hxm8"
+        },
+        {
+          "type": "PACKAGE",
+          "url": "https://github.com/markedjs/marked"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/BO2RMVVZVV6NFTU46B5RYRK7ZCXYARZS"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/M6BJG6RGDH7ZWVVAUFBFI5L32RSMQN2S"
+        },
+        {
+          "type": "WEB",
+          "url": "https://snyk.io/vuln/npm:marked:20170112"
+        }
+      ],
+      "published": "2018-01-04T21:04:19Z",
+      "modified": "2023-11-08T03:58:46.365782Z"
+    },
+    {
+      "id": "GHSA-35jh-r3h4-6jhm",
+      "aliases": [
+        "CVE-2021-23337",
+        "CVE-2026-4800",
+        "GHSA-r5fr-rjxr-66jc"
+      ],
+      "mergedIds": [
+        "GHSA-r5fr-rjxr-66jc"
+      ],
+      "package": "lodash",
+      "installedVersion": "4.17.20",
+      "summary": "Command Injection in lodash",
+      "detailsExcerpt": "`lodash` versions prior to 4.17.21 are vulnerable to Command Injection via the template function.",
+      "blamedSymbols": [
+        {
+          "name": "template",
+          "kind": "exported",
+          "via": "member-access"
+        },
+        {
+          "name": "assignInWith",
+          "kind": "exported",
+          "via": "backticks"
+        }
+      ],
+      "severity": {
+        "cvssVector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "cvssScore": 8.1,
+        "cvssVersion": "3.1",
+        "ghsa": "HIGH"
+      },
+      "cweIds": [
+        "CWE-77",
+        "CWE-94"
+      ],
+      "malware": false,
+      "affectedRange": "<4.17.21 || >=4.0.0 <4.18.0",
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            },
+            {
+              "fixed": "4.17.21"
+            }
+          ]
+        },
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "4.0.0"
+            },
+            {
+              "fixed": "4.18.0"
+            }
+          ]
+        }
+      ],
+      "fixedVersions": [
+        "4.17.21",
+        "4.18.0"
+      ],
+      "recommendedFix": {
+        "version": "4.18.1",
+        "majorBump": false,
+        "skippedDeprecated": [
+          "4.18.0"
+        ]
+      },
+      "isDirect": true,
+      "isDevOnly": false,
+      "dependencyPaths": [
+        [
+          "lodash@4.17.20"
+        ]
+      ],
+      "references": [
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-23337"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/lodash/lodash/commit/3469357cff396a26c363f8c1b5a91dde28ba4b1c"
+        },
+        {
+          "type": "WEB",
+          "url": "https://www.oracle.com/security-alerts/cpuoct2021.html"
+        },
+        {
+          "type": "WEB",
+          "url": "https://www.oracle.com/security-alerts/cpujul2022.html"
+        },
+        {
+          "type": "WEB",
+          "url": "https://www.oracle.com/security-alerts/cpujan2022.html"
+        },
+        {
+          "type": "WEB",
+          "url": "https://www.oracle.com//security-alerts/cpujul2021.html"
+        },
+        {
+          "type": "WEB",
+          "url": "https://snyk.io/vuln/SNYK-JS-LODASH-1040724"
+        },
+        {
+          "type": "WEB",
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-1074929"
+        },
+        {
+          "type": "WEB",
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWERGITHUBLODASH-1074931"
+        },
+        {
+          "type": "WEB",
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-1074928"
+        },
+        {
+          "type": "WEB",
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARS-1074930"
+        },
+        {
+          "type": "WEB",
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGFUJIONWEBJARS-1074932"
+        },
+        {
+          "type": "WEB",
+          "url": "https://security.netapp.com/advisory/ntap-20210312-0006"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/lodash-rails/CVE-2021-23337.yml"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/lodash/lodash/blob/ddfd9b11a0126db2302cb70ec9973b66baec0975/lodash.js#L14851"
+        },
+        {
+          "type": "PACKAGE",
+          "url": "https://github.com/lodash/lodash"
+        },
+        {
+          "type": "WEB",
+          "url": "https://cert-portal.siemens.com/productcert/pdf/ssa-637483.pdf"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/lodash/lodash/security/advisories/GHSA-r5fr-rjxr-66jc"
+        },
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-4800"
+        },
+        {
+          "type": "WEB",
+          "url": "https://cna.openjsf.org/security-advisories.html"
+        },
+        {
+          "type": "ADVISORY",
+          "url": "https://github.com/advisories/GHSA-35jh-r3h4-6jhm"
+        }
+      ],
+      "published": "2021-05-06T16:05:51Z",
+      "modified": "2026-09-10T03:51:02.970455926Z"
+    },
+    {
+      "id": "GHSA-xxjr-mmjv-4gpg",
+      "aliases": [
+        "CVE-2025-13465",
+        "CVE-2026-2950",
+        "GHSA-f23m-r3pf-42rh"
+      ],
+      "mergedIds": [
+        "GHSA-f23m-r3pf-42rh"
+      ],
+      "package": "lodash",
+      "installedVersion": "4.17.20",
+      "summary": "Lodash has Prototype Pollution Vulnerability in `_.unset` and `_.omit` functions",
+      "detailsExcerpt": "Lodash versions 4.0.0 through 4.17.22 are vulnerable to prototype pollution in the `.unset` and `.omit` functions. An attacker can pass crafted paths which cause Lodash to delete methods from global prototypes. The issue permits deletion of properties but does not allow overwriting their original behavior. This issue is patched on 4.17.23.",
+      "blamedSymbols": [
+        {
+          "name": "unset",
+          "kind": "exported",
+          "via": "member-access"
+        },
+        {
+          "name": "omit",
+          "kind": "exported",
+          "via": "member-access"
+        }
+      ],
+      "severity": {
+        "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L",
+        "cvssScore": 6.5,
+        "cvssVersion": "3.1",
+        "ghsa": "MODERATE"
+      },
+      "cweIds": [
+        "CWE-1321"
+      ],
+      "malware": false,
+      "affectedRange": "<4.18.0 || >=4.0.0 <4.17.23",
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "4.0.0"
+            },
+            {
+              "fixed": "4.17.23"
+            }
+          ]
+        },
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            },
+            {
+              "fixed": "4.18.0"
+            }
+          ]
+        }
+      ],
+      "fixedVersions": [
+        "4.17.23",
+        "4.18.0"
+      ],
+      "recommendedFix": {
+        "version": "4.18.1",
+        "majorBump": false,
+        "skippedDeprecated": [
+          "4.18.0"
+        ]
+      },
+      "isDirect": true,
+      "isDevOnly": false,
+      "dependencyPaths": [
+        [
+          "lodash@4.17.20"
+        ]
+      ],
+      "references": [
+        {
+          "type": "WEB",
+          "url": "https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg"
+        },
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-13465"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/lodash/lodash/commit/edadd452146f7e4bad4ea684e955708931d84d81"
+        },
+        {
+          "type": "WEB",
+          "url": "https://cert-portal.siemens.com/productcert/html/ssa-253495.html"
+        },
+        {
+          "type": "PACKAGE",
+          "url": "https://github.com/lodash/lodash"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/lodash/lodash/security/advisories/GHSA-f23m-r3pf-42rh"
+        },
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-2950"
+        }
+      ],
+      "published": "2026-01-21T23:01:22Z",
+      "modified": "2026-09-10T03:50:44.050013812Z"
+    },
+    {
+      "id": "GHSA-29mw-wpgm-hmr9",
+      "aliases": [
+        "CVE-2020-28500"
+      ],
+      "mergedIds": [],
+      "package": "lodash",
+      "installedVersion": "4.17.20",
+      "summary": "Regular Expression Denial of Service (ReDoS) in lodash",
+      "detailsExcerpt": "All versions of package lodash prior to 4.17.21 are vulnerable to Regular Expression Denial of Service (ReDoS) via the `toNumber`, `trim` and `trimEnd` functions. Steps to reproduce (provided by reporter Liyuan Chen):",
+      "blamedSymbols": [
+        {
+          "name": "toNumber",
+          "kind": "exported",
+          "via": "member-access"
+        },
+        {
+          "name": "trim",
+          "kind": "exported",
+          "via": "member-access"
+        },
+        {
+          "name": "trimEnd",
+          "kind": "exported",
+          "via": "member-access"
+        }
+      ],
+      "severity": {
+        "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+        "cvssScore": 5.3,
+        "cvssVersion": "3.1",
+        "ghsa": "MODERATE"
+      },
+      "cweIds": [
+        "CWE-1333",
+        "CWE-400"
+      ],
+      "malware": false,
+      "affectedRange": ">=4.0.0 <4.17.21",
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "4.0.0"
+            },
+            {
+              "fixed": "4.17.21"
+            }
+          ]
+        }
+      ],
+      "fixedVersions": [
+        "4.17.21"
+      ],
+      "recommendedFix": {
+        "version": "4.17.21",
+        "majorBump": false
+      },
+      "isDirect": true,
+      "isDevOnly": false,
+      "dependencyPaths": [
+        [
+          "lodash@4.17.20"
+        ]
+      ],
+      "references": [
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2020-28500"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/github/advisory-database/pull/6139"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/lodash/lodash/pull/5065"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/lodash/lodash/pull/5065/commits/02906b8191d3c100c193fe6f7b27d1c40f200bb7"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/lodash/lodash/commit/c4847ebe7d14540bb28a8b932a9ce1b9ecbfee1a"
+        },
+        {
+          "type": "WEB",
+          "url": "https://www.oracle.com/security-alerts/cpuoct2021.html"
+        },
+        {
+          "type": "WEB",
+          "url": "https://www.oracle.com/security-alerts/cpujul2022.html"
+        },
+        {
+          "type": "WEB",
+          "url": "https://www.oracle.com/security-alerts/cpujan2022.html"
+        },
+        {
+          "type": "WEB",
+          "url": "https://www.oracle.com//security-alerts/cpujul2021.html"
+        },
+        {
+          "type": "WEB",
+          "url": "https://snyk.io/vuln/SNYK-JS-LODASH-1018905"
+        },
+        {
+          "type": "WEB",
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-1074893"
+        },
+        {
+          "type": "WEB",
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWERGITHUBLODASH-1074895"
+        },
+        {
+          "type": "WEB",
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-1074892"
+        },
+        {
+          "type": "WEB",
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARS-1074894"
+        },
+        {
+          "type": "WEB",
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGFUJIONWEBJARS-1074896"
+        },
+        {
+          "type": "WEB",
+          "url": "https://security.netapp.com/advisory/ntap-20210312-0006"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/lodash-rails/CVE-2020-28500.yml"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/lodash/lodash/blob/npm/trimEnd.js%23L8"
+        },
+        {
+          "type": "PACKAGE",
+          "url": "https://github.com/lodash/lodash"
+        },
+        {
+          "type": "WEB",
+          "url": "https://cert-portal.siemens.com/productcert/pdf/ssa-637483.pdf"
+        }
+      ],
+      "published": "2022-01-06T20:30:46Z",
+      "modified": "2025-09-29T21:12:31.102523Z"
+    },
+    {
+      "id": "GHSA-w573-4hg7-7wgq",
+      "aliases": [
+        "CVE-2022-38900"
+      ],
+      "mergedIds": [],
+      "package": "decode-uri-component",
+      "installedVersion": "0.2.0",
+      "summary": "decode-uri-component vulnerable to Denial of Service (DoS)",
+      "detailsExcerpt": "decode-uri-component 0.2.0 is vulnerable to Improper Input Validation resulting in DoS.",
+      "blamedSymbols": [],
+      "severity": {
+        "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "cvssScore": 7.5,
+        "cvssVersion": "3.1",
+        "ghsa": "HIGH"
+      },
+      "cweIds": [
+        "CWE-20"
+      ],
+      "malware": false,
+      "affectedRange": "<0.2.1",
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            },
+            {
+              "fixed": "0.2.1"
+            }
+          ]
+        }
+      ],
+      "fixedVersions": [
+        "0.2.1"
+      ],
+      "recommendedFix": {
+        "version": "0.2.1",
+        "majorBump": false
+      },
+      "isDirect": false,
+      "isDevOnly": false,
+      "dependencyPaths": [
+        [
+          "query-string@6.14.1",
+          "decode-uri-component@0.2.0"
+        ]
+      ],
+      "references": [
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-38900"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/SamVerschueren/decode-uri-component/issues/5"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/sindresorhus/query-string/issues/345"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/SamVerschueren/decode-uri-component/commit/746ca5dcb6667c5d364e782d53c542830e4c10b9"
+        },
+        {
+          "type": "PACKAGE",
+          "url": "https://github.com/SamVerschueren/decode-uri-component"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/SamVerschueren/decode-uri-component/releases/tag/v0.2.1"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/ERN6YE3DS7NBW7UH44SCJBMNC2NWQ7SM"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/KAC5KQ2SEWAMQ6UZAUBZ5KXKEOESH375"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/QABOUA2I542UTANVZIVFKWMRYVHLV32D"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/UW4SCMT3SEUFVIL7YIADQ5K36GJEO6I5"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/VNV2GNZXOTEDAJRFH3ZYWRUBGIVL7BSU"
+        }
+      ],
+      "published": "2022-11-28T15:30:24Z",
+      "modified": "2023-11-08T04:10:14.135716Z"
+    },
+    {
+      "id": "GHSA-vcc3-ghjq-m6fr",
+      "aliases": [
+        "CVE-2026-45822"
+      ],
+      "mergedIds": [],
+      "package": "decode-uri-component",
+      "installedVersion": "0.2.0",
+      "summary": "decode-uri-component: Denial of service via exponential decoding of malformed percent-encoded input",
+      "detailsExcerpt": "An attacker who can supply input to `decodeUriComponent()` (directly or via a dependency that uses this package on URL/query/path data) can cause excessive CPU usage and application unresponsiveness. This is an availability issue; there is no known memory corruption, data disclosure, or remote code execution impact. Upgrade to `decode-uri-component@0.5.0`. Limit the size of the input.",
+      "blamedSymbols": [
+        {
+          "name": "decodeUriComponent",
+          "kind": "exported",
+          "via": "default-callable"
+        }
+      ],
+      "severity": {
+        "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:U/S:N/AU:Y/R:U/V:D/RE:M/U:Amber",
+        "cvssScore": 6.6,
+        "cvssVersion": "4.0",
+        "ghsa": "MODERATE"
+      },
+      "cweIds": [
+        "CWE-1176",
+        "CWE-400",
+        "CWE-405",
+        "CWE-407"
+      ],
+      "malware": false,
+      "affectedRange": "<0.5.0",
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            },
+            {
+              "fixed": "0.5.0"
+            }
+          ]
+        }
+      ],
+      "fixedVersions": [
+        "0.5.0"
+      ],
+      "recommendedFix": {
+        "version": "0.5.0",
+        "majorBump": true
+      },
+      "isDirect": false,
+      "isDevOnly": false,
+      "dependencyPaths": [
+        [
+          "query-string@6.14.1",
+          "decode-uri-component@0.2.0"
+        ]
+      ],
+      "references": [
+        {
+          "type": "WEB",
+          "url": "https://github.com/SamVerschueren/decode-uri-component/security/advisories/GHSA-vcc3-ghjq-m6fr"
+        },
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-45822"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/SamVerschueren/decode-uri-component/commit/fa479dafeede7bedf04e5c89aa78f2a78c664005"
+        },
+        {
+          "type": "PACKAGE",
+          "url": "https://github.com/SamVerschueren/decode-uri-component"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/SamVerschueren/decode-uri-component/blob/00662938dc7c6241547ae8abce7785cc13ffd3f6/index.js"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/SamVerschueren/decode-uri-component/releases/tag/v0.5.0"
+        },
+        {
+          "type": "WEB",
+          "url": "https://www.npmjs.com/package/decode-uri-component"
+        }
+      ],
+      "published": "2026-08-31T22:10:20Z",
+      "modified": "2026-09-10T03:51:14.713899943Z"
+    },
+    {
+      "id": "GHSA-9c47-m6qq-7p4h",
+      "aliases": [
+        "CVE-2022-46175"
+      ],
+      "mergedIds": [],
+      "package": "json5",
+      "installedVersion": "2.2.0",
+      "summary": "Prototype Pollution in JSON5 via Parse Method",
+      "detailsExcerpt": "The `parse` method of the JSON5 library before and including version `2.2.1` does not restrict parsing of keys named `proto`, allowing specially crafted strings to pollute the prototype of the resulting object. This vulnerability pollutes the prototype of the object returned by `JSON5.parse` and not the global Object prototype, which is the commonly understood definition of Prototype Pollution.",
+      "blamedSymbols": [
+        {
+          "name": "parse",
+          "kind": "exported",
+          "via": "member-access"
+        }
+      ],
+      "severity": {
+        "cvssVector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:L/A:H",
+        "cvssScore": 7.1,
+        "cvssVersion": "3.1",
+        "ghsa": "HIGH"
+      },
+      "cweIds": [
+        "CWE-1321"
+      ],
+      "malware": false,
+      "affectedRange": "<1.0.2 || >=2.0.0 <2.2.2",
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "2.0.0"
+            },
+            {
+              "fixed": "2.2.2"
+            }
+          ]
+        },
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            },
+            {
+              "fixed": "1.0.2"
+            }
+          ]
+        }
+      ],
+      "fixedVersions": [
+        "2.2.2"
+      ],
+      "recommendedFix": {
+        "version": "2.2.2",
+        "majorBump": false
+      },
+      "isDirect": true,
+      "isDevOnly": false,
+      "dependencyPaths": [
+        [
+          "json5@2.2.0"
+        ]
+      ],
+      "references": [
+        {
+          "type": "WEB",
+          "url": "https://github.com/json5/json5/security/advisories/GHSA-9c47-m6qq-7p4h"
+        },
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-46175"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/json5/json5/issues/199"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/json5/json5/issues/295"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/json5/json5/pull/298"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/json5/json5/commit/62a65408408d40aeea14c7869ed327acead12972"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/json5/json5/commit/7774c1097993bc3ce9f0ac4b722a32bf7d6871c8"
+        },
+        {
+          "type": "PACKAGE",
+          "url": "https://github.com/json5/json5"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.debian.org/debian-lts-announce/2023/11/msg00021.html"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/3S26TLPLVFAJTUN3VIXFDEBEXDYO22CE"
+        }
+      ],
+      "published": "2022-12-29T01:51:03Z",
+      "modified": "2026-09-10T03:49:56.250129993Z"
+    },
+    {
+      "id": "GHSA-c2qf-rxjj-qqgw",
+      "aliases": [
+        "CVE-2022-25883"
+      ],
+      "mergedIds": [],
+      "package": "semver",
+      "installedVersion": "5.7.1",
+      "summary": "semver vulnerable to Regular Expression Denial of Service",
+      "detailsExcerpt": "Versions of the package semver before 7.5.2 on the 7.x branch, before 6.3.1 on the 6.x branch, and all other versions before 5.7.2 are vulnerable to Regular Expression Denial of Service (ReDoS) via the function new Range, when untrusted user data is provided as a range.",
+      "blamedSymbols": [
+        {
+          "name": "Range",
+          "kind": "internal",
+          "via": "call"
+        }
+      ],
+      "severity": {
+        "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "cvssScore": 7.5,
+        "cvssVersion": "3.1",
+        "ghsa": "HIGH"
+      },
+      "cweIds": [
+        "CWE-1333"
+      ],
+      "malware": false,
+      "affectedRange": ">=2.0.0-alpha <5.7.2 || >=6.0.0 <6.3.1 || >=7.0.0 <7.5.2",
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "7.0.0"
+            },
+            {
+              "fixed": "7.5.2"
+            }
+          ]
+        },
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "6.0.0"
+            },
+            {
+              "fixed": "6.3.1"
+            }
+          ]
+        },
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "2.0.0-alpha"
+            },
+            {
+              "fixed": "5.7.2"
+            }
+          ]
+        }
+      ],
+      "fixedVersions": [
+        "5.7.2",
+        "6.3.1",
+        "7.5.2"
+      ],
+      "recommendedFix": {
+        "version": "5.7.2",
+        "majorBump": false
+      },
+      "isDirect": true,
+      "isDevOnly": true,
+      "dependencyPaths": [
+        [
+          "semver@5.7.1"
+        ]
+      ],
+      "references": [
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-25883"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/npm/node-semver/pull/564"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/npm/node-semver/pull/585"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/npm/node-semver/pull/593"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/npm/node-semver/commit/2f8fd41487acf380194579ecb6f8b1bbfe116be0"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/npm/node-semver/commit/717534ee353682f3bcf33e60a8af4292626d4441"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/npm/node-semver/commit/928e56d21150da0413a3333a3148b20e741a920c"
+        },
+        {
+          "type": "PACKAGE",
+          "url": "https://github.com/npm/node-semver"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/npm/node-semver/blob/main/classes/range.js#L97-L104"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/npm/node-semver/blob/main/classes/range.js%23L97-L104"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/npm/node-semver/blob/main/internal/re.js#L138"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/npm/node-semver/blob/main/internal/re.js#L160"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/npm/node-semver/blob/main/internal/re.js%23L138"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/npm/node-semver/blob/main/internal/re.js%23L160"
+        },
+        {
+          "type": "WEB",
+          "url": "https://security.netapp.com/advisory/ntap-20241025-0004"
+        },
+        {
+          "type": "WEB",
+          "url": "https://security.snyk.io/vuln/SNYK-JS-SEMVER-3247795"
+        }
+      ],
+      "published": "2023-06-21T06:30:28Z",
+      "modified": "2026-09-10T03:50:02.224637541Z"
+    }
+  ],
+  "osvRecords": {}
+}

@@ -1,0 +1,9 @@
+{
+ "tag_name": "v4.0.0",
+ "name": "v4.0.0",
+ "body": "# [4.0.0](https://github.com/markedjs/marked/compare/v3.0.8...v4.0.0) (2021-11-02)\r\n\r\n\r\n### Bug Fixes\r\n\r\n* Convert to ESM ([#2227](https://github.com/markedjs/marked/issues/2227)) ([4afb228](https://github.com/markedjs/marked/commit/4afb228d956a415624c4e5554bb8f25d047676fe))\r\n\r\n\r\n### BREAKING CHANGES\r\n\r\n* Default export removed. Use `import { marked } from 'marked'` or `const { marked } = require('marked')` instead.\r\n* `/lib/marked.js` removed. Use `/marked.min.js` in script tag instead.\r\n* When using marked in a script tag use `marked.parse(...)` instead of `marked(...)`\r\n\r\n\r\n\r\n",
+ "published_at": "2021-11-02T14:42:34Z",
+ "html_url": "https://github.com/markedjs/marked/releases/tag/v4.0.0",
+ "draft": false,
+ "prerelease": false
+}

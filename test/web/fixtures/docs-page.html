@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Upgrading to v4 &mdash; Example Docs</title>
+  <meta name="description" content="META DESCRIPTION SHOULD NOT APPEAR">
+  <style>body { font-family: sans-serif; } .x::before { content: "STYLE TEXT SHOULD NOT APPEAR"; }</style>
+  <script>
+    // A script that mentions markup: </div> <p>SCRIPT TEXT SHOULD NOT APPEAR</p>
+    window.analytics = { track: function () { return "<h1>fake</h1>"; } };
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <a href="/">Example Docs HEADER TEXT</a>
+    <nav><a href="/guide">Guide NAV LINK</a> <a href="/api">API NAV LINK</a></nav>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">SIDEBAR AD TEXT <a href="/sponsor">Sponsor</a></aside>
+    <main id="content">
+      <h1>Upgrading to v4</h1>
+      <p>Version 4 of the library changes how it is imported. Read this page before you run
+         <code>npm install example@4</code>. Tom &amp; Jerry say it&#39;s fine &amp; they don&#x2019;t mind.</p>
+      <!-- A comment: COMMENT TEXT SHOULD NOT APPEAR -->
+      <h2 id="breaking">Breaking changes</h2>
+      <ul>
+        <li><strong>Default export removed.</strong> Use <code>const { marked } = require('marked')</code> instead.</li>
+        <li>The <code>&lt;script&gt;</code> build moved:
+          <ol>
+            <li>Replace <code>/lib/marked.js</code> with <code>/marked.min.js</code>.</li>
+            <li>Call <code>marked.parse()</code> instead of <code>marked()</code>.</li>
+          </ol>
+        </li>
+        <li>Node.js 12 or newer is now required.</li>
+      </ul>
+      <div hidden>HIDDEN TEXT SHOULD NOT APPEAR</div>
+      <div aria-hidden="true">ARIA HIDDEN TEXT SHOULD NOT APPEAR</div>
+      <button type="button">Copy BUTTON TEXT</button>
+      <noscript>NOSCRIPT TEXT SHOULD NOT APPEAR</noscript>
+      <template><p>TEMPLATE TEXT SHOULD NOT APPEAR</p></template>
+      <h3>Options</h3>
+      <table>
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>gfm</code></td><td>boolean</td><td>true</td></tr>
+          <tr><td><code>breaks</code></td><td>boolean</td><td>false</td></tr>
+        </tbody>
+      </table>
+      <h3>Example</h3>
+      <pre><code class="language-js">// before
+const marked = require('marked');
+
+// after
+function render(md) {
+  const { marked } = require('marked');
+  return marked.parse(md);
+}
+</code></pre>
+      <p>See the <a href="https://example.com/migration">full migration guide</a> for details.&nbsp;Line<br>break here.</p>
+      <p>Unescaped less-than: 3 < 4 stays readable.</p>
+    </main>
+  </div>
+  <footer>Copyright FOOTER TEXT SHOULD NOT APPEAR</footer>
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{
+ "total_count": 132,
+ "incomplete_results": false,
+ "items": [
+  {
+   "number": 4100,
+   "title": "fix: load CLI configs with top-level await",
+   "state": "open",
+   "html_url": "https://github.com/markedjs/marked/pull/4100",
+   "body": "The CLI cannot load an ESM config containing top-level `await` on Node.js versions that support synchronous `require(esm)`. For example:\n\n```js\n// config.mjs\nexport default await Promise.resolve({ breaks: true });\n```\n\n`marked --config config.mjs --string text` exits with `ERR_REQUIRE_ASYNC_MODULE` on Node 24.19.0. The config loader only falls back to `import()` for `ERR_REQUIRE_ESM`, so it never reaches the existing asynchronous import path.\n\nTreat `ERR_REQUIRE_ASYNC_MODULE` as another reason to use that path. Other loading errors continue to propagate, and the existing JSON/CommonJS loading ",
+   "pull_request": {
+    "url": "https://api.github.com/repos/markedjs/marked/pulls/4100"
+   }
+  },
+  {
+   "number": 4033,
+   "title": "docs: explain partial extensions in use",
+   "state": "closed",
+   "html_url": "https://github.com/markedjs/marked/pull/4033",
+   "body": "**Marked version:** 58ed4af62e7383ca770ac68aa987ca39887f33f3\n\n**Markdown flavor:** n/a\n\n## Description\n\n- Fixes #4016.\n- Adds source-level documentation to `Marked#use`, `marked.use`, and the named `use` export.\n- Explains that `renderer`, `tokenizer`, and `hooks` can be partial when registered through `use`, because they are merged with built-in and previously registered behavior.\n- Documents the default, instance, and inline parse APIs with the recommended per-call pattern: create separate `Marked` instances and configure each through `use` instead of passing hooks, renderers, or tokenizers ",
+   "pull_request": {
+    "url": "https://api.github.com/repos/markedjs/marked/pulls/4033"
+   }
+  },
+  {
+   "number": 4041,
+   "title": "chore(deps-dev): bump markdown-it from 14.3.0 to 15.0.0",
+   "state": "closed",
+   "html_url": "https://github.com/markedjs/marked/pull/4041",
+   "body": "Bumps [markdown-it](https://github.com/markdown-it/markdown-it) from 14.3.0 to 15.0.0.\n<details>\n<summary>Changelog</summary>\n<p><em>Sourced from <a href=\"https://github.com/markdown-it/markdown-it/blob/master/CHANGELOG.md\">markdown-it's changelog</a>.</em></p>\n<blockquote>\n<h2>[15.0.0] - 2026-07-30</h2>\n<h3>Added</h3>\n<ul>\n<li>Exposed parser internals classes as static properties on <code>markdownit</code>.</li>\n<li>Bundled TypeScript declarations. Remove <code>@types/markdown-it</code> if you used it.</li>\n<li>Added the <code>markdown-it/browser</code> export with bundled ESM and UMD builds.",
+   "pull_request": {
+    "url": "https://api.github.com/repos/markedjs/marked/pulls/4041"
+   }
+  },
+  {
+   "number": 3979,
+   "title": "Let marked turn AI-generated markdown into live charts",
+   "state": "closed",
+   "html_url": "https://github.com/markedjs/marked/issues/3979",
+   "body": "**What pain point are you perceiving?.**\nmarked parses markdown into HTML. Right now, ` ```vis ` code blocks get the same treatment as ` ```js ` \u2014 they become static `<pre><code>` blocks. But there's a new kind of markdown content emerging: **AI-generated markdown with data visualizations**.\n\nWhen an LLM outputs a chart in markdown, users should see a rendered chart, not a code block they have to copy elsewhere. The missing piece is a way for marked to recognize that `vis` code blocks are not code \u2014 they're charts.\n\n**Describe the solution you'd like**\n**[GPT-Vis](https://github.com/antvis/GPT"
+  },
+  {
+   "number": 3915,
+   "title": "chore(deps-dev): Bump esbuild from 0.27.3 to 0.27.4",
+   "state": "closed",
+   "html_url": "https://github.com/markedjs/marked/pull/3915",
+   "body": "Bumps [esbuild](https://github.com/evanw/esbuild) from 0.27.3 to 0.27.4.\n<details>\n<summary>Release notes</summary>\n<p><em>Sourced from <a href=\"https://github.com/evanw/esbuild/releases\">esbuild's releases</a>.</em></p>\n<blockquote>\n<h2>v0.27.4</h2>\n<ul>\n<li>\n<p>Fix a regression with CSS media queries (<a href=\"https://redirect.github.com/evanw/esbuild/issues/4395\">#4395</a>, <a href=\"https://redirect.github.com/evanw/esbuild/issues/4405\">#4405</a>, <a href=\"https://redirect.github.com/evanw/esbuild/issues/4406\">#4406</a>)</p>\n<p>Version 0.25.11 of esbuild introduced support for parsing media",
+   "pull_request": {
+    "url": "https://api.github.com/repos/markedjs/marked/pulls/3915"
+   }
+  },
+  {
+   "number": 3519,
+   "title": "BREAKING CHANGE: Move all regexes to rules",
+   "state": "closed",
+   "html_url": "https://github.com/markedjs/marked/pull/3519",
+   "body": "**Marked version:** 14.1.3\r\n\r\n## Description\r\n\r\nMove all regular expressions to rules.ts to be able to reuse similar regular expressions and spped up marked by creating the regular expressions once instead of inside a loop like the tokenizer or parser loops. These rules will be in an object exported as `other` by rules.ts. \r\n\r\n## Contributor\r\n\r\n- [x] Test(s) exist to ensure functionality and minimize regression (if no tests added, list tests covering this PR); or,\r\n- [ ] no tests required for this PR.\r\n- [ ] If submitting new feature, it has been documented in the appropriate places.\r\n\r\n## Com",
+   "pull_request": {
+    "url": "https://api.github.com/repos/markedjs/marked/pulls/3519"
+   }
+  }
+ ]
+}

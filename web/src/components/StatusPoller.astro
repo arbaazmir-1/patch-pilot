@@ -1,0 +1,99 @@
+---
+import type { ProjectRunStatus } from '../lib/status.ts';
+
+interface Props {
+  runs: ProjectRunStatus[];
+  // 'all' reloads when an unknown run shows up
+  scope: 'all' | 'project';
+  root?: string;
+}
+const { runs, scope, root = '' } = Astro.props;
+const initial = runs.map((r) => ({ root: r.root, state: r.status.state }));
+---
+
+<script type="application/json" id="run-initial" set:html={JSON.stringify(initial).replace(/</g, '\\u003c')} />
+<div hidden id="run-poller" data-scope={scope} data-root={root}></div>
+
+<script>
+  import { checklistHtml, statusLineHtml, SPINNER_FRAMES, SPINNER_MS } from './runStatus.ts';
+  import type { ProjectRunStatus, RunStatus } from '../lib/status.ts';
+
+  // polls status while something runs
+  const poller = document.getElementById('run-poller') as HTMLElement;
+  const scope = poller.dataset.scope ?? 'all';
+  const onlyRoot = poller.dataset.root ?? '';
+  const states = new Map<string, RunStatus['state']>();
+  try {
+    const raw = JSON.parse(document.getElementById('run-initial')?.textContent ?? '[]') as { root: string; state: RunStatus['state'] }[];
+    for (const r of raw) states.set(r.root, r.state);
+  } catch {
+    // no initial runs
+  }
+
+  let timer: number | undefined;
+  let spin: number | undefined;
+  let frame = 0;
+
+  const anyRunning = (): boolean => [...states.values()].some((s) => s === 'running');
+
+  function render(run: ProjectRunStatus): void {
+    document.querySelectorAll<HTMLElement>('[data-run-root]').forEach((el) => {
+      if (el.dataset.runRoot !== run.root) return;
+      el.dataset.state = run.status.state;
+      el.innerHTML = el.dataset.runKind === 'checklist' ? checklistHtml(run.status) : statusLineHtml(run.status);
+    });
+  }
+
+  function animate(): void {
+    if (spin !== undefined) return;
+    spin = window.setInterval(() => {
+      frame = (frame + 1) % SPINNER_FRAMES.length;
+      const text = SPINNER_FRAMES[frame] ?? '';
+      document.querySelectorAll<HTMLElement>('[data-run-kind="line"][data-state="running"] .run-glyph').forEach((g) => {
+        g.textContent = text;
+      });
+      if (!anyRunning()) {
+        window.clearInterval(spin);
+        spin = undefined;
+      }
+    }, SPINNER_MS);
+  }
+
+  async function tick(): Promise<void> {
+    timer = undefined;
+    let runs: ProjectRunStatus[];
+    try {
+      const res = await fetch('/api/status', { cache: 'no-store' });
+      runs = ((await res.json()) as { runs: ProjectRunStatus[] }).runs;
+    } catch {
+      schedule();
+      return;
+    }
+    let reload = false;
+    for (const run of runs) {
+      if (scope === 'project' && run.root !== onlyRoot) continue;
+      const before = states.get(run.root);
+      if (before === undefined && run.status.state === 'running' && scope === 'all') reload = true;
+      if (before === 'running' && run.status.state === 'done') reload = true;
+      states.set(run.root, run.status.state);
+      render(run);
+    }
+    if (reload) {
+      window.location.reload();
+      return;
+    }
+    schedule();
+  }
+
+  function schedule(): void {
+    if (timer !== undefined || !anyRunning()) return;
+    timer = window.setTimeout(tick, 2000);
+    animate();
+  }
+
+  schedule();
+  // catch runs started while the tab was away
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && timer === undefined) void tick();
+  });
+</script>

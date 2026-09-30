@@ -1,0 +1,10 @@
+{
+  "name": "indirect-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PatchPilot test fixture: lodash reached through a wrapper module and through a computed member access.",
+  "main": "src/cli.js",
+  "dependencies": {
+    "lodash": "4.17.20"
+  }
+}

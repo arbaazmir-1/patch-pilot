@@ -1,0 +1,112 @@
+{
+	"type": "npm",
+	"name": "marked",
+	"version": "4.0.10",
+	"default": "/lib/marked.umd.min.js",
+	"files": [
+		{
+			"name": "/bin/marked.js",
+			"hash": "Xg6K8JJpiYkZWOmqWXIXEv42iCUY3AkSNBlD3PfIA5Y=",
+			"size": 4385
+		},
+		{
+			"name": "/lib/marked.cjs",
+			"hash": "9Wv3XkGpiodw7MUabDiswgY14en1nJ37i0+rnAyrrjE=",
+			"size": 90491
+		},
+		{
+			"name": "/lib/marked.esm.js",
+			"hash": "08sF4a7MfdbVqaIdAGGphJYnIZ15mG5TSsEMvduLoQg=",
+			"size": 74838
+		},
+		{
+			"name": "/lib/marked.umd.js",
+			"hash": "XPp803fWqdwoWQdzevRGP96zK25lDUKQM02/aBkoXZo=",
+			"size": 95585
+		},
+		{
+			"name": "/LICENSE.md",
+			"hash": "jjo/gvWaYJWPVsoI9EVkfDKkcz3HymwsRvbriYRxq5w=",
+			"size": 2942
+		},
+		{
+			"name": "/man/marked.1",
+			"hash": "OpxLkPJrciLE+W6mu5BwiFXb1eOJAfsHBhP/FywUSeg=",
+			"size": 2091
+		},
+		{
+			"name": "/man/marked.1.txt",
+			"hash": "hdMQlNKXFRgzK23c+iVRcs6gLbhci25NTSwinKRbCuA=",
+			"size": 2163
+		},
+		{
+			"name": "/marked.min.js",
+			"hash": "U9E348W0w5AFlhhqcPejKCOnuacbqg7GSy4WwLxFAeo=",
+			"size": 47618
+		},
+		{
+			"name": "/package.json",
+			"hash": "Akfi5ZDrk4t0X8EiKPjts9f/AByte87c0F5LcpmW+ns=",
+			"size": 2927
+		},
+		{
+			"name": "/README.md",
+			"hash": "3Upph/j9BoCf9/0c43AusDrlqd+VCfr1KicsaeyxYQA=",
+			"size": 2760
+		},
+		{
+			"name": "/src/defaults.js",
+			"hash": "sLyxEWZsblDYiO/ZvvLpnvfzcxA3G7ALLcfvtqpKSoQ=",
+			"size": 558
+		},
+		{
+			"name": "/src/helpers.js",
+			"hash": "Sc78cjya71DFqOL++Qxw7ZNnbWgKfR2b5NT7S6wGFq8=",
+			"size": 6242
+		},
+		{
+			"name": "/src/Lexer.js",
+			"hash": "eBmc3eutFOux5e/4Hc2J1Ko3NYXldYREX/hSTa0hS4c=",
+			"size": 13921
+		},
+		{
+			"name": "/src/marked.js",
+			"hash": "hjGjkfbovcKpMEtXndolE6jyvttxD7rf5+VmNIhntCM=",
+			"size": 9573
+		},
+		{
+			"name": "/src/Parser.js",
+			"hash": "V2osT6nrfGZKSSbexnfEblzlEk/zzAjgX8xZdtyqXLc=",
+			"size": 7928
+		},
+		{
+			"name": "/src/Renderer.js",
+			"hash": "WdSBeHqhACfBbeDcHzQXNMfsWfAEHn0b9isij357Oag=",
+			"size": 3437
+		},
+		{
+			"name": "/src/rules.js",
+			"hash": "ueDviQRVG6Hp53nE6QYva22z/lp8YXFNn/ogmJj5fMU=",
+			"size": 11841
+		},
+		{
+			"name": "/src/Slugger.js",
+			"hash": "vEqYD7H9LXfsbAOgibckVZJnakIdhCJB1jnA64FFzV0=",
+			"size": 1252
+		},
+		{
+			"name": "/src/TextRenderer.js",
+			"hash": "RVcB5gevzO2bbReEgus989qiqzIgkQr863bktDCJOm4=",
+			"size": 503
+		},
+		{
+			"name": "/src/Tokenizer.js",
+			"hash": "xqfPyxnObAMOLEEvqOd9863EaqFmCC1Mk9+sVs4L1eU=",
+			"size": 20780
+		}
+	],
+	"links": {
+		"stats": "https://data.jsdelivr.com/v1/stats/packages/npm/marked@4.0.10",
+		"entrypoints": "https://data.jsdelivr.com/v1/packages/npm/marked@4.0.10/entrypoints"
+	}
+}

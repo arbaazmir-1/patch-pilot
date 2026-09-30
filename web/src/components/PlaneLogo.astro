@@ -1,0 +1,168 @@
+---
+// ascii plane filled with a stream of npm package names
+interface Props {
+  size?: 'large' | 'small';
+  highlight?: string[];
+  class?: string;
+}
+const { size = 'large', highlight = ['astro'], class: className = '' } = Astro.props;
+
+type Run = [number, number];
+
+// per row [start, end] column runs; nose up-right, rasterized from a top-down
+// silhouette rotated 40deg at a 1:2 cell aspect
+const LARGE: Run[][] = [
+  [[60,67]],
+  [[58,68]],
+  [[56,68]],
+  [[54,68]],
+  [[53,67]],
+  [[51,65]],
+  [[49,64]],
+  [[4,14], [48,62]],
+  [[2,23], [46,60]],
+  [[0,32], [44,59]],
+  [[3,57]],
+  [[8,55]],
+  [[12,54]],
+  [[16,52]],
+  [[20,51]],
+  [[25,52]],
+  [[29,52]],
+  [[31,53]],
+  [[29,54]],
+  [[27,55]],
+  [[26,56]],
+  [[24,38], [41,56]],
+  [[22,37], [43,57]],
+  [[21,35], [44,58]],
+  [[4,9], [19,33], [46,59]],
+  [[2,32], [47,60]],
+  [[2,30], [48,61]],
+  [[6,28], [50,61]],
+  [[10,27], [51,62]],
+  [[13,26], [53,63]],
+  [[14,27], [54,64]],
+  [[16,28], [55,65]],
+  [[20,29], [57,64]],
+  [[22,29], [58,62]],
+  [[23,30], [60,61]],
+  [[25,30]],
+  [[26,28]],
+];
+
+const SMALL: Run[][] = [
+  [[29,33]],
+  [[27,33]],
+  [[25,32]],
+  [[2,4], [24,30]],
+  [[0,13], [22,29]],
+  [[2,27]],
+  [[7,25]],
+  [[11,25]],
+  [[15,25]],
+  [[14,26]],
+  [[12,27]],
+  [[10,17], [21,28]],
+  [[1,6], [9,15], [23,29]],
+  [[2,14], [24,29]],
+  [[5,12], [25,30]],
+  [[7,13], [27,31]],
+  [[10,14], [28,31]],
+  [[12,14]],
+];
+
+const PACKAGES = [
+  'semver', 'cookie', 'zod', 'astro', 'undici', 'js-yaml', 'brace-expansion', 'svgo', 'browserslist',
+  'devalue', 'postcss', 'vite', 'ws', 'baseline-browser-mapping', '@astrojs/cloudflare', '@babel/core',
+  'esbuild', 'minimatch', 'sharp', 'miniflare', 'rollup', 'picomatch',
+];
+
+// char stream with a class per char: d dot, n name, h highlighted name
+const chars: string[] = [];
+const kinds: string[] = [];
+const hl = new Set(highlight);
+for (const name of PACKAGES) {
+  chars.push('.');
+  kinds.push('d');
+  for (const ch of name) {
+    chars.push(ch);
+    kinds.push(hl.has(name) ? 'h' : 'n');
+  }
+}
+
+const mask = size === 'large' ? LARGE : SMALL;
+let k = 0;
+const next = (): [string, string] => {
+  const i = k++ % chars.length;
+  return [chars[i]!, kinds[i]!];
+};
+
+// group same-class chars into spans
+const rows: { text: string; kind: string }[][] = mask.map((runs) => {
+  const segs: { text: string; kind: string }[] = [];
+  const push = (text: string, kind: string): void => {
+    const last = segs[segs.length - 1];
+    if (last && last.kind === kind) last.text += text;
+    else segs.push({ text, kind });
+  };
+  let col = 0;
+  for (const [start, end] of runs) {
+    if (start > col) push(' '.repeat(start - col), 's');
+    push('.', 'e');
+    if (end > start) {
+      if (chars[k % chars.length] === '.') k++;
+      for (let c = start + 1; c < end; c++) {
+        const [ch, kind] = next();
+        push(ch, kind);
+      }
+      push('.', 'e');
+    }
+    col = end + 1;
+  }
+  return segs;
+});
+
+const html = rows
+  .map((segs) => segs.map((s) => (s.kind === 's' ? s.text : `<span class="p${s.kind}">${s.text}</span>`)).join(''))
+  .join('\n');
+---
+
+<div class:list={['plane', `plane-${size}`, className]} role="img" aria-label="patch pilot plane logo">
+  <pre aria-hidden="true" set:html={html} />
+</div>
+
+<style>
+  .plane pre {
+    margin: 0;
+    font-family: var(--mono);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0;
+    white-space: pre;
+    color: var(--fg);
+  }
+  .plane-large pre {
+    font-size: 9px;
+  }
+  .plane-small pre {
+    font-size: 6px;
+  }
+  .plane :global(.pn) {
+    color: #ededed;
+  }
+  .plane :global(.pd) {
+    color: #767676;
+  }
+  .plane :global(.pe) {
+    color: #a3a3a3;
+  }
+  .plane :global(.ph) {
+    color: var(--phase-3);
+  }
+  @media (max-width: 520px) {
+    .plane-large pre {
+      font-size: 6.5px;
+    }
+  }
+</style>

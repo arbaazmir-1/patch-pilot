@@ -1,0 +1,61 @@
+---
+import '../styles/global.css';
+import PlaneGlyph from '../components/PlaneGlyph.astro';
+import KeyHints from '../components/KeyHints.astro';
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+interface Props {
+  title: string;
+  crumbs?: Crumb[];
+  keys?: [string, string][];
+}
+const { title, crumbs = [], keys = [] } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>{title} · patch pilot</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <nav class="crumbs" aria-label="breadcrumb">
+          <a class="crumb crumb-home" href="/"><PlaneGlyph size={14} color="var(--orange)" /> patch-pilot</a>
+          {crumbs.map((c, i) => (
+            <>
+              <span class="crumb-sep">/</span>
+              {c.href && i < crumbs.length - 1 ? (
+                <a class="crumb" href={c.href}>{c.label}</a>
+              ) : (
+                <span class="crumb crumb-current" aria-current="page">{c.label}</span>
+              )}
+            </>
+          ))}
+        </nav>
+        <span class="topbar-note">local · data stays on this machine</span>
+      </header>
+      <hr class="rule" />
+      <main>
+        <slot />
+      </main>
+      <hr class="rule" />
+      <footer class="footer">
+        <KeyHints keys={keys} />
+        <p class="footer-note">
+          reads ~/.patch-pilot/trusted.json and each project's .patch-pilot/report.json · stored in ~/.patch-pilot/web.db
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

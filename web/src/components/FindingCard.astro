@@ -1,0 +1,119 @@
+---
+import type { FindingRow } from '../lib/queries.ts';
+
+interface Props {
+  finding: FindingRow;
+}
+const { finding: f } = Astro.props;
+
+function pct(confidence: number | null): string {
+  if (confidence === null || confidence === undefined) return '-';
+  return `${Math.round(Math.min(1, Math.max(0, confidence)) * 100)}%`;
+}
+
+function advisoryLink(idText: string): string | null {
+  if (/^GHSA-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}$/i.test(idText)) return `https://github.com/advisories/${idText}`;
+  if (/^CVE-\d{4}-\d{4,}$/i.test(idText)) return `https://www.cve.org/CVERecord?id=${idText}`;
+  if (/^OSV-/.test(idText)) return `https://osv.dev/vulnerability/${idText}`;
+  return null;
+}
+
+function arr(raw: string | null): string[] {
+  try {
+    const parsed: unknown = JSON.parse(raw ?? '[]');
+    return Array.isArray(parsed) ? parsed.map((x) => String(x)) : [];
+  } catch {
+    return [];
+  }
+}
+
+const link = advisoryLink(f.cve);
+const evidence = arr(f.evidence);
+const fixedVersions = arr(f.fixed_versions);
+const badges = arr(f.badges);
+const references = arr(f.references);
+const risk = ['critical', 'high', 'medium', 'low', 'noise'].includes((f.risk ?? '').toLowerCase()) ? (f.risk ?? 'noise').toLowerCase() : 'none';
+const pkg = `${f.package}${f.version ? `@${f.version}` : ''}`;
+const search = `${f.cve} ${f.ghsa ?? ''} ${pkg} ${f.summary ?? ''}`.toLowerCase();
+const tree = (i: number, n: number): string => (i === n - 1 ? '└──' : '├──');
+---
+
+<article class={`finding r-${risk}`} data-finding data-search={search} tabindex="-1">
+  <header class="finding-title">
+    {link ? (
+      <a class="finding-id" href={link} target="_blank" rel="noopener noreferrer">{f.cve}</a>
+    ) : (
+      <span class="finding-id">{f.cve}</span>
+    )}
+    <span class="sep"> · </span>
+    <span class="finding-pkg">{pkg}</span>
+    {f.cvss != null && (
+      <>
+        <span class="sep"> · </span>
+        <span class="dim">CVSS {Number(f.cvss).toFixed(1)}</span>
+      </>
+    )}
+  </header>
+
+  {f.summary && <p class="finding-summary">{f.summary}</p>}
+
+  <div class="tags">
+    {f.reachable && <span class={`tag tag-reach-${f.reachable}`}>{f.reachable}</span>}
+    {f.direct === 1 && <span class="tag">direct</span>}
+    {f.direct === 0 && <span class="tag">transitive</span>}
+    {f.dev_only === 1 && <span class="tag">dev-only</span>}
+    {f.accepted === 1 && <span class="tag tag-accent">accepted risk</span>}
+    {f.recommendation_action && <span class="tag tag-blue">{f.recommendation_action}</span>}
+    {f.ghsa && f.ghsa !== f.cve && <span class="tag">{f.ghsa}</span>}
+    {badges.map((b) => <span class="tag">{b}</span>)}
+  </div>
+
+  <div class="verdict">
+    <span class={`pill pill-${risk}`}>{(f.risk ?? 'unrated').toUpperCase()}</span>
+    <p class="verdict-text">{f.reasoning ?? 'No verdict recorded.'}</p>
+  </div>
+
+  <p class="finding-meta">
+    Confidence: {pct(f.confidence)}
+    <span class="sep"> · </span>
+    Recommended: {f.recommendation_text ?? '-'}
+    {f.target_version && (
+      <span class="finding-target">
+        {' '}→ {f.package}@{f.target_version}{f.major_bump === 1 && <span class="warn"> (major bump)</span>}
+      </span>
+    )}
+  </p>
+
+  {(f.affected_range || fixedVersions.length > 0) && (
+    <p class="finding-meta">
+      {f.affected_range && <>affected {f.affected_range}</>}
+      {f.affected_range && fixedVersions.length > 0 && <span class="sep"> · </span>}
+      {fixedVersions.length > 0 && <>fixed in {fixedVersions.join(', ')}</>}
+    </p>
+  )}
+
+  {(evidence.length > 0 || references.length > 0) && (
+    <details class="finding-details">
+      <summary>
+        evidence {evidence.length}<span class="sep"> · </span>references {references.length}
+      </summary>
+      {evidence.length > 0 && (
+        <ul class="tree">
+          {evidence.map((e, i) => (
+            <li><span class="tree-glyph">{tree(i, evidence.length)}</span><span>{e}</span></li>
+          ))}
+        </ul>
+      )}
+      {references.length > 0 && (
+        <ul class="tree tree-refs">
+          {references.map((r, i) => (
+            <li>
+              <span class="tree-glyph">{tree(i, references.length)}</span>
+              <a href={r} target="_blank" rel="noopener noreferrer">{r}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </details>
+  )}
+</article>

@@ -1,0 +1,8 @@
+{
+  "name": "@patchpilot-fixture/b",
+  "version": "1.0.0",
+  "dependencies": {
+    "@patchpilot-fixture/a": "1.0.0",
+    "debug": "4.3.4"
+  }
+}

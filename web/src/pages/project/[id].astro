@@ -1,0 +1,275 @@
+---
+import os from 'node:os';
+import Base from '../../layouts/Base.astro';
+import FindingCard from '../../components/FindingCard.astro';
+import RunLine from '../../components/RunLine.astro';
+import Checklist from '../../components/Checklist.astro';
+import StatusPoller from '../../components/StatusPoller.astro';
+import { getFindings, getProject, riskCount, RISK_ORDER } from '../../lib/queries.ts';
+import { readRunStatus, type ProjectRunStatus } from '../../lib/status.ts';
+import { syncReports } from '../../lib/sync.ts';
+import type { ReportJson } from '../../lib/report.ts';
+
+// pick up a report a finished run just wrote
+syncReports();
+const id = Number(Astro.params.id);
+const project = Number.isInteger(id) ? getProject(id) : null;
+if (!project) {
+  return new Response('Project not found. It may have been removed from the dashboard.', { status: 404 });
+}
+
+const findings = getFindings(project.id);
+let report: ReportJson | null = null;
+try {
+  report = project.report_json ? (JSON.parse(project.report_json) as ReportJson) : null;
+} catch {
+  report = null;
+}
+
+const status = readRunStatus(project.root);
+const runs: ProjectRunStatus[] = status ? [{ root: project.root, name: project.name, projectId: project.id, status }] : [];
+const home = os.homedir();
+const tildePath = project.root.startsWith(home) ? `~${project.root.slice(home.length)}` : project.root;
+
+function fmtDate(iso: string | null | undefined): string {
+  if (!iso) return '-';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const p = (n: number): string => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+const inv = report?.investigation ?? null;
+const groups = RISK_ORDER.map((risk) => ({ risk, items: findings.filter((f) => (f.risk ?? 'Noise') === risk) })).filter((g) => g.items.length > 0);
+const unrated = findings.filter((f) => f.risk && !(RISK_ORDER as readonly string[]).includes(f.risk));
+const meta: [string, string][] = [
+  ['scanned', fmtDate(project.scanned_at ?? project.report_generated_at)],
+  ['lockfile', project.lockfile ? `${project.lockfile} v${project.lockfile_version ?? '?'}` : '-'],
+  [
+    'dependencies',
+    project.dependencies == null
+      ? '-'
+      : `${project.dependencies}${project.direct_deps != null && project.dev_deps != null ? ` (${project.direct_deps} direct, ${project.dev_deps} dev)` : ''}`,
+  ],
+  ['vulnerable pkgs', project.vulnerable_packages == null ? '-' : String(project.vulnerable_packages)],
+  ['advisories', project.vuln_source_label ?? '-'],
+  ['patch-pilot', project.patch_pilot_version ?? '-'],
+  ['imported', fmtDate(project.updated_at)],
+];
+---
+
+<Base
+  title={project.name}
+  crumbs={[{ label: 'projects', href: '/' }, { label: project.name }]}
+  keys={[
+    ['j k', 'move'],
+    ['ENTER', 'evidence'],
+    ['/', 'filter'],
+    ['ESC', 'back'],
+  ]}
+>
+  <section class="phead">
+    <h1 class="ptitle">{project.name}</h1>
+    <p class="ppath" title={project.root}>{tildePath}</p>
+    <p class="labels">
+      {RISK_ORDER.map((r) => (
+        <a href={`#risk-${r.toLowerCase()}`} class={`label label-${r.toLowerCase()}${riskCount(project, r) === 0 ? ' is-zero' : ''}`}>
+          {riskCount(project, r)} {r.toLowerCase()}
+        </a>
+      ))}
+      {project.accepted_count > 0 && <span class="label label-dim">{project.accepted_count} accepted</span>}
+      <span class="label label-dim">{project.total_vulnerabilities ?? 0} cves</span>
+    </p>
+    {status && (
+      <p class="phead-run">
+        <RunLine root={project.root} status={status} />
+      </p>
+    )}
+  </section>
+
+  <div class="pgrid">
+    <div class="pmain">
+      <div class="section-bar">
+        <h2 class="tab"><span class="tab-icon">▤</span> vulnerabilities <span class="tab-count">{findings.length}</span></h2>
+        {findings.length > 0 && (
+          <label class="filter">
+            <span class="prompt">/</span>
+            <input id="ffilter" type="search" placeholder="filter by cve or package" autocomplete="off" spellcheck="false" />
+          </label>
+        )}
+      </div>
+
+      {findings.length === 0 ? (
+        <div class="empty">
+          {project.total_vulnerabilities ? (
+            <>
+              <p class="bright">{project.total_vulnerabilities} cve{project.total_vulnerabilities === 1 ? '' : 's'} found, none investigated yet</p>
+              <ul class="tree">
+                <li><span class="tree-glyph">└──</span><span>run <code>patch-pilot</code> in this project to generate verdicts</span></li>
+              </ul>
+            </>
+          ) : (
+            <p class="bright"><span class="ok">✓</span> no vulnerabilities in the last scan</p>
+          )}
+        </div>
+      ) : (
+        <>
+          {groups.map((g) => (
+            <section class="rgroup" id={`risk-${g.risk.toLowerCase()}`} data-group>
+              <h3 class={`rgroup-head c-${g.risk.toLowerCase()}`}>
+                <span class="rgroup-mark">■</span> {g.risk.toLowerCase()} <span class="tab-count">{g.items.length}</span>
+              </h3>
+              {g.items.map((f) => <FindingCard finding={f} />)}
+            </section>
+          ))}
+          {unrated.length > 0 && (
+            <section class="rgroup" data-group>
+              <h3 class="rgroup-head dim"><span class="rgroup-mark">■</span> other <span class="tab-count">{unrated.length}</span></h3>
+              {unrated.map((f) => <FindingCard finding={f} />)}
+            </section>
+          )}
+          <p class="plist-foot" id="ffilter-empty" hidden>no vulnerability matches the filter</p>
+        </>
+      )}
+    </div>
+
+    <aside class="pside">
+      <div class="card">
+        <h3 class="card-title"><span class="tab-icon">◉</span> last run</h3>
+        {status ? (
+          <Checklist root={project.root} status={status} />
+        ) : (
+          <p class="dim">no run recorded yet. start one with <code>patch-pilot</code> in this project</p>
+        )}
+      </div>
+
+      <div class="card">
+        <h3 class="card-title"><span class="tab-icon">≡</span> report</h3>
+        <dl class="kv">
+          {meta.map(([k, v]) => (
+            <div><dt>{k}</dt><dd>{v}</dd></div>
+          ))}
+        </dl>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title"><span class="tab-icon">✦</span> investigation</h3>
+        {inv ? (
+          <>
+            <p class="tags">
+              {inv.provider && <span class="tag tag-accent">{inv.provider}</span>}
+              {(inv.models && inv.models.length > 0 ? inv.models : inv.model ? [inv.model] : []).map((m) => (
+                <span class="tag tag-blue">{m}</span>
+              ))}
+              {inv.complete === false ? <span class="tag tag-warn">incomplete</span> : <span class="tag tag-ok">complete</span>}
+            </p>
+            <dl class="kv">
+              <div><dt>verdicts</dt><dd>{inv.verdicts ?? project.investigated ?? '-'}</dd></div>
+              {inv.cached != null && <div><dt>cached</dt><dd>{inv.cached}</dd></div>}
+              {inv.adjusted != null && <div><dt>adjusted</dt><dd>{inv.adjusted}</dd></div>}
+              {inv.forced != null && <div><dt>forced</dt><dd>{inv.forced}</dd></div>}
+            </dl>
+            {inv.complete === false && <p class="dim">resume with <code>patch-pilot investigate --resume</code></p>}
+          </>
+        ) : (
+          <p class="dim">not investigated</p>
+        )}
+      </div>
+
+      <div class="card">
+        <h3 class="card-title"><span class="tab-icon">↳</span> source</h3>
+        <p class="src-path">{tildePath}/.patch-pilot/report.json</p>
+        <p class="dim">re-run <code>patch-pilot</code> there; the dashboard re-reads reports on every visit</p>
+      </div>
+    </aside>
+  </div>
+
+  <StatusPoller runs={runs} scope="project" root={project.root} />
+
+  <script>
+    // keyboard nav
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-finding]'));
+    const groups = Array.from(document.querySelectorAll<HTMLElement>('[data-group]'));
+    const input = document.getElementById('ffilter') as HTMLInputElement | null;
+    const empty = document.getElementById('ffilter-empty');
+    let selected = -1;
+
+    const visible = (): HTMLElement[] => cards.filter((c) => !c.hidden);
+
+    function select(index: number, scroll = true): void {
+      const list = visible();
+      cards.forEach((c) => c.classList.remove('is-selected'));
+      if (list.length === 0) {
+        selected = -1;
+        return;
+      }
+      selected = Math.max(0, Math.min(index, list.length - 1));
+      const card = list[selected]!;
+      card.classList.add('is-selected');
+      if (scroll) card.scrollIntoView({ block: 'nearest' });
+    }
+
+    input?.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      for (const card of cards) card.hidden = !(card.dataset.search ?? '').includes(q);
+      for (const group of groups) group.hidden = !group.querySelector('[data-finding]:not([hidden])');
+      if (empty) empty.hidden = visible().length > 0;
+      selected = -1;
+      cards.forEach((c) => c.classList.remove('is-selected'));
+    });
+
+    cards.forEach((card) => {
+      card.addEventListener('click', () => {
+        const i = visible().indexOf(card);
+        if (i !== selected) select(i, false);
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      if (document.activeElement instanceof HTMLInputElement) {
+        if (event.key === 'Escape') {
+          if (input) {
+            input.value = '';
+            input.dispatchEvent(new Event('input'));
+          }
+          (document.activeElement as HTMLInputElement).blur();
+        } else if (event.key === 'Enter' || event.key === 'ArrowDown') {
+          event.preventDefault();
+          (document.activeElement as HTMLInputElement).blur();
+          select(0);
+        }
+        return;
+      }
+      switch (event.key) {
+        case 'ArrowDown':
+        case 'j':
+          event.preventDefault();
+          select(selected + 1);
+          break;
+        case 'ArrowUp':
+        case 'k':
+          event.preventDefault();
+          select(selected <= 0 ? 0 : selected - 1);
+          break;
+        case 'Enter': {
+          const focus = document.activeElement;
+          if (focus instanceof HTMLAnchorElement || focus instanceof HTMLButtonElement || focus instanceof HTMLElement && focus.tagName === 'SUMMARY') break;
+          const details = visible()[selected]?.querySelector('details');
+          if (details) {
+            event.preventDefault();
+            details.open = !details.open;
+          }
+          break;
+        }
+        case '/':
+          event.preventDefault();
+          input?.focus();
+          break;
+        case 'Escape':
+          window.location.href = '/';
+          break;
+      }
+    });
+  </script>
+</Base>
