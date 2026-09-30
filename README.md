@@ -4,29 +4,28 @@
 
 An autonomous AI agent for software supply chain security.
 
-*Local model. Human approval. Full audit trail.*
+_Local model. Human approval. Full audit trail._
 
 It reads your codebase. It checks whether the vulnerable function is actually called. It explains why. Then it asks before it changes anything.
 
-| | |
-|---|---|
-| Event | Agentic AI Cybersecurity Hackathon 2026 |
-| Track | Track 1, Cybersecurity defence agents |
-| Date | 7 November 2026 |
-| Venue | UTAR Kampar, FICT |
-| Document | Proposal |
-| Website | hackai.my |
+|         |                                         |
+| ------- | --------------------------------------- |
+| Event   | Agentic AI Cybersecurity Hackathon 2026 |
+| Track   | Track 1, Cybersecurity defence agents   |
+| Date    | 7 November 2026                         |
+| Venue   | UTAR Kampar, FICT                       |
+| Website | hackai.my                               |
 
 ## Team Zero Day Pilots
 
 INTI International University
 
-| Member | Role |
-|---|---|
-| Abdullah Ibn Shahin | Team leader |
-| Imtiaz Ahmed Talukder Biplob | Developer |
-| Junaid Hussain Mohammed | Web Dev |
-| Wang Peifeng | UI/UX |
+| Member                       | Role        |
+| ---------------------------- | ----------- |
+| Abdullah Ibn Shahin          | Team leader |
+| Imtiaz Ahmed Talukder Biplob | Developer   |
+| Junaid Hussain Mohammed      | Web Dev     |
+| Wang Peifeng                 | UI/UX       |
 
 ---
 
@@ -44,7 +43,7 @@ When a fix requires a major version bump, the tools stop at the version number a
 
 > **2 of 20** vulnerable packages in a real Astro project are actually imported. A conventional scanner reports all twenty with equal urgency. PatchPilot tells them apart.
 
-*Untouched code, unpatched risk.*
+_Untouched code, unpatched risk._
 
 ---
 
@@ -64,11 +63,11 @@ Nothing changes without human approval. Every decision is logged in a full audit
 
 ### Design philosophy
 
-| Layer | Role | Principle |
-|---|---|---|
-| Code | *deterministic* | Everything deterministic is done by code. |
-| Model | *judgement* | Everything that needs judgement is done by the model. |
-| Code | *verification* | Everything the model concludes is checked by code again. |
+| Layer | Role            | Principle                                                |
+| ----- | --------------- | -------------------------------------------------------- |
+| Code  | _deterministic_ | Everything deterministic is done by code.                |
+| Model | _judgement_     | Everything that needs judgement is done by the model.    |
+| Code  | _verification_  | Everything the model concludes is checked by code again. |
 
 ---
 
@@ -78,15 +77,15 @@ Nothing changes without human approval. Every decision is logged in a full audit
 
 Three phases. The hackathon's own agent framework, built end to end.
 
-#### I. Take in evidence (No LLM) *gather*
+#### I. Take in evidence (No LLM) _gather_
 
 Discover lockfiles across npm, yarn and pnpm. Parse the full dependency graph the way the package manager resolves it. Batch-query every dependency against the OSV vulnerability database, with a local SQLite snapshot as fallback that reports its own data age. Walk the project source with the TypeScript compiler API and record every import site, every member call, every alias chain, resolved across files. Extract the blamed symbols from each advisory. Build the case file.
 
-#### II. Investigate and decide (Agentic LLM loop) *judge*
+#### II. Investigate and decide (Agentic LLM loop) _judge_
 
 For each vulnerable package the model receives the case file and a set of tools it can call in a loop. It checks imports, traces function usage, reads source files, fetches changelogs, pulls the full advisory. An evidence gate ensures the model cannot skip a required check; if it tries, the harness runs the check itself. Guard rails bound the verdict by the evidence gathered. The recommended action is derived by rules, never by the model's opinion.
 
-#### III. Act safely (Human approval required) *act*
+#### III. Act safely (Human approval required) _act_
 
 Present findings with risk level, reachability, reasoning and confidence. Research breaking changes from release notes, changelogs, migration guides and public documentation, and verify every quote against its source. Draft code edits that are syntax-checked before being shown. Apply approved patches with a backup and a one-command rollback. Write the complete audit report.
 
@@ -136,7 +135,7 @@ brace-expansion@2.1.0      transitive via minimatch, not imported, 3 CVEs, fix 2
   HIGH       CVE-2026-69152    (GHSA-rgw5-rvv9-x895)   DoS via unbounded expansion          fixed in 2.1.4
 ```
 
-*Fig. 1. Phase one output. Dependency graph parsed, OSV queried, usage evidence located.*
+_Fig. 1. Phase one output. Dependency graph parsed, OSV queried, usage evidence located._
 
 Phase one finishes with a severity table and every advisory grouped by package. Note the line that matters: 2 of 20 vulnerable packages are actually imported. Eighteen of them are transitive dependencies the project never touches directly. A conventional scanner would report all twenty with equal urgency.
 
@@ -189,7 +188,7 @@ agent Checking the changelog of sharp 0.34.5 to 0.35.4...
     Investigating sharp@0.34.5 (2 of 20), reconnaissance, 2 CVEs, 21s
 ```
 
-*Fig. 2. Phase two. Per-CVE verdicts with reasoning, confidence and cached results.*
+_Fig. 2. Phase two. Per-CVE verdicts with reasoning, confidence and cached results._
 
 Each verdict states the reasoning in plain English: the vulnerable function is not called, the package is not fed untrusted input, the risk is Low and the recommendation is monitor rather than upgrade. Verdicts are cached against the model, the prompt version and a hash of the usage evidence, so a re-scan of unchanged code costs milliseconds. The checklist at the bottom of the terminal tracks all three phases live.
 
@@ -199,15 +198,15 @@ Each verdict states the reasoning in plain English: the vulnerable function is n
 
 ### Against existing tools
 
-| | npm audit | Dependabot | Snyk | **PatchPilot** |
-|---|---|---|---|---|
-| Reachability analysis | No | No | Enterprise | **Yes** |
-| Plain-English reasoning | No | No | No | **Yes** |
-| Breaking change research | No | No | No | **Yes** |
-| Source code patches | No | No | No | **Yes** |
-| Runs locally or offline | Yes | GitHub only | Cloud | **Yes** |
-| Audit trail | No | PR history | Dashboard | **Full JSONL** |
-| Cost at scale | Free | Free | Paid | **Free** |
+|                          | npm audit | Dependabot  | Snyk       | **PatchPilot** |
+| ------------------------ | --------- | ----------- | ---------- | -------------- |
+| Reachability analysis    | No        | No          | Enterprise | **Yes**        |
+| Plain-English reasoning  | No        | No          | No         | **Yes**        |
+| Breaking change research | No        | No          | No         | **Yes**        |
+| Source code patches      | No        | No          | No         | **Yes**        |
+| Runs locally or offline  | Yes       | GitHub only | Cloud      | **Yes**        |
+| Audit trail              | No        | PR history  | Dashboard  | **Full JSONL** |
+| Cost at scale            | Free      | Free        | Paid       | **Free**       |
 
 ---
 
@@ -229,15 +228,15 @@ A general coding agent can do this if you prompt it correctly. PatchPilot is an 
 
 ### Tech stack
 
-| Component | Technology |
-|---|---|
-| Runtime | Node.js and TypeScript, ES modules |
-| CLI | Commander.js and Chalk |
-| Model | Ollama, local-first. qwen3:8b by default, mistral:7b as the lighter option |
-| CVE data | OSV.dev API, with a SQLite cache and offline snapshot |
-| Code analysis | TypeScript Compiler API. A real syntax tree with cross-file resolution |
-| Lockfiles | npm v1 to v3, yarn 1 and 2+, pnpm v6 and v9 |
-| Tests | 900+ tests, no GPU or network required |
+| Component     | Technology                                                                 |
+| ------------- | -------------------------------------------------------------------------- |
+| Runtime       | Node.js and TypeScript, ES modules                                         |
+| CLI           | Commander.js and Chalk                                                     |
+| Model         | Ollama, local-first. qwen3:8b by default, mistral:7b as the lighter option |
+| CVE data      | OSV.dev API, with a SQLite cache and offline snapshot                      |
+| Code analysis | TypeScript Compiler API. A real syntax tree with cross-file resolution     |
+| Lockfiles     | npm v1 to v3, yarn 1 and 2+, pnpm v6 and v9                                |
+| Tests         | 900+ tests, no GPU or network required                                     |
 
 ---
 
@@ -261,7 +260,7 @@ The AI is the engine, not the product. The product is a security workflow that p
 
 ---
 
-INTI International University · Track 1, Defence agents · hackai.my · *Think agents. Build impact.*
+INTI International University · Track 1, Defence agents · hackai.my · _Think agents. Build impact._
 
 ## License
 
