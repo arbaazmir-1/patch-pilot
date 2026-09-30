@@ -1,0 +1,16 @@
+{
+  "name": "unused-dependency",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Intentionally vulnerable PatchPilot demo: node-fetch is installed but never imported; the app uses only Node built-ins.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "node-fetch": "2.6.0"
+  }
+}

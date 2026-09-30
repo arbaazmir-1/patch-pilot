@@ -1,0 +1,16 @@
+{
+  "name": "reachable-template",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Intentionally vulnerable PatchPilot demo: lodash _.template renders a template taken from the request query string.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "lodash": "4.17.20"
+  }
+}

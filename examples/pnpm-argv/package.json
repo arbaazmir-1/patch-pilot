@@ -1,0 +1,17 @@
+{
+  "name": "pnpm-argv",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Intentionally vulnerable PatchPilot demo: a pnpm-managed CLI that parses process.argv with a minimist version vulnerable to prototype pollution.",
+  "main": "src/cli.js",
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "start": "node src/cli.js --name Ada --shout"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "minimist": "1.2.5"
+  }
+}

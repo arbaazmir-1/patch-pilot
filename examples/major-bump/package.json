@@ -1,0 +1,16 @@
+{
+  "name": "major-bump",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Intentionally vulnerable PatchPilot demo: an old marked called through its pre-v4 default export, so the fix needs a major upgrade and a code change.",
+  "main": "src/render.js",
+  "scripts": {
+    "start": "node src/render.js README.md"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "marked": "1.2.9"
+  }
+}
