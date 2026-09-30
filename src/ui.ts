@@ -375,9 +375,13 @@ export function formatDuration(ms: number): string {
   if (!Number.isFinite(ms) || ms < 0) return '?';
   if (ms < 1000) return `${Math.round(ms)} ms`;
   if (ms < 60_000) return `${(ms / 1000).toFixed(1)} s`;
-  const minutes = Math.floor(ms / 60_000);
-  const seconds = Math.round((ms % 60_000) / 1000);
-  return `${minutes} min ${seconds} s`;
+  const totalSeconds = Math.round(ms / 1000);
+  const days = Math.floor(totalSeconds / 86_400);
+  const hours = Math.floor((totalSeconds % 86_400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  if (days > 0) return hours > 0 ? `${days} d ${hours} h` : `${days} d`;
+  if (hours > 0) return minutes > 0 ? `${hours} h ${minutes} min` : `${hours} h`;
+  return `${minutes} min ${totalSeconds % 60} s`;
 }
 
 // "850ms", "12s", "4m 12s", "1h 5m"

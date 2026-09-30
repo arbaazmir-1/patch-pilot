@@ -337,6 +337,11 @@ describe('ui helpers', () => {
     assert.equal(truncateLine('abcdefghijkl', 6), 'abcde…');
     assert.equal(formatDuration(850), '850 ms');
     assert.equal(formatDuration(12_340), '12.3 s');
+    assert.equal(formatDuration(4 * 60_000 + 12_000), '4 min 12 s');
+    assert.equal(formatDuration(482 * 60_000 + 22_000), '8 h 2 min');
+    assert.equal(formatDuration(3 * 3_600_000), '3 h');
+    assert.equal(formatDuration(26 * 3_600_000 + 5 * 60_000), '1 d 2 h');
+    assert.equal(formatDuration(59 * 60_000 + 59_600), '1 h');
     assert.equal(formatElapsed(850), '850ms');
     assert.equal(formatElapsed(12_400), '12s');
     assert.equal(formatElapsed(252_000), '4m 12s');
