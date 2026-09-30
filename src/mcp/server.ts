@@ -42,26 +42,33 @@ async function guarded(work: () => Promise<McpToolOutput>): Promise<CallToolResu
 
 const readOnly = { readOnlyHint: true, destructiveHint: false, openWorldHint: false } as const;
 
-const verdictShape = z
-  .object({
+// zod 4 drops additionalProperties for stripping objects; keep the zod 3 wire schema
+function closedObject<Shape extends z.ZodRawShape>(shape: Shape, description?: string) {
+  return z.object(shape).meta(description ? { description, additionalProperties: false } : { additionalProperties: false });
+}
+
+const verdictShape = closedObject(
+  {
     risk: z.enum(['Critical', 'High', 'Medium', 'Low', 'Noise']).describe('Contextual risk for THIS project (see the rubric in get_case)'),
     reachable: z.enum(['yes', 'likely', 'unlikely', 'no', 'unknown']).describe('Is the blamed code reachable from the project?'),
     confidence: z.number().describe('0 to 1'),
     reasoning: z.string().describe('One or two sentences naming the decisive fact'),
     evidence: z.array(z.string()).describe('file:line facts and tool findings'),
     recommendationAction: z.enum(['upgrade', 'upgrade_major', 'update_transitive', 'override', 'remove', 'ignore', 'monitor']).describe('Your suggestion (PatchPilot derives the final action by rule)'),
-  })
-  .describe('The verdict');
+  },
+  'The verdict',
+);
 
-const dossierShape = z
-  .object({
+const dossierShape = closedObject(
+  {
     inputSources: z.array(z.string()).describe('Where the data passed to the package comes from, with file:line'),
     callSiteNotes: z.array(z.string()).describe('file:line of each call and what is passed'),
     dependentsSummary: z.string().describe('Direct, transitive or dev-only, and who depends on it'),
     fixCost: z.string().describe('The fix version and whether it is a major bump'),
     openQuestions: z.array(z.string()).describe('What is still unknown'),
-  })
-  .describe('Facts about how the project uses the package (no risk rating)');
+  },
+  'Facts about how the project uses the package (no risk rating)',
+);
 
 // tests use in-memory transport
 export function createMcpServer(session: McpSession): McpServer {
@@ -83,7 +90,7 @@ export function createMcpServer(session: McpSession): McpServer {
     {
       title: 'Get one vulnerability case',
       description: 'The full case for one vulnerability (OSV id or CVE id): advisory details, blamed symbols, how the project uses the package, the evidence PatchPilot requires before it accepts a verdict, the risk rubric and the verdict format.',
-      inputSchema: { vulnId: z.string().describe('OSV id (GHSA-...) or CVE id') },
+      inputSchema: closedObject({ vulnId: z.string().describe('OSV id (GHSA-...) or CVE id') }),
       annotations: readOnly,
     },
     async ({ vulnId }) => guarded(() => session.getCase(vulnId)),
@@ -93,10 +100,10 @@ export function createMcpServer(session: McpSession): McpServer {
     {
       title: 'How the project uses a package',
       description: describe('get_usage', 'Import sites and calls of a package or one of its functions.'),
-      inputSchema: {
+      inputSchema: closedObject({
         package: z.string().describe('npm package name, for example lodash'),
         symbol: z.string().optional().describe('Function or member to look for, for example template'),
-      },
+      }),
       annotations: readOnly,
     },
     async (args) => guarded(() => session.runTool('get_usage', args)),
@@ -106,11 +113,11 @@ export function createMcpServer(session: McpSession): McpServer {
     {
       title: 'Search the project code',
       description: describe('search_code', 'Regular-expression search over the project source.'),
-      inputSchema: {
+      inputSchema: closedObject({
         pattern: z.string().describe('JavaScript regular expression, for example \\bmerge\\('),
         fileGlob: z.string().optional().describe('Only search files matching this glob, for example src/**/*.js'),
         maxResults: z.number().int().optional().describe('Maximum matches to return (default 10, at most 30)'),
-      },
+      }),
       annotations: readOnly,
     },
     async (args) => guarded(() => session.runTool('search_code', args)),
@@ -120,11 +127,11 @@ export function createMcpServer(session: McpSession): McpServer {
     {
       title: 'Read a project file',
       description: describe('read_file', 'Numbered lines from a project file.'),
-      inputSchema: {
+      inputSchema: closedObject({
         path: z.string().describe('Project-relative path, for example src/render.js'),
         startLine: z.number().int().optional().describe('First line to read (1-based)'),
         endLine: z.number().int().optional().describe('Last line to read'),
-      },
+      }),
       annotations: readOnly,
     },
     async (args) => guarded(() => session.runTool('read_file', args)),
@@ -134,7 +141,7 @@ export function createMcpServer(session: McpSession): McpServer {
     {
       title: 'Read an advisory',
       description: describe('get_advisory', 'Full advisory text for one vulnerability id.'),
-      inputSchema: { id: z.string().describe('Vulnerability id, for example GHSA-xvch-5gv4-984h or CVE-2021-44906') },
+      inputSchema: closedObject({ id: z.string().describe('Vulnerability id, for example GHSA-xvch-5gv4-984h or CVE-2021-44906') }),
       annotations: readOnly,
     },
     async (args) => guarded(() => session.runTool('get_advisory', args)),
@@ -144,7 +151,7 @@ export function createMcpServer(session: McpSession): McpServer {
     {
       title: 'Dependency facts',
       description: describe('check_deps', 'Direct or transitive, dev-only, dependents and paths of a package.'),
-      inputSchema: { package: z.string().describe('npm package name, for example decode-uri-component') },
+      inputSchema: closedObject({ package: z.string().describe('npm package name, for example decode-uri-component') }),
       annotations: readOnly,
     },
     async (args) => guarded(() => session.runTool('check_deps', args)),
@@ -154,11 +161,11 @@ export function createMcpServer(session: McpSession): McpServer {
     {
       title: 'Release notes between two versions',
       description: describe('get_changelog', 'Release notes between two versions of a package.'),
-      inputSchema: {
+      inputSchema: closedObject({
         package: z.string().describe('npm package name'),
         fromVersion: z.string().describe('Installed version, for example 0.3.6'),
         toVersion: z.string().describe('Target version, for example 4.0.10'),
-      },
+      }),
       annotations: { ...readOnly, openWorldHint: true },
     },
     async (args) => guarded(() => session.runTool('get_changelog', args)),
@@ -168,7 +175,7 @@ export function createMcpServer(session: McpSession): McpServer {
     {
       title: 'Save a fact dossier',
       description: 'Optional: save the facts about how the project uses a package (input sources, call sites, dependents, fix cost, open questions) before the per-vulnerability verdicts. No risk rating.',
-      inputSchema: { package: z.string().describe('npm package name'), dossier: dossierShape },
+      inputSchema: closedObject({ package: z.string().describe('npm package name'), dossier: dossierShape }),
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     },
     async ({ package: pkg, dossier }) => guarded(() => session.submitDossier(pkg, dossier)),
@@ -178,7 +185,7 @@ export function createMcpServer(session: McpSession): McpServer {
     {
       title: 'Submit a verdict',
       description: `Submit the verdict for one vulnerability. PatchPilot refuses it until the required evidence (see get_case) was collected in this session and names the exact call to make; it checks the verdict against its evidence rules, derives the recommendation, and saves it to .patch-pilot/assessment.json.\nRisk rubric:\n${RISK_RUBRIC}`,
-      inputSchema: { vulnId: z.string().describe('OSV id or CVE id'), verdict: verdictShape },
+      inputSchema: closedObject({ vulnId: z.string().describe('OSV id or CVE id'), verdict: verdictShape }),
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     },
     async ({ vulnId, verdict }) => guarded(() => session.submitVerdict(vulnId, verdict)),
