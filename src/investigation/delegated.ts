@@ -18,7 +18,7 @@ import { MCP_PROMPT_VERSION, MCP_TOOL_NAMES, type SessionLogEntry } from '../mcp
 import type { Assessment, AuditSink, CaseFile, Config, JsonSchema, PackageCase, Verdict, VulnCase } from '../types.ts';
 import type { Spinner, Ui } from '../ui.ts';
 import { EnvironmentError, errorMessage } from '../util/errors.ts';
-import { forcedVerdict, recommendationText, selectPackages } from './agent.ts';
+import { alignAssessment, forcedVerdict, recommendationText, selectPackages } from './agent.ts';
 import { caseFileHash, createAssessment, findVerdict, loadAssessment, saveAssessment, upsertVerdict } from './assessment.ts';
 import { clip, dependencyText, displayVulnId, severityText } from './prompts.ts';
 import { createToolRegistry, type ToolRegistry } from './tools/index.ts';
@@ -478,7 +478,7 @@ export async function runPhase2Delegated(caseFile: CaseFile, config: Config, dep
     if (err instanceof EnvironmentError || err instanceof LlmError) throw err;
     throw new EnvironmentError(`The Codex investigation failed: ${errorMessage(err)}`, { hint: `Docs: ${CODEX_DOCS}`, cause: err });
   }
-  assessment = { ...assessment, complete: true, updatedAt: new Date().toISOString() };
+  assessment = { ...alignAssessment(caseFile, assessment, config.ignore), complete: true, updatedAt: new Date().toISOString() };
   await saveAssessment(file, assessment);
   const tokens = usageTotals.inputTokens + usageTotals.outputTokens;
   if (tokens > 0) {

@@ -1,18 +1,22 @@
 import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
 import {
+  alignAssessment,
+  alignRecommendation,
   applyRails,
   cleanProse,
   deriveRecommendation,
   evidenceRequirements,
   forcedVerdict,
+  packageFixFor,
   parseDossierOutput,
   parseVerdictOutput,
   recommendationText,
   selectPackages,
 } from '../../src/investigation/agent.ts';
-import type { Config, VerdictModelOutput } from '../../src/types.ts';
-import { caseFileOf, decodeFixture, lodashFixture, markedFixture, markedParseFixture, minimistFixture, semverFixture, tempDir, testConfig } from './helpers.ts';
+import { createAssessment, upsertVerdict } from '../../src/investigation/assessment.ts';
+import type { Config, Verdict, VerdictModelOutput } from '../../src/types.ts';
+import { caseFileOf, decodeFixture, lodashFixture, markedFixture, markedParseFixture, markedThreeFixture, minimistFixture, semverFixture, tempDir, testConfig } from './helpers.ts';
 
 const META = { provider: 'mock' as const, model: 'mock', promptVersion: 'p1' };
 
@@ -257,6 +261,70 @@ describe('recommendation', () => {
     assert.equal(recommendationText({ action: 'upgrade', targetVersion: '4.17.21', majorBump: false }), 'bump to 4.17.21');
     assert.equal(recommendationText({ action: 'upgrade_major', targetVersion: '4.0.10', majorBump: true }), 'upgrade to 4.0.10 (major)');
     assert.equal(recommendationText({ action: 'ignore', targetVersion: null, majorBump: false }), 'ignore');
+  });
+});
+
+describe('package-level fix', () => {
+  const marked = markedThreeFixture();
+  const caseFile = caseFileOf([marked.pkg], marked.vulns);
+  const verdictOf = (vuln: (typeof marked.vulns)[number]): Verdict => ({
+    vulnId: vuln.id,
+    package: 'marked',
+    installedVersion: '1.2.9',
+    risk: 'Critical',
+    reachable: 'yes',
+    confidence: 0.9,
+    reasoning: 'r',
+    evidence: [],
+    recommendation: deriveRecommendation(marked.pkg, vuln, 'upgrade_major', { risk: 'Critical' }),
+    investigation: { ...META, steps: 1, toolCalls: [], durationMs: 0, forced: false },
+  });
+  const assessmentOf = () => marked.vulns.reduce((a, v) => upsertVerdict(a, verdictOf(v)), createAssessment(caseFile, META));
+
+  it('picks the version that clears every cve of the package, for each of them', () => {
+    for (const vuln of marked.vulns) assert.deepEqual(packageFixFor(vuln, marked.vulns, '1.2.9', caseFile), { version: '4.0.10', majorBump: true }, vuln.id);
+    assert.deepEqual(packageFixFor(marked.fixedIn2, [marked.fixedIn2], '1.2.9', caseFile), { version: '2.0.0', majorBump: true }, 'alone, its own fix');
+    assert.equal(packageFixFor({ ...marked.fixedIn2, malware: true }, marked.vulns, '1.2.9', caseFile), null);
+  });
+
+  it('keeps the own fix when the package target does not clear the cve', () => {
+    // 4.0.10 regresses it, so the plan leaves it open
+    const regressed = { ...marked.fixedIn2, ranges: [...marked.fixedIn2.ranges, { type: 'SEMVER' as const, events: [{ introduced: '3.0.0' }] }] };
+    const fixedIn4 = marked.fixedIn4[0]!;
+    assert.equal(packageFixFor(regressed, [fixedIn4, regressed], '1.2.9', caseFile), null);
+  });
+
+  it('recommends the package target and says where this cve alone is fixed', () => {
+    const fix = packageFixFor(marked.fixedIn2, marked.vulns, '1.2.9', caseFile);
+    const rec = deriveRecommendation(marked.pkg, marked.fixedIn2, 'upgrade_major', { risk: 'Critical', packageFix: fix });
+    assert.deepEqual(rec, { action: 'upgrade_major', targetVersion: '4.0.10', majorBump: true, fixedIn: '2.0.0', notes: 'Major version bump to 4.0.10: breaking changes are expected.' });
+    assert.equal(recommendationText(rec), 'upgrade to 4.0.10 (major); this CVE alone is fixed in 2.0.0');
+    const same = deriveRecommendation(marked.pkg, marked.fixedIn4[0]!, 'upgrade_major', { risk: 'Critical', packageFix: fix });
+    assert.equal(same.fixedIn, undefined, 'no note when the own fix is the package fix');
+    assert.equal(recommendationText(same), 'upgrade to 4.0.10 (major)');
+  });
+
+  it('aligns every verdict of an assessment with the package action, and is a no-op once aligned', () => {
+    const before = assessmentOf();
+    assert.deepEqual(before.verdicts.map((v) => v.recommendation.targetVersion).sort(), ['2.0.0', '4.0.10', '4.0.10'], 'the bug: one card said 2.0.0');
+    const aligned = alignAssessment(caseFile, before, []);
+    assert.deepEqual(aligned.verdicts.map((v) => v.recommendation.targetVersion), ['4.0.10', '4.0.10', '4.0.10']);
+    assert.equal(aligned.verdicts.find((v) => v.vulnId === marked.fixedIn2.id)?.recommendation.fixedIn, '2.0.0');
+    assert.equal(alignAssessment(caseFile, aligned, []), aligned);
+  });
+
+  it('follows accepted risks: with the 4.0.10 cves accepted, the plan and the card go back to 2.0.0', () => {
+    const aligned = alignAssessment(caseFile, assessmentOf(), []);
+    const ignore = marked.fixedIn4.map((v) => ({ id: v.id, reason: 'accepted', by: 'Test <t@example.com>', createdAt: '2026-09-01' }));
+    const back = alignAssessment(caseFile, aligned, ignore).verdicts.find((v) => v.vulnId === marked.fixedIn2.id);
+    assert.equal(back?.recommendation.targetVersion, '2.0.0');
+    assert.equal(back?.recommendation.fixedIn, undefined);
+  });
+
+  it('realigns a cached verdict from a wider run', () => {
+    const wide = alignAssessment(caseFile, assessmentOf(), []).verdicts.find((v) => v.vulnId === marked.fixedIn2.id)!;
+    const narrow = alignRecommendation(wide, marked.pkg, marked.fixedIn2, packageFixFor(marked.fixedIn2, [marked.fixedIn2], '1.2.9', caseFile));
+    assert.deepEqual(narrow.recommendation, { action: 'upgrade_major', targetVersion: '2.0.0', majorBump: true, notes: 'Major version bump to 2.0.0: breaking changes are expected.' });
   });
 });
 

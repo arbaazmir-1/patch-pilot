@@ -4,8 +4,11 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import { MemoryAudit } from '../../src/audit.ts';
+import { deriveRecommendation } from '../../src/investigation/agent.ts';
+import { createAssessment, upsertVerdict } from '../../src/investigation/assessment.ts';
 import { buildReportJson, renderReportMarkdown, sessionRecords, writeReports } from '../../src/remediation/report.ts';
 import type { AuditEvent, AuditRecord, Config } from '../../src/types.ts';
+import { caseFileOf, markedThreeFixture } from '../investigation/helpers.ts';
 import { captureUi, IDENTITY, loadFixtures, projectConfig } from './patch-helpers.ts';
 
 let dir: string;
@@ -132,6 +135,39 @@ describe('writeReports', () => {
     assert.equal(json.findings.length, 13);
     assert.ok(md.includes(json.generatedAt), 'both files come from one model');
     assert.deepEqual(audit.events('report.written').map((e) => [e.md, e.json]), [['.patch-pilot/report.md', '.patch-pilot/report.json']]);
+  });
+
+  it('report.md and report.json show the package target for every cve of a package, not each cve alone', async () => {
+    const marked = markedThreeFixture();
+    const caseFile = caseFileOf([marked.pkg], marked.vulns, dir);
+    const meta = { provider: 'mock' as const, model: 'mock', promptVersion: 'p1' };
+    // saved before the fix: each cve had its own target
+    const assessment = marked.vulns.reduce(
+      (a, vuln) =>
+        upsertVerdict(a, {
+          vulnId: vuln.id,
+          package: 'marked',
+          installedVersion: '1.2.9',
+          risk: 'Critical',
+          reachable: 'yes',
+          confidence: 0.5,
+          reasoning: 'r',
+          evidence: [],
+          recommendation: deriveRecommendation(marked.pkg, vuln, 'upgrade_major', { risk: 'Critical' }),
+          investigation: { ...meta, steps: 1, toolCalls: [], durationMs: 0, forced: false },
+        }),
+      createAssessment(caseFile, meta),
+    );
+    const { ui } = captureUi();
+    const written = await writeReports(config, { ui, audit: new MemoryAudit(), caseFile, assessment });
+    const json = JSON.parse(await readFile(written.json, 'utf8')) as { findings: { vulnId: string; recommendation: { targetVersion: string; fixedIn?: string; text: string } }[] };
+    assert.deepEqual(json.findings.map((f) => f.recommendation.targetVersion), ['4.0.10', '4.0.10', '4.0.10']);
+    const lone = json.findings.find((f) => f.vulnId === marked.fixedIn2.id)?.recommendation;
+    assert.equal(lone?.fixedIn, '2.0.0');
+    assert.equal(lone?.text, 'upgrade to 4.0.10 (major); this CVE alone is fixed in 2.0.0');
+    const md = await readFile(written.md, 'utf8');
+    for (const f of json.findings) assert.ok(md.includes(`| ${f.recommendation.text} |`), `md table matches json for ${f.vulnId}`);
+    assert.doesNotMatch(md, /upgrade to 2\.0\.0/);
   });
 
   it('says there is nothing to report before a scan', async () => {

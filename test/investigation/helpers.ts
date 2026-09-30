@@ -272,6 +272,34 @@ export function markedParseFixture(): { pkg: PackageCase; vuln: VulnCase } {
   };
 }
 
+// marked 1.2.9: two cves fixed in 4.0.10, one already in 2.0.0
+export function markedThreeFixture(): { pkg: PackageCase; fixedIn4: VulnCase[]; fixedIn2: VulnCase; vulns: VulnCase[] } {
+  const upTo = (fixed: string, introduced = '0') => [{ type: 'SEMVER' as const, events: [{ introduced }, { fixed }] }];
+  const base = { package: 'marked', installedVersion: '1.2.9', blamedSymbols: [{ name: 'marked', kind: 'exported' as const, via: 'default-callable' as const }] };
+  const fixedIn4 = [
+    vulnCase({ ...base, id: 'GHSA-5v2h-r2cx-5xgj', aliases: ['CVE-2022-21681'], affectedRange: '<4.0.10', ranges: upTo('4.0.10'), fixedVersions: ['4.0.10'], recommendedFix: { version: '4.0.10', majorBump: true } }),
+    vulnCase({ ...base, id: 'GHSA-rrrm-qjm4-v8hf', aliases: ['CVE-2022-21680'], affectedRange: '<4.0.10', ranges: upTo('4.0.10'), fixedVersions: ['4.0.10'], recommendedFix: { version: '4.0.10', majorBump: true } }),
+  ];
+  const fixedIn2 = vulnCase({
+    ...base,
+    id: 'GHSA-4r62-v4vq-hr96',
+    aliases: ['CVE-2021-21306'],
+    severity: { ghsa: 'MODERATE', cvssScore: 5.3 },
+    affectedRange: '>=1.1.1 <2.0.0',
+    ranges: upTo('2.0.0', '1.1.1'),
+    fixedVersions: ['2.0.0'],
+    recommendedFix: { version: '2.0.0', majorBump: true },
+  });
+  const vulns = [...fixedIn4, fixedIn2];
+  const pkg = pkgCase({
+    name: 'marked',
+    version: '1.2.9',
+    vulnIds: vulns.map((v) => v.id),
+    usage: usage({ package: 'marked', files: [site('src/render.js', 1, "const marked = require('marked');", 'marked')], bindingCalls: 1 }),
+  });
+  return { pkg, fixedIn4, fixedIn2, vulns };
+}
+
 export function caseFileOf(packages: PackageCase[], vulns: VulnCase[], root = '/tmp/project', records: Record<string, OsvRecord> = {}): CaseFile {
   return {
     version: 1,

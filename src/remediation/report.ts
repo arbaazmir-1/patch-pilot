@@ -3,7 +3,7 @@ import { readAuditFile } from '../audit.ts';
 import { findIgnore, readIgnoreEntries } from '../config.ts';
 import { loadCaseFile, formatVulnSource, severityLabel } from '../evidence/casefile.ts';
 import { loadAssessment } from '../investigation/assessment.ts';
-import { recommendationText } from '../investigation/agent.ts';
+import { alignAssessment, recommendationText } from '../investigation/agent.ts';
 import { displayVulnId } from '../investigation/prompts.ts';
 import type {
   Action,
@@ -486,8 +486,8 @@ export async function writeReports(
   deps: { ui: Ui; audit: AuditSink; phase3?: Phase3Result | null; caseFile?: CaseFile | null; assessment?: Assessment | null },
 ): Promise<{ md: string; json: string }> {
   const caseFile = deps.caseFile !== undefined ? deps.caseFile : await loadCaseFile(config.paths.caseFile);
-  const assessment = deps.assessment !== undefined ? deps.assessment : await loadAssessment(config.paths.assessmentFile);
-  if (!caseFile && !assessment) {
+  const loaded = deps.assessment !== undefined ? deps.assessment : await loadAssessment(config.paths.assessmentFile);
+  if (!caseFile && !loaded) {
     throw new PatchPilotError(`Nothing to report yet: no case file or assessment in ${relativePosix(config.projectRoot, config.paths.stateDir) || config.paths.stateDir}`, {
       exitCode: EXIT.USAGE,
       hint: 'Run `patch-pilot scan` first.',
@@ -499,6 +499,8 @@ export async function writeReports(
   } catch {
     // keep loaded entries if the file broke
   }
+  // same targets as the planned actions
+  const assessment = caseFile && loaded ? alignAssessment(caseFile, loaded, ignore) : loaded;
   const input: ReportInput = { config: { ...config, ignore }, caseFile, assessment, audit: auditRecordsOf(deps.audit, config), phase3: deps.phase3 ?? null };
   const json = buildReportJson(input);
   const md = markdownFromModel(json);

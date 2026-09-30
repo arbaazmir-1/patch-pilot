@@ -1,7 +1,7 @@
 // recon, per-cve verdicts, evidence gate, rails
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { riskRank } from '../config.ts';
+import { findIgnore, riskRank } from '../config.ts';
 import { LlmError } from '../llm/errors.ts';
 import type { ChatProvider } from '../llm/provider.ts';
 import { extractJsonObject, parseTextToolCalls, stripJsonBlocks, unwrapRawArguments } from '../llm/textToolCalls.ts';
@@ -45,7 +45,8 @@ import type {
 } from '../types.ts';
 import { formatArgs, type Card, type Spinner, type Ui } from '../ui.ts';
 import { errorMessage, isNotImplemented } from '../util/errors.ts';
-import { compareVersions, satisfiesRange } from '../util/semver.ts';
+import { chooseTarget, vulnAffects } from '../remediation/target.ts';
+import { compareVersions, isMajorBump, satisfiesRange } from '../util/semver.ts';
 import { createAssessment, caseFileHash, loadAssessment, saveAssessment, upsertDossier, upsertVerdict } from './assessment.ts';
 import {
   budgetSpentNote,
@@ -430,9 +431,10 @@ export function deriveRecommendation(
   pkg: PackageCase,
   vuln: VulnCase,
   modelAction: RecommendationAction,
-  options: { graph?: DependencyGraph | null; breakingChanges?: string[]; risk?: RiskLevel } = {},
+  options: { graph?: DependencyGraph | null; breakingChanges?: string[]; risk?: RiskLevel; packageFix?: PackageFix | null } = {},
 ): Recommendation {
-  const fix = vuln.recommendedFix;
+  const own = vuln.recommendedFix ?? null;
+  const fix = options.packageFix ?? own;
   const targetVersion = fix?.version ?? null;
   const majorBump = fix?.majorBump ?? false;
   const risk = options.risk ?? 'High';
@@ -458,15 +460,84 @@ export function deriveRecommendation(
     action = 'monitor';
     notes.push(`Major upgrade to ${targetVersion} available.`);
   }
-  if (fix?.skippedDeprecated?.length) notes.push(`Skips deprecated ${fix.skippedDeprecated.join(', ')}.`);
+  if (fix === own && own?.skippedDeprecated?.length) notes.push(`Skips deprecated ${own.skippedDeprecated.join(', ')}.`);
   const rec: Recommendation = { action, targetVersion, majorBump };
+  if (own && targetVersion && own.version !== targetVersion) rec.fixedIn = own.version;
   if (options.breakingChanges && options.breakingChanges.length > 0) rec.breakingChanges = options.breakingChanges.slice(0, 8);
   if (notes.length > 0) rec.notes = notes.join(' ');
   return rec;
 }
 
+export interface PackageFix {
+  version: string;
+  majorBump: boolean;
+}
+
+// target the package action picks, if it clears this cve
+export function packageFixFor(vuln: VulnCase, packageVulns: readonly VulnCase[], installed: string, caseFile?: CaseFile | null): PackageFix | null {
+  if (vuln.malware) return null;
+  const choice = chooseTarget(packageVulns, installed, caseFile);
+  if (!choice || vulnAffects(vuln, choice.version, caseFile)) return null;
+  return { version: choice.version, majorBump: isMajorBump(installed, choice.version) };
+}
+
+// per-cve target follows the package fix
+export function alignRecommendation(
+  verdict: Verdict,
+  pkg: PackageCase,
+  vuln: VulnCase,
+  packageFix: PackageFix | null,
+  options: { graph?: DependencyGraph | null; modelAction?: RecommendationAction } = {},
+): Verdict {
+  const own = vuln.recommendedFix?.version ?? null;
+  const want = packageFix?.version ?? own;
+  const fixedIn = own && want && own !== want ? own : undefined;
+  const rec = verdict.recommendation;
+  if (rec.targetVersion === want && rec.fixedIn === fixedIn) return verdict;
+  const next = deriveRecommendation(pkg, vuln, options.modelAction ?? rec.action, {
+    risk: verdict.risk,
+    packageFix,
+    ...(options.graph !== undefined ? { graph: options.graph } : {}),
+    ...(rec.breakingChanges ? { breakingChanges: rec.breakingChanges } : {}),
+  });
+  return { ...verdict, recommendation: next };
+}
+
+function isAccepted(config: Pick<Config, 'ignore'>, vuln: VulnCase, now: Date = new Date()): boolean {
+  const hit = findIgnore(config.ignore, vuln.id, vuln.package, [...vuln.aliases, ...vuln.mergedIds], now);
+  return hit !== null && !hit.expired;
+}
+
+// same vuln set as planActions
+function packageVulnsOf(caseFile: CaseFile, pkg: PackageCase, verdicts: readonly Verdict[], ignore: Config['ignore'], now: Date): VulnCase[] {
+  return caseFile.vulnerabilities.filter((v) => {
+    if (v.package !== pkg.name || v.installedVersion !== pkg.version || v.malware || isAccepted({ ignore }, v, now)) return false;
+    return verdicts.some((x) => x.vulnId === v.id && x.package === pkg.name && x.installedVersion === pkg.version);
+  });
+}
+
+// every verdict's target matches its package action
+export function alignAssessment(caseFile: CaseFile, assessment: Assessment, ignore: Config['ignore'], graph?: DependencyGraph | null, now: Date = new Date()): Assessment {
+  let changed = false;
+  const verdicts = assessment.verdicts.map((verdict) => {
+    const pkg = caseFile.packages.find((p) => p.name === verdict.package && p.version === verdict.installedVersion);
+    const vuln = caseFile.vulnerabilities.find((v) => v.id === verdict.vulnId && v.package === verdict.package && v.installedVersion === verdict.installedVersion);
+    if (!pkg || !vuln) return verdict;
+    const fix = packageFixFor(vuln, packageVulnsOf(caseFile, pkg, assessment.verdicts, ignore, now), pkg.version, caseFile);
+    const next = alignRecommendation(verdict, pkg, vuln, fix, graph !== undefined ? { graph } : {});
+    if (next !== verdict) changed = true;
+    return next;
+  });
+  return changed ? { ...assessment, verdicts } : assessment;
+}
+
 // card text: "bump to 4.17.21", "upgrade to 4.0.10 (major)", "ignore"
 export function recommendationText(rec: Recommendation): string {
+  const text = actionText(rec);
+  return rec.fixedIn && rec.targetVersion && rec.action !== 'monitor' && rec.action !== 'ignore' ? `${text}; this CVE alone is fixed in ${rec.fixedIn}` : text;
+}
+
+function actionText(rec: Recommendation): string {
   const to = rec.targetVersion;
   switch (rec.action) {
     case 'upgrade':
@@ -1435,7 +1506,7 @@ function firstSentence(text: string): string {
   return clip(first.length >= 20 ? first : sentences(text, 2), 260) || 'No reasoning given.';
 }
 
-async function verdictLoop(run: Run, pkg: PackageCase, vuln: VulnCase, dossier: Dossier): Promise<Verdict> {
+async function verdictLoop(run: Run, pkg: PackageCase, vuln: VulnCase, dossier: Dossier, packageFix: PackageFix | null = null): Promise<Verdict> {
   const card = run.ui.card(null);
   card.title(displayVulnId(vuln), `${pkg.name}@${pkg.version}`, scoreText(vuln));
   const trace = cardTrace(card, run.ui);
@@ -1520,6 +1591,7 @@ async function verdictLoop(run: Run, pkg: PackageCase, vuln: VulnCase, dossier: 
       investigation,
     };
   }
+  verdict = alignRecommendation(verdict, pkg, vuln, packageFix, { graph: run.graph, ...(modelAction ? { modelAction } : {}) });
   if (gate.fired || gate.coached || gate.harnessCalls.length > 0) verdict.investigation.gate = { ...gate };
   const analysis = [loop.lastProse ? clip(loop.lastProse, 2000) : null, modelAction ? `Model recommendation: ${modelAction}` : null].filter(Boolean).join('\n');
   if (analysis) verdict.investigation.analysis = analysis;
@@ -1673,14 +1745,18 @@ export async function runPhase2(caseFile: CaseFile, config: Config, deps: Phase2
       run.ui.status.set({ activity });
       if (!run.ui.status.active) run.ui.activity(`${activity}...`);
       const pending: VulnCase[] = [];
+      // what planActions will pick for this package
+      const fixVulns = vulns.filter((v) => !v.malware && !isAccepted(config, v));
+      const fixFor = (vuln: VulnCase): PackageFix | null => packageFixFor(vuln, fixVulns, pkg.version, caseFile);
       for (const vuln of vulns) {
         if (done.has(verdictId(vuln.id, pkg.name, vuln.installedVersion || pkg.version))) continue;
         const hit = cache.lookup(pkg, vuln);
         if (hit) {
           onCve(vuln);
-          cachedCard(run, pkg, vuln, hit.verdict);
-          run.audit.log({ event: 'verdict.cached', vulnId: vuln.id, package: pkg.name, risk: hit.verdict.risk, key: hit.key });
-          assessment = upsertVerdict(assessment, hit.verdict);
+          const cached = alignRecommendation(hit.verdict, pkg, vuln, fixFor(vuln), { graph: run.graph });
+          cachedCard(run, pkg, vuln, cached);
+          run.audit.log({ event: 'verdict.cached', vulnId: vuln.id, package: pkg.name, risk: cached.risk, key: hit.key });
+          assessment = upsertVerdict(assessment, cached);
           await save();
           continue;
         }
@@ -1696,7 +1772,7 @@ export async function runPhase2(caseFile: CaseFile, config: Config, deps: Phase2
       }
       for (const vuln of pending) {
         onCve(vuln);
-        const verdict = await verdictLoop(run, pkg, vuln, dossier);
+        const verdict = await verdictLoop(run, pkg, vuln, dossier, fixFor(vuln));
         assessment = upsertVerdict(assessment, verdict);
         await save();
         if (!verdict.investigation.forced) await cache.store(pkg, vuln, verdict);
@@ -1706,7 +1782,8 @@ export async function runPhase2(caseFile: CaseFile, config: Config, deps: Phase2
     await save().catch(() => {});
     throw err;
   }
-  assessment = { ...assessment, complete: true, updatedAt: new Date().toISOString() };
+  // resumed verdicts too
+  assessment = { ...alignAssessment(caseFile, assessment, config.ignore, graph), complete: true, updatedAt: new Date().toISOString() };
   await save();
   run.ui.footer({ model: run.meta.model, numCtx: config.numCtx, packages: selected.length, cves: totalCves, elapsedMs: now() - started });
   return assessment;

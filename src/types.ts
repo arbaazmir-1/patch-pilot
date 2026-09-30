@@ -556,6 +556,8 @@ export interface Recommendation {
   // from recommendedFix, not the model
   targetVersion: string | null;
   majorBump: boolean;
+  // this cve's own fix, when the package fix is higher
+  fixedIn?: string;
   // from get_changelog
   breakingChanges?: string[];
   notes?: string;

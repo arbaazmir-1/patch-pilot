@@ -14,6 +14,7 @@ import { npmAlias, splitAt } from '../evidence/lockfiles/index.ts';
 import { pnpmStorePath } from '../evidence/lockfiles/pnpm.ts';
 import { removeYarnClassicRequests } from '../evidence/lockfiles/yarn.ts';
 import { getPackument } from '../evidence/registry.ts';
+import { alignAssessment } from '../investigation/agent.ts';
 import { caseFileHash } from '../investigation/assessment.ts';
 import { displayVulnId } from '../investigation/prompts.ts';
 import { createToolRegistry } from '../investigation/tools/index.ts';
@@ -55,12 +56,15 @@ import { EnvironmentError, errorMessage, EXIT, isNotImplemented, isPromptCancell
 import { atomicWrite, detectEol, readJsonIfExists, relativePosix, resolveInside, sha256, toPosix, updateJsonFile, writeJsonAtomic } from '../util/fs.ts';
 import { npmInvocation } from '../util/npm.ts';
 import { run, type RunOptions, type RunResult } from '../util/proc.ts';
-import { compareVersions, isAffected, isAffectedByEntry, isMajorBump, isSameLine, parseVersion, satisfiesRange, specStyle } from '../util/semver.ts';
+import { compareVersions, isMajorBump, satisfiesRange, specStyle } from '../util/semver.ts';
 import { checkSyntax, proposeCodemod, writePatches } from './codemod.ts';
+import { chooseTarget, vulnAffects } from './target.ts';
 import { manualChecklist, renderBrief, researchMigration } from './migration.ts';
 import { canPrompt, defaultPromptAdapter, logApproval, runApprovalGate, type PromptAdapter } from './approve.ts';
 import { actionLabel, presentActions, presentFindings, renderLockfileChanges } from './present.ts';
 import { writeReports } from './report.ts';
+
+export { chooseTarget, vulnAffects, type TargetChoice } from './target.ts';
 
 export { npmInvocation } from '../util/npm.ts';
 
@@ -159,16 +163,6 @@ function pairKey(name: string, version: string): string {
   return `${name}@${version}`;
 }
 
-// falls back to osv version lists
-export function vulnAffects(vuln: VulnCase, version: string, caseFile?: CaseFile | null): boolean {
-  if (vuln.ranges.length > 0) return isAffected(version, vuln.ranges);
-  const entries = [vuln.id, ...vuln.mergedIds].flatMap((id) =>
-    (caseFile?.osvRecords?.[id]?.affected ?? []).filter((a) => a.package?.name === vuln.package && (a.package.ecosystem ?? '').toLowerCase() === 'npm'),
-  );
-  if (entries.length === 0) return version === vuln.installedVersion;
-  return entries.some((entry) => isAffectedByEntry(version, entry));
-}
-
 // project-relative posix path
 export function lockfileRelPath(caseFile: CaseFile, config: Config): string {
   const abs = path.resolve(config.projectRoot, caseFile.project.lockfile);
@@ -182,38 +176,6 @@ function isScratchLockfile(rel: string): boolean {
 function isAccepted(config: Pick<Config, 'ignore'>, vuln: VulnCase, now: Date): boolean {
   const hit = findIgnore(config.ignore, vuln.id, vuln.package, [...vuln.aliases, ...vuln.mergedIds], now);
   return hit !== null && !hit.expired;
-}
-
-export interface TargetChoice {
-  version: string;
-  full: boolean;
-  clears: VulnCase[];
-  remaining: VulnCase[];
-}
-
-// else best in installed line
-export function chooseTarget(vulns: readonly VulnCase[], installed: string, caseFile?: CaseFile | null): TargetChoice | null {
-  const candidates = unique(
-    vulns
-      .map((v) => v.recommendedFix?.version)
-      .filter((v): v is string => typeof v === 'string' && parseVersion(v) !== null && compareVersions(v, installed) > 0),
-  ).sort((a, b) => compareVersions(b, a));
-  if (candidates.length === 0) return null;
-  const evaluate = (version: string): { clears: VulnCase[]; remaining: VulnCase[] } => {
-    const clears: VulnCase[] = [];
-    const remaining: VulnCase[] = [];
-    for (const vuln of vulns) (vulnAffects(vuln, version, caseFile) ? remaining : clears).push(vuln);
-    return { clears, remaining };
-  };
-  for (const version of candidates) {
-    const result = evaluate(version);
-    if (result.remaining.length === 0) return { version, full: true, ...result };
-  }
-  const scored = candidates.map((version) => ({ version, ...evaluate(version) })).filter((s) => s.clears.length > 0);
-  const best = (list: typeof scored): (typeof scored)[number] | undefined =>
-    [...list].sort((a, b) => b.clears.length - a.clears.length || compareVersions(b.version, a.version))[0];
-  const pick = best(scored.filter((s) => isSameLine(installed, s.version))) ?? best(scored);
-  return pick ? { ...pick, full: false } : null;
 }
 
 // non-root dependents and their ranges
@@ -1787,6 +1749,7 @@ export async function runPhase3(caseFile: CaseFile, assessment: Assessment, conf
     if (assessment.caseFileHash !== caseFileHash(caseFile)) {
       ui.warn('The saved assessment was made from an older case file', 'run patch-pilot investigate for fresh verdicts');
     }
+    assessment = alignAssessment(caseFile, assessment, config.ignore);
     presentFindings(assessment, caseFile, config, ui, { cards: deps.showCards ?? true });
     ui.status.set({ activity: 'Planning the fixes' });
     const lockRel = lockfileRelPath(caseFile, config);

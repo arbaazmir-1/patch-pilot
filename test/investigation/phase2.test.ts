@@ -7,7 +7,7 @@ import { runPhase2 } from '../../src/investigation/agent.ts';
 import { caseFileHash, loadAssessment } from '../../src/investigation/assessment.ts';
 import { PROMPT_VERSION } from '../../src/investigation/prompts.ts';
 import type { CaseFile, Config } from '../../src/types.ts';
-import { captureUi, caseFileOf, fakeRegistry, lodashFixture, minimistFixture, tempDir, testConfig, usageResult } from './helpers.ts';
+import { captureUi, caseFileOf, fakeRegistry, lodashFixture, markedThreeFixture, minimistFixture, tempDir, testConfig, usageResult } from './helpers.ts';
 
 const lodash = lodashFixture();
 const minimist = minimistFixture();
@@ -63,6 +63,18 @@ describe('runPhase2', () => {
       [...new Set(s.provider.calls.map((c) => c.purpose))],
       ['recon', 'dossier', 'verdict-loop', 'verdict'],
     );
+  });
+
+  it('every card of a multi-cve package recommends the version the package action applies', async () => {
+    const s = setup({ rules: [] });
+    const marked = markedThreeFixture();
+    const cf = caseFileOf([marked.pkg], marked.vulns, tmp.dir);
+    const assessment = await runPhase2(cf, config, { provider: s.provider, ui: s.ui, audit: s.audit, registry: s.registry, graph: null });
+    assert.deepEqual(assessment.verdicts.map((v) => v.recommendation.targetVersion), ['4.0.10', '4.0.10', '4.0.10']);
+    const text = s.out();
+    assert.doesNotMatch(text, /Recommended: upgrade to 2\.0\.0/);
+    assert.match(text, /Recommended: upgrade to 4\.0\.10 \(major\); this CVE alone is fixed in 2\.0\.0/);
+    assert.equal(text.match(/Recommended: upgrade to 4\.0\.10 \(major\)\n/g)?.length, 2);
   });
 
   it('saves after every verdict, and --resume skips the finished CVEs and reuses the dossier', async () => {
