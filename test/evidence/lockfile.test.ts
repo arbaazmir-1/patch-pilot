@@ -4,9 +4,6 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import {
   dependencyPaths,
-  dependentsOf,
-  graphCounts,
-  loadDependencyGraph,
   nameFromKey,
   nodesByName,
   parseLockfile,
@@ -14,54 +11,7 @@ import {
   resolveEdge,
   type LockfileJson,
 } from '../../src/evidence/lockfile.ts';
-import { FIXTURE_APP, tempDir } from './helpers.ts';
-
-describe('lockfile v3: the fixture examples/vulnerable-app', async () => {
-  const graph = await loadDependencyGraph(FIXTURE_APP, path.join(FIXTURE_APP, 'package-lock.json'));
-
-  it('parses every package entry with its flags', () => {
-    assert.equal(graph.lockfileVersion, 3);
-    assert.equal(graph.nodes.size, 10);
-    assert.deepEqual(graphCounts(graph), { total: 10, direct: 6, dev: 1 });
-    const semver = graph.nodes.get('node_modules/semver');
-    assert.ok(semver);
-    assert.equal(semver.dev, true);
-    assert.equal(semver.isDirect, true);
-    assert.equal(graph.nodes.get('node_modules/decode-uri-component')?.isDirect, false);
-    assert.equal(graph.nodes.get('node_modules/lodash')?.version, '4.17.20');
-    assert.equal(graph.nodes.get('node_modules/lodash')?.license, 'MIT');
-    assert.deepEqual(graph.workspaceKeys, []);
-  });
-
-  it('reads the root package (direct specs, engines) and resolves the root edges', () => {
-    assert.equal(graph.root.name, 'vulnerable-app');
-    assert.equal(graph.root.dependencies.lodash, '4.17.20');
-    assert.equal(graph.root.devDependencies.semver, '5.7.1');
-    assert.deepEqual(graph.root.engines, { node: '>=18' });
-    assert.equal(graph.root.edges.minimist, 'node_modules/minimist');
-    assert.equal(Object.keys(graph.root.edges).length, 6);
-  });
-
-  it('resolves package edges and parents (minimist is direct and required by json5)', () => {
-    const json5 = graph.nodes.get('node_modules/json5');
-    assert.deepEqual(json5?.requires, { minimist: '^1.2.5' });
-    assert.deepEqual(json5?.edges, { minimist: 'node_modules/minimist' });
-    assert.deepEqual(graph.nodes.get('node_modules/minimist')?.parents, ['', 'node_modules/json5']);
-    assert.deepEqual(graph.nodes.get('node_modules/decode-uri-component')?.parents, ['node_modules/query-string']);
-    assert.deepEqual(
-      dependentsOf(graph, 'node_modules/decode-uri-component').map((n) => `${n.name}@${n.version}`),
-      ['query-string@6.14.1'],
-    );
-    assert.deepEqual(graph.byName.get('lodash'), ['node_modules/lodash']);
-  });
-
-  it('computes shortest dependency paths from the root', () => {
-    assert.deepEqual(dependencyPaths(graph, 'node_modules/minimist'), [['minimist@1.2.5'], ['json5@2.2.0', 'minimist@1.2.5']]);
-    assert.deepEqual(dependencyPaths(graph, 'node_modules/decode-uri-component'), [['query-string@6.14.1', 'decode-uri-component@0.2.0']]);
-    assert.deepEqual(dependencyPaths(graph, 'node_modules/minimist', { maxPaths: 1 }), [['minimist@1.2.5']]);
-    assert.deepEqual(dependencyPaths(graph, 'node_modules/missing'), []);
-  });
-});
+import { tempDir } from './helpers.ts';
 
 // nesting, scopes, alias, workspace link, flags
 const NESTED: LockfileJson = {

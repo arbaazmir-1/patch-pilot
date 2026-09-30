@@ -14,7 +14,11 @@ const option = (name: string): string | undefined => {
   return i === -1 ? undefined : args[i + 1];
 };
 const positional = args.filter((a, i) => !a.startsWith('--') && args[i - 1] !== '--home');
-const dir = positional[0] ?? 'examples/vulnerable-app';
+const dir = positional[0];
+if (!dir) {
+  console.error('usage: node test/evidence/live-check.ts <project-dir> [--offline] [--json] [--home <dir>]');
+  process.exit(2);
+}
 const home = option('--home');
 
 const config = await loadConfig({ dir, flags: { offline: flag('--offline'), trust: true }, homeDir: home ? path.resolve(home) : undefined });

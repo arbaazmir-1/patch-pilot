@@ -1,13 +1,9 @@
-import { cp, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { Writable } from 'node:stream';
-import { fileURLToPath } from 'node:url';
 import type { AbbreviatedPackument, OsvRecord } from '../../src/types.ts';
 import { Ui } from '../../src/ui.ts';
-
-export const REPO_ROOT = fileURLToPath(new URL('../..', import.meta.url));
-export const FIXTURE_APP = path.join(REPO_ROOT, 'examples', 'vulnerable-app');
 
 export interface FixtureData {
   querybatch: Record<string, { id: string; modified: string }[]>;
@@ -17,7 +13,7 @@ export interface FixtureData {
 
 let cached: FixtureData | null = null;
 
-// real responses for examples/vulnerable-app
+// recorded OSV.dev and registry responses
 export async function fixtureData(): Promise<FixtureData> {
   if (!cached) cached = JSON.parse(await readFile(new URL('./fixtures/fixture-data.json', import.meta.url), 'utf8')) as FixtureData;
   return cached;
@@ -121,10 +117,3 @@ export async function tempDir(prefix = 'pp-phase1-'): Promise<{ dir: string; cle
   return { dir, cleanup: () => rm(dir, { recursive: true, force: true }) };
 }
 
-// fresh temp copy
-export async function copyFixtureApp(): Promise<{ dir: string; cleanup: () => Promise<void> }> {
-  const tmp = await tempDir('pp-app-');
-  const dir = path.join(tmp.dir, 'vulnerable-app');
-  await cp(FIXTURE_APP, dir, { recursive: true, filter: (src) => !src.split(path.sep).includes('.patch-pilot') && !src.split(path.sep).includes('node_modules') });
-  return { dir, cleanup: tmp.cleanup };
-}

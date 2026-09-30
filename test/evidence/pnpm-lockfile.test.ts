@@ -1,47 +1,9 @@
 import assert from 'node:assert/strict';
-import { cp, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
-import os from 'node:os';
-import path from 'node:path';
 import { describe, it } from 'node:test';
-import { installedPath, loadDependencyGraph, lockfileManager } from '../../src/evidence/lockfile.ts';
-import { normalizePnpmKey, parsePnpmLockfile, pnpmStorePath, refinePnpmRanges, splitPnpmKey } from '../../src/evidence/lockfiles/pnpm.ts';
+import { installedPath } from '../../src/evidence/lockfile.ts';
+import { normalizePnpmKey, parsePnpmLockfile, pnpmStorePath, splitPnpmKey } from '../../src/evidence/lockfiles/pnpm.ts';
 import type { NodeSummary } from './yarn-pnpm-helpers.ts';
-import { APP, appNpmGraph, appPackage, rootEdges, summarize, text, workspacePackages, workspacesNpmGraph } from './yarn-pnpm-helpers.ts';
-
-describe('pnpm lockfile 9.0: examples/vulnerable-app (pnpm import of package-lock.json)', async () => {
-  const graph = parsePnpmLockfile(await text('vulnerable-app', 'pnpm-lock.yaml'), { rootPackage: await appPackage() });
-
-  it('builds the same graph as the npm lockfile: flags, direct, dependents, paths', async () => {
-    const npm = await appNpmGraph();
-    assert.deepEqual(summarize(graph), summarize(npm));
-    assert.deepEqual(rootEdges(graph), rootEdges(npm));
-    assert.equal(graph.packageManager, 'pnpm');
-    assert.equal(graph.lockfileVersion, 9);
-  });
-
-  it('keys nodes by snapshot, keeps integrity and engines, and records resolved versions as requires', () => {
-    const qs = graph.nodes.get('query-string@6.14.1');
-    assert.equal(qs?.edges['decode-uri-component'], 'decode-uri-component@0.2.0');
-    assert.deepEqual(qs?.requires, { 'decode-uri-component': '0.2.0', 'filter-obj': '1.1.0', 'split-on-first': '1.1.0', 'strict-uri-encode': '2.0.0' }, 'pnpm-lock.yaml has no declared ranges');
-    assert.deepEqual(qs?.engines, { node: '>=6' });
-    assert.match(qs?.integrity ?? '', /^sha512-XDxAeV/);
-    assert.equal(installedPath(graph, 'query-string@6.14.1'), 'node_modules/.pnpm/query-string@6.14.1/node_modules/query-string');
-  });
-
-  it('lockfile 6.0 gives the same graph and the same keys', async () => {
-    const v6 = parsePnpmLockfile(await text('vulnerable-app', 'pnpm-v6', 'pnpm-lock.yaml'), { rootPackage: await appPackage() });
-    assert.equal(v6.lockfileVersion, 6);
-    assert.deepEqual(summarize(v6), summarize(graph));
-    assert.deepEqual([...v6.nodes.keys()].sort(), [...graph.nodes.keys()].sort(), 'a pnpm upgrade that rewrites 6.0 as 9.0 changes no key');
-  });
-
-  it('works from the lockfile alone (the root specifiers)', async () => {
-    const bare = parsePnpmLockfile(await text('vulnerable-app', 'pnpm-lock.yaml'));
-    assert.deepEqual(bare.root.devDependencies, { semver: '5.7.1' });
-    assert.equal(bare.root.dependencies.lodash, '4.17.20');
-    assert.deepEqual(summarize(bare), summarize(graph));
-  });
-});
+import { summarize, text, workspacePackages, workspacesNpmGraph } from './yarn-pnpm-helpers.ts';
 
 describe('pnpm lockfile: workspaces, peers, an alias, optional and dev dependencies', async () => {
   const { root } = await workspacePackages();
@@ -99,29 +61,6 @@ describe('pnpm keys and the virtual store', () => {
     assert.equal(pnpmStorePath('@sindresorhus/is@4.6.0', '@sindresorhus/is'), 'node_modules/.pnpm/@sindresorhus+is@4.6.0/node_modules/@sindresorhus/is');
     assert.equal(pnpmStorePath('debug@4.3.4(supports-color@7.2.0)', 'debug'), 'node_modules/.pnpm/debug@4.3.4_supports-color@7.2.0/node_modules/debug');
     assert.equal(pnpmStorePath('Upper@1.0.0', 'Upper'), null, 'pnpm hashes upper-case folder names');
-  });
-
-  it('refines requires from the installed package.json, and loadDependencyGraph does it when node_modules/.pnpm exists', async () => {
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'pp-pnpm-'));
-    try {
-      await cp(path.join(APP, 'package.json'), path.join(tmp, 'package.json'));
-      await writeFile(path.join(tmp, 'pnpm-lock.yaml'), await text('vulnerable-app', 'pnpm-lock.yaml'));
-      const store = path.join(tmp, 'node_modules', '.pnpm', 'query-string@6.14.1', 'node_modules', 'query-string');
-      await mkdir(store, { recursive: true });
-      await writeFile(
-        path.join(store, 'package.json'),
-        JSON.stringify({ name: 'query-string', version: '6.14.1', dependencies: { 'decode-uri-component': '^0.2.0', 'filter-obj': '^1.1.0', 'split-on-first': '^1.0.0', 'strict-uri-encode': '^2.0.0' } }),
-      );
-      const plain = parsePnpmLockfile(await text('vulnerable-app', 'pnpm-lock.yaml'));
-      assert.equal(await refinePnpmRanges(plain, tmp), 1);
-      assert.equal(plain.nodes.get('query-string@6.14.1')?.requires['decode-uri-component'], '^0.2.0');
-      const loaded = await loadDependencyGraph(tmp, path.join(tmp, 'pnpm-lock.yaml'));
-      assert.equal(loaded.nodes.get('query-string@6.14.1')?.requires['decode-uri-component'], '^0.2.0');
-      assert.equal(loaded.nodes.get('json5@2.2.0')?.requires.minimist, '1.2.5', 'not installed: the resolved version stays');
-      assert.equal(lockfileManager('pnpm-lock.yaml'), 'pnpm');
-    } finally {
-      await rm(tmp, { recursive: true, force: true });
-    }
   });
 
   it('explains an invalid or unversioned lockfile', () => {

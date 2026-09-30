@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
-import { cp, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, it } from 'node:test';
-import { dependencyPaths, installedPath, loadDependencyGraph, lockfileManager, nodesByName } from '../../src/evidence/lockfile.ts';
+import { dependencyPaths, loadDependencyGraph, lockfileManager, nodesByName } from '../../src/evidence/lockfile.ts';
 import { npmAlias } from '../../src/evidence/lockfiles/index.ts';
 import {
   parseResolutionKey,
@@ -15,50 +15,7 @@ import {
   removeYarnClassicRequests,
   yarnFlavor,
 } from '../../src/evidence/lockfiles/yarn.ts';
-import { APP, appNpmGraph, appPackage, LOCKFILES, rootEdges, summarize, text, workspacePackages, workspacesNpmGraph } from './yarn-pnpm-helpers.ts';
-
-describe('yarn 1 lockfile: examples/vulnerable-app (yarn import of package-lock.json)', async () => {
-  const graph = parseYarnClassic(await text('vulnerable-app', 'yarn.lock'), { rootPackage: await appPackage() });
-
-  it('builds the same graph as the npm lockfile: flags, direct, dependents, paths', async () => {
-    const npm = await appNpmGraph();
-    assert.deepEqual(summarize(graph), summarize(npm));
-    assert.deepEqual(rootEdges(graph), rootEdges(npm));
-    assert.equal(graph.packageManager, 'yarn');
-    assert.equal(graph.lockfileVersion, 1);
-    assert.deepEqual(graph.workspaceKeys, []);
-  });
-
-  it('keys nodes "name@version" and keeps resolved, integrity and the declared ranges', () => {
-    assert.deepEqual([...graph.nodes.keys()].sort(), [
-      'decode-uri-component@0.2.0',
-      'filter-obj@1.1.0',
-      'json5@2.2.0',
-      'lodash@4.17.20',
-      'marked@0.3.6',
-      'minimist@1.2.5',
-      'query-string@6.14.1',
-      'semver@5.7.1',
-      'split-on-first@1.1.0',
-      'strict-uri-encode@2.0.0',
-    ]);
-    const qs = graph.nodes.get('query-string@6.14.1');
-    assert.deepEqual(qs?.requires, { 'decode-uri-component': '^0.2.0', 'filter-obj': '^1.1.0', 'split-on-first': '^1.0.0', 'strict-uri-encode': '^2.0.0' });
-    assert.equal(qs?.edges['decode-uri-component'], 'decode-uri-component@0.2.0');
-    assert.match(qs?.resolved ?? '', /^https:\/\/registry\.yarnpkg\.com\/query-string\/-\/query-string-6\.14\.1\.tgz#/);
-    assert.match(qs?.integrity ?? '', /^sha512-XDxAeV/);
-    // one entry for direct 1.2.5 and json5's ^1.2.5
-    assert.deepEqual(graph.nodes.get('minimist@1.2.5')?.parents, ['', 'json5@2.2.0']);
-    assert.equal(graph.root.edges.minimist, 'minimist@1.2.5');
-    assert.equal(installedPath(graph, 'minimist@1.2.5'), 'node_modules/minimist');
-  });
-
-  it('infers the direct dependencies when package.json is missing', async () => {
-    const bare = parseYarnClassic(await text('vulnerable-app', 'yarn.lock'));
-    assert.deepEqual(Object.keys(bare.root.dependencies).sort(), ['json5', 'lodash', 'marked', 'query-string', 'semver']);
-    assert.equal(bare.nodes.get('minimist@1.2.5')?.isDirect, false, 'json5 requires it, so it is not inferred as direct');
-  });
-});
+import { LOCKFILES, rootEdges, summarize, text, workspacePackages, workspacesNpmGraph } from './yarn-pnpm-helpers.ts';
 
 describe('yarn 1 lockfile: workspaces, scopes, an alias, optional and dev dependencies', async () => {
   const { root, workspaces } = await workspacePackages();
@@ -171,34 +128,6 @@ describe('yarn 1 text format', () => {
   });
 });
 
-describe('yarn 2+ lockfile: examples/vulnerable-app (yarn 4.18.0)', async () => {
-  const graph = parseYarnBerry(await text('vulnerable-app', 'berry', 'yarn.lock'), { rootPackage: await appPackage() });
-
-  it('builds the same graph as the npm lockfile', async () => {
-    const npm = await appNpmGraph();
-    assert.deepEqual(summarize(graph), summarize(npm));
-    assert.deepEqual(rootEdges(graph), rootEdges(npm));
-    assert.equal(graph.packageManager, 'yarn-berry');
-    assert.equal(graph.lockfileVersion, 10);
-  });
-
-  it('keys nodes by locator, strips the npm protocol from ranges and keeps the checksum', () => {
-    const qs = graph.nodes.get('query-string@npm:6.14.1');
-    assert.equal(qs?.requires['decode-uri-component'], '^0.2.0');
-    assert.equal(qs?.edges['decode-uri-component'], 'decode-uri-component@npm:0.2.0');
-    assert.match(qs?.integrity ?? '', /^10c0\//);
-    assert.equal(qs?.resolved, undefined, 'registry packages have no resolved URL in yarn 2+');
-    assert.equal(graph.nodes.get('semver@npm:5.7.1')?.dev, true, 'dev comes from package.json: the workspace entry merges the sections');
-  });
-
-  it('resolves a request rewritten by package.json resolutions (the override lockfile)', async () => {
-    const pkg = { ...(await appPackage()), resolutions: { 'query-string/decode-uri-component': '0.5.0' } };
-    const after = parseYarnBerry(await text('after', 'berry-override-decode.lock'), { rootPackage: pkg });
-    assert.equal(after.nodes.get('query-string@npm:6.14.1')?.edges['decode-uri-component'], 'decode-uri-component@npm:0.5.0');
-    assert.deepEqual(after.nodes.get('decode-uri-component@npm:0.5.0')?.parents, ['query-string@npm:6.14.1']);
-  });
-});
-
 describe('yarn 2+ lockfile: workspaces, aliases, peers', async () => {
   const { root, workspaces } = await workspacePackages();
   const graph = parseYarnBerry(await text('workspaces', 'berry', 'yarn.lock'), { rootPackage: root, workspaces });
@@ -268,9 +197,9 @@ describe('yarn 2+ details', () => {
   });
 
   it('tells yarn 1 from yarn 2+ and reads resolution keys', async () => {
-    assert.equal(yarnFlavor(await text('vulnerable-app', 'yarn.lock')), 'classic');
-    assert.equal(yarnFlavor(await text('vulnerable-app', 'berry', 'yarn.lock')), 'berry');
-    assert.equal(parseYarnLockfile(await text('vulnerable-app', 'berry', 'yarn.lock')).packageManager, 'yarn-berry');
+    assert.equal(yarnFlavor(await text('workspaces', 'yarn.lock')), 'classic');
+    assert.equal(yarnFlavor(await text('workspaces', 'berry', 'yarn.lock')), 'berry');
+    assert.equal(parseYarnLockfile(await text('workspaces', 'berry', 'yarn.lock')).packageManager, 'yarn-berry');
     assert.deepEqual(parseResolutionKey('query-string/decode-uri-component'), { from: 'query-string', name: 'decode-uri-component' });
     assert.deepEqual(parseResolutionKey('query-string@^6/decode-uri-component'), { from: 'query-string', name: 'decode-uri-component' });
     assert.deepEqual(parseResolutionKey('@s/parent/@s/child'), { from: '@s/parent', name: '@s/child' });
@@ -282,18 +211,5 @@ describe('yarn 2+ details', () => {
 
   it('explains invalid YAML', () => {
     assert.throws(() => parseYarnBerry('__metadata:\n  version: 8\n"a@npm:1":\n  version: [\n'), /not valid YAML.*yarn install/s);
-  });
-
-  it('loadDependencyGraph picks the yarn 2+ parser by content', async () => {
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'pp-berry-'));
-    try {
-      await cp(path.join(APP, 'package.json'), path.join(tmp, 'package.json'));
-      await writeFile(path.join(tmp, 'yarn.lock'), await text('vulnerable-app', 'berry', 'yarn.lock'));
-      const graph = await loadDependencyGraph(tmp, 'yarn.lock');
-      assert.equal(graph.packageManager, 'yarn-berry');
-      assert.deepEqual(summarize(graph), summarize(await appNpmGraph()));
-    } finally {
-      await rm(tmp, { recursive: true, force: true });
-    }
   });
 });

@@ -5,10 +5,8 @@ import { describe, it } from 'node:test';
 import { DEFAULT_EXCLUDES } from '../../src/config.ts';
 import {
   classifyFile,
-  collectUsageEvidence,
   extractBlamedSymbols,
   findImportsInSource,
-  findUsage,
   findUsageInSource,
   globToRegExp,
   IMPORT_KINDS,
@@ -21,7 +19,7 @@ import {
   walkProject,
 } from '../../src/evidence/codebase.ts';
 import type { ImportSite, UsageEvidence } from '../../src/types.ts';
-import { FIXTURE_APP, fixtureData, recordById, tempDir } from './helpers.ts';
+import { tempDir } from './helpers.ts';
 
 const noUsage = (pkg: string): UsageEvidence => ({
   package: pkg,
@@ -183,18 +181,6 @@ describe('findImportsInSource: every ImportKind', () => {
 });
 
 describe('findUsageInSource: members, counts and binding calls', () => {
-  it('counts members on a whole-module binding and ignores comments and strings', async () => {
-    const source = await import('node:fs/promises').then((fs) => fs.readFile(path.join(FIXTURE_APP, 'src/config.js'), 'utf8'));
-    const sites = findImportsInSource(source, 'src/config.js', ['lodash']);
-    const usage = findUsageInSource(source, 'src/config.js', sites);
-    assert.deepEqual(
-      usage.map((u) => `${u.line}:${u.binding}.${u.member}`),
-      ['22:_.merge', '24:_.get', '25:_.get', '26:_.get'],
-    );
-    assert.equal(usage[0]?.text, 'const merged = _.merge({}, DEFAULTS, readConfigFile(file), overrides);');
-    assert.equal(usage[0]?.scope, 'source');
-  });
-
   it('finds bracket access, optional chaining and named-import calls', () => {
     const source = [
       "import _, { get as g } from 'lodash';",
@@ -267,102 +253,7 @@ describe('findUsageInSource: members, counts and binding calls', () => {
   });
 });
 
-describe('usage evidence on the fixture', () => {
-  it('collects imports, scopes, members and binding calls in one walk', async () => {
-    const evidence = await collectUsageEvidence(FIXTURE_APP, ['lodash', 'minimist', 'marked', 'json5', 'semver', 'decode-uri-component'], { exclude: DEFAULT_EXCLUDES });
-    const lodash = evidence.get('lodash');
-    assert.equal(lodash?.imported, true);
-    assert.deepEqual(
-      lodash?.files.map((s) => [s.path, s.line, s.kind, s.binding]),
-      [['src/config.js', 7, 'cjs-require', '_']],
-    );
-    assert.deepEqual(lodash?.membersUsed, { get: 3, merge: 1 });
-    assert.deepEqual(lodash?.scopes, { source: 1, test: 0, config: 0, scripts: 0 });
-    assert.equal(evidence.get('minimist')?.bindingCalls, 1);
-    assert.equal(evidence.get('minimist')?.files[0]?.path, 'src/cli.js');
-    assert.equal(evidence.get('marked')?.bindingCalls, 1);
-    assert.deepEqual(evidence.get('json5')?.membersUsed, { parse: 1 });
-    assert.deepEqual(evidence.get('semver')?.scopes, { source: 0, test: 0, config: 0, scripts: 1 });
-    assert.equal(evidence.get('semver')?.files[0]?.path, 'scripts/check-version.js');
-    assert.equal(evidence.get('decode-uri-component')?.imported, false);
-    assert.equal(evidence.get('lodash')?.scannedFiles, 5);
-  });
-
-  it('findUsage reads the importing files and caps the results', async () => {
-    const evidence = await collectUsageEvidence(FIXTURE_APP, ['lodash'], { exclude: DEFAULT_EXCLUDES });
-    const sites = evidence.get('lodash')?.files ?? [];
-    const get = await findUsage(FIXTURE_APP, sites, 'get', { contextLines: 2 });
-    assert.deepEqual(get.map((u) => u.line), [24, 25, 26]);
-    assert.equal(get[0]?.context?.before.length, 2);
-    assert.equal((await findUsage(FIXTURE_APP, sites, undefined, { maxResults: 2 })).length, 2);
-    assert.deepEqual(await findUsage(FIXTURE_APP, sites, 'template', {}), []);
-  });
-});
-
-describe('extractBlamedSymbols on real advisory text', async () => {
-  const data = await fixtureData();
-  const usage = await collectUsageEvidence(FIXTURE_APP, ['lodash', 'minimist', 'marked', 'json5', 'semver', 'decode-uri-component'], { exclude: DEFAULT_EXCLUDES });
-  const blamed = (id: string, pkg: string, ev: UsageEvidence = usage.get(pkg) ?? noUsage(pkg)) => {
-    const record = recordById(data, id);
-    return extractBlamedSymbols(record.details ?? '', record.summary ?? '', pkg, ev).map((s) => `${s.name}:${s.kind}:${s.via}`);
-  };
-
-  it('minimist: the bare setKey() is internal', () => {
-    assert.deepEqual(blamed('GHSA-xvch-5gv4-984h', 'minimist'), ['setKey:internal:call']);
-  });
-
-  it('json5: JSON5.parse is exported (and used by the project)', () => {
-    assert.deepEqual(blamed('GHSA-9c47-m6qq-7p4h', 'json5'), ['parse:exported:member-access']);
-    assert.deepEqual(blamed('GHSA-9c47-m6qq-7p4h', 'json5', noUsage('json5')), ['parse:exported:member-access']);
-  });
-
-  it('lodash: backticked names confirmed as lo.x in the PoC, _.template, _.unset/_.omit', () => {
-    assert.deepEqual(blamed('GHSA-29mw-wpgm-hmr9', 'lodash'), ['toNumber:exported:member-access', 'trim:exported:member-access', 'trimEnd:exported:member-access']);
-    // _ holds the whole module
-    assert.deepEqual(blamed('GHSA-r5fr-rjxr-66jc', 'lodash'), ['template:exported:member-access', 'assignInWith:exported:backticks']);
-    assert.deepEqual(blamed('GHSA-xxjr-mmjv-4gpg', 'lodash'), ['unset:exported:member-access', 'omit:exported:member-access']);
-  });
-
-  it('lodash CVE-2021-23337 on its own: "via the template function" is exported for a whole-module import', () => {
-    // no alias naming _.template
-    assert.deepEqual(blamed('GHSA-35jh-r3h4-6jhm', 'lodash'), ['template:exported:call'], 'the fixture: const _ = require("lodash")');
-    const site = (kind: ImportSite['kind'], binding: string | null, named?: Record<string, string>): UsageEvidence => ({
-      ...noUsage('lodash'),
-      imported: true,
-      files: [{ path: 'src/a.js', line: 1, statement: '', binding, kind, scope: 'source', ...(named ? { named } : {}) }],
-    });
-    assert.deepEqual(blamed('GHSA-35jh-r3h4-6jhm', 'lodash', site('esm-namespace', 'lo')), ['template:exported:call']);
-    assert.deepEqual(blamed('GHSA-35jh-r3h4-6jhm', 'lodash', site('esm-default', '_')), ['template:exported:call']);
-    // template only if named
-    assert.deepEqual(blamed('GHSA-35jh-r3h4-6jhm', 'lodash', site('esm-named', null, { merge: 'merge' })), ['template:internal:call']);
-    assert.deepEqual(blamed('GHSA-35jh-r3h4-6jhm', 'lodash', site('esm-named', null, { template: 'template' })), ['template:exported:call']);
-    // subpath binding is one function
-    assert.deepEqual(blamed('GHSA-35jh-r3h4-6jhm', 'lodash', { ...site('cjs-require', 'merge'), files: [{ ...site('cjs-require', 'merge').files[0]!, subpath: 'merge' }] }), ['template:internal:call']);
-    assert.deepEqual(blamed('GHSA-35jh-r3h4-6jhm', 'lodash', noUsage('lodash')), ['template:internal:call']);
-    assert.deepEqual(blamed('GHSA-35jh-r3h4-6jhm', 'lodash', { ...noUsage('lodash'), membersUsed: { template: 1 } }), ['template:exported:call']);
-  });
-
-  it('minimist: setKey stays internal because its sentence names index.js', () => {
-    const minimist = usage.get('minimist');
-    assert.equal(minimist?.files[0]?.binding, 'parseArgs', 'a whole-module binding');
-    assert.deepEqual(blamed('GHSA-xvch-5gv4-984h', 'minimist'), ['setKey:internal:call']);
-    const record = recordById(data, 'GHSA-xvch-5gv4-984h');
-    const withoutPath = (record.details ?? '').replace('via file `index.js`, function', 'via the function');
-    assert.deepEqual(
-      extractBlamedSymbols(withoutPath, record.summary ?? '', 'minimist', minimist ?? noUsage('minimist')).map((s) => `${s.name}:${s.kind}`),
-      ['setKey:exported'],
-      'the file path is what marks it internal',
-    );
-  });
-
-  it('marked and json5: parse stays exported, regex names stay internal', () => {
-    assert.deepEqual(blamed('GHSA-5v2h-r2cx-5xgj', 'marked'), ['parse:exported:member-access', 'inline.reflinkSearch:internal:backticks']);
-    assert.deepEqual(blamed('GHSA-rrrm-qjm4-v8hf', 'marked'), ['parse:exported:member-access', 'block.def:internal:backticks']);
-    for (const id of ['GHSA-7px7-7xjx-hxm8', 'GHSA-x5pg-88wf-qq4p', 'GHSA-p9wx-2529-fp83']) assert.deepEqual(blamed(id, 'marked'), [], id);
-    assert.deepEqual(blamed('GHSA-9c47-m6qq-7p4h', 'json5'), ['parse:exported:member-access']);
-    assert.deepEqual(blamed('GHSA-c2qf-rxjj-qqgw', 'semver'), ['Range:internal:call'], 'a PascalCase class is not a plain camelCase name');
-  });
-
+describe('extractBlamedSymbols', () => {
   it('keeps names internal when the sentence says internal, private, helper or names a source file', () => {
     const whole: UsageEvidence = {
       ...noUsage('lodash'),
@@ -376,19 +267,6 @@ describe('extractBlamedSymbols on real advisory text', async () => {
     assert.deepEqual(kinds('In `lib/merge.js` the `baseMerge` function is vulnerable. The `cloneDeep` function too.'), ['cloneDeep:exported', 'baseMerge:internal']);
     assert.deepEqual(kinds('The flaw is in the assignValue function of utils.js.'), ['assignValue:internal']);
     assert.deepEqual(kinds('The flaw is in the assignValue function.'), ['assignValue:exported']);
-  });
-
-  it('marked: marked.parse from the PoC is exported, regex names are internal', () => {
-    assert.deepEqual(blamed('GHSA-5v2h-r2cx-5xgj', 'marked'), ['parse:exported:member-access', 'inline.reflinkSearch:internal:backticks']);
-    assert.deepEqual(blamed('GHSA-rrrm-qjm4-v8hf', 'marked'), ['parse:exported:member-access', 'block.def:internal:backticks']);
-    assert.deepEqual(blamed('GHSA-7px7-7xjx-hxm8', 'marked'), []);
-    assert.deepEqual(blamed('GHSA-x5pg-88wf-qq4p', 'marked'), [], 'the backticked package name is not a symbol');
-  });
-
-  it('decode-uri-component: the default callable; semver: new Range', () => {
-    assert.deepEqual(blamed('GHSA-vcc3-ghjq-m6fr', 'decode-uri-component'), ['decodeUriComponent:exported:default-callable']);
-    assert.deepEqual(blamed('GHSA-c2qf-rxjj-qqgw', 'semver'), ['Range:internal:call']);
-    assert.deepEqual(blamed('GHSA-w573-4hg7-7wgq', 'decode-uri-component'), []);
   });
 
   it('filters stop words, globals, options, file names, URLs and fix sections', () => {

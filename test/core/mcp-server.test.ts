@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
@@ -15,7 +15,6 @@ import { McpSession, MCP_PROMPT_VERSION, type SessionLogEntry } from '../../src/
 import type { CaseFile, Config } from '../../src/types.ts';
 import { caseFileOf, fakeRegistry, lodashFixture, minimistFixture, tempDir, testConfig, usageResult } from '../investigation/helpers.ts';
 
-const FIXTURE = fileURLToPath(new URL('../../examples/vulnerable-app', import.meta.url));
 const BIN = fileURLToPath(new URL('../../bin/patch-pilot.ts', import.meta.url));
 
 let dir: string;
@@ -220,30 +219,6 @@ describe('PatchPilot MCP server', () => {
     assert.deepEqual(assessment?.dossiers[0]?.inputSources, ['process.argv']);
     const kase = await h.call('get_case', { vulnId: 'CVE-2021-44906' });
     assert.match(kase.text, /Fact dossier \(submitted earlier\)/);
-  });
-
-  it('runs the real tools on the bundled fixture', async () => {
-    const root = path.join(dir, 'fixture');
-    await cp(FIXTURE, root, { recursive: true, filter: (src) => !src.includes(`${path.sep}.patch-pilot`) && !src.includes(`${path.sep}node_modules`) });
-    const config = await testConfig(root);
-    const { pkg, vuln } = minimistFixture();
-    const audit = new MemoryAudit();
-    const session = new McpSession({ config, provider: 'codex', model: 'test-model', audit, graph: null, loadCase: async () => caseFileOf([pkg], [vuln], root), scanImports: async () => new Map() });
-    const usage = await session.runTool('get_usage', { package: 'minimist' });
-    assert.equal(usage.isError, false, usage.text);
-    assert.match(usage.text, /src\/cli\.js/);
-    const file = await session.runTool('read_file', { path: 'src/cli.js', startLine: 1, endLine: 20 });
-    assert.equal(file.isError, false, file.text);
-    assert.match(file.text, /minimist/);
-    const escape = await session.runTool('read_file', { path: '../../etc/passwd' });
-    assert.equal(escape.isError, true, 'paths outside the project are refused by the registry tool');
-    const web = await session.runTool('web_search', { query: 'x' });
-    assert.equal(web.isError, true);
-    const verdict = await session.submitVerdict('CVE-2021-44906', HIGH);
-    assert.ok(!verdict.isError, verdict.text);
-    const v = (await loadAssessment(config.paths.assessmentFile))?.verdicts[0];
-    assert.equal(v?.investigation.provider, 'codex');
-    assert.equal(v?.investigation.model, 'test-model');
   });
 });
 

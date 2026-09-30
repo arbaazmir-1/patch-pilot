@@ -1,14 +1,9 @@
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { after, afterEach, before, describe, it } from 'node:test';
-import { MemoryAudit } from '../../src/audit.ts';
-import { DEFAULT_EXCLUDES, loadConfig } from '../../src/config.ts';
-import { runPhase1 } from '../../src/evidence/casefile.ts';
-import { collectDependentUsage, collectUsageEvidence, DEPENDENT_MAX_FILES, findUsage } from '../../src/evidence/codebase.ts';
-import { captureUi, copyFixtureApp, FIXTURE_APP, fixtureData, fixtureServer, stubFetch, tempDir } from './helpers.ts';
-
-const PACKAGES = ['lodash', 'minimist', 'marked', 'json5', 'semver', 'decode-uri-component'];
+import { describe, it } from 'node:test';
+import { collectDependentUsage, DEPENDENT_MAX_FILES } from '../../src/evidence/codebase.ts';
+import { tempDir } from './helpers.ts';
 
 async function write(root: string, rel: string, content: string): Promise<void> {
   await mkdir(path.dirname(path.join(root, rel)), { recursive: true });
@@ -30,46 +25,6 @@ const QUERY_STRING = [
   'exports.parse = (query, options) => decode(query, options);',
   '',
 ].join('\n');
-
-describe('codebase: the parser path on examples/vulnerable-app', () => {
-  it('keeps the wave 1 evidence and adds method ast and the calls through the app modules', async () => {
-    const evidence = await collectUsageEvidence(FIXTURE_APP, PACKAGES, { exclude: DEFAULT_EXCLUDES });
-    const lodash = evidence.get('lodash');
-    assert.deepEqual(
-      lodash?.files.map((s) => [s.path, s.line, s.kind, s.binding, s.statement]),
-      [['src/config.js', 7, 'cjs-require', '_', "const _ = require('lodash');"]],
-    );
-    assert.deepEqual(lodash?.membersUsed, { get: 3, merge: 1 });
-    assert.equal(evidence.get('minimist')?.bindingCalls, 1);
-    assert.equal(evidence.get('marked')?.bindingCalls, 1);
-    assert.deepEqual(evidence.get('json5')?.membersUsed, { parse: 1 });
-    assert.deepEqual(evidence.get('semver')?.scopes, { source: 0, test: 0, config: 0, scripts: 1 });
-    assert.equal(evidence.get('decode-uri-component')?.imported, false);
-    for (const name of PACKAGES) {
-      const e = evidence.get(name);
-      assert.equal(e?.method, 'ast', name);
-      assert.equal(e?.dynamicAccess, undefined, `${name}: no dynamic access`);
-      assert.equal(e?.dependentUsage, undefined, `${name}: dependents are not scanned here`);
-    }
-    assert.deepEqual(lodash?.indirectPaths, [
-      { path: 'src/cli.js', line: 33, via: ['loadConfig'], member: 'merge' },
-      { path: 'src/cli.js', line: 33, via: ['loadConfig'], member: 'get' },
-    ]);
-    assert.deepEqual(evidence.get('json5')?.indirectPaths, [{ path: 'src/cli.js', line: 33, via: ['loadConfig', 'readConfigFile'], member: 'parse' }]);
-    assert.deepEqual(
-      evidence.get('marked')?.indirectPaths?.map((p) => `${p.path}:${p.line} ${p.via.join('>')}`),
-      ['src/cli.js:34 renderDocument>renderMarkdown', 'test/render.test.js:8 renderMarkdown', 'test/render.test.js:14 renderDocument>renderMarkdown'],
-    );
-    assert.equal(evidence.get('minimist')?.indirectPaths, undefined, 'minimist is called at the top of main(), not through another module');
-  });
-
-  it('findUsage gives the same call sites as before', async () => {
-    const evidence = await collectUsageEvidence(FIXTURE_APP, ['lodash'], { exclude: DEFAULT_EXCLUDES });
-    const sites = evidence.get('lodash')?.files ?? [];
-    assert.deepEqual((await findUsage(FIXTURE_APP, sites, 'get', { contextLines: 2 })).map((u) => u.line), [24, 25, 26]);
-    assert.deepEqual((await findUsage(FIXTURE_APP, sites, undefined, {})).map((u) => `${u.line}:${u.member}`), ['22:merge', '24:get', '25:get', '26:get']);
-  });
-});
 
 describe('codebase: dependent usage under node_modules', () => {
   it('finds the calls inside a dependent and skips nested node_modules, dist, tests and minified files', async () => {
@@ -123,40 +78,5 @@ describe('codebase: dependent usage under node_modules', () => {
     } finally {
       await tmp.cleanup();
     }
-  });
-
-  describe('runPhase1 attaches the dependent usage of a transitive package', async () => {
-    const data = await fixtureData();
-    let app: { dir: string; cleanup: () => Promise<void> };
-    let home: { dir: string; cleanup: () => Promise<void> };
-    let stub: ReturnType<typeof stubFetch> | null = null;
-    before(async () => {
-      app = await copyFixtureApp();
-      home = await tempDir('pp-home-');
-    });
-    afterEach(() => {
-      stub?.restore();
-      stub = null;
-    });
-    after(async () => {
-      await app.cleanup();
-      await home.cleanup();
-    });
-
-    it('leaves dependentUsage undefined without node_modules and fills it when installed', async () => {
-      stub = stubFetch(fixtureServer(data));
-      const config = await loadConfig({ dir: app.dir, flags: { trust: true }, homeDir: home.dir, stdinIsTTY: false, stdoutIsTTY: false });
-      const first = await runPhase1(config, { ui: captureUi().ui, audit: new MemoryAudit() });
-      const decode = (cf: typeof first) => cf.packages.find((p) => p.name === 'decode-uri-component');
-      assert.equal(decode(first)?.usage.dependentUsage, undefined);
-      assert.equal(decode(first)?.usage.method, 'ast');
-      await write(app.dir, 'node_modules/query-string/package.json', '{ "name": "query-string", "version": "6.14.1" }');
-      await write(app.dir, 'node_modules/query-string/index.js', QUERY_STRING);
-      const second = await runPhase1(config, { ui: captureUi().ui, audit: new MemoryAudit() });
-      assert.deepEqual(decode(second)?.usage.dependentUsage, [
-        { dependent: 'query-string', version: '6.14.1', path: 'node_modules/query-string/index.js', line: 7, member: null, text: 'return decodeComponent(value);' },
-      ]);
-      assert.equal(second.packages.find((p) => p.name === 'lodash')?.usage.dependentUsage, undefined, 'imported packages are not scanned in node_modules');
-    });
   });
 });

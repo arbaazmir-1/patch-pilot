@@ -1,5 +1,5 @@
 {
- "note": "Real OSV.dev and npm registry responses captured 2026-09-24 for examples/vulnerable-app (packuments trimmed to versions, deprecations and engines.node).",
+ "note": "Real OSV.dev and npm registry responses captured 2026-09-24 for a lockfile with lodash 4.17.20, minimist 1.2.5, marked 0.3.6, json5 2.2.0, semver 5.7.1 and query-string 6.14.1 (packuments trimmed to versions, deprecations and engines.node).",
  "querybatch": {
   "decode-uri-component@0.2.0": [
    {

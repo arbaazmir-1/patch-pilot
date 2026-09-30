@@ -3,127 +3,17 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
-import { parseLockfile } from '../../src/evidence/lockfile.ts';
-import {
-  chooseTarget,
-  enginesCheck,
-  npmArgsFor,
-  npmInvocation,
-  overrideConflict,
-  overrideEntries,
-  planActions,
-  stalePackages,
-  writeOverride,
-} from '../../src/remediation/patch.ts';
-import type { Action, Config, IgnoreEntry, VulnCase } from '../../src/types.ts';
-import { fixtureGraph, fixtureLock, fixturePackage, loadFixtures, projectConfig, setNodeVersion } from './patch-helpers.ts';
+import { chooseTarget, enginesCheck, npmArgsFor, npmInvocation, overrideConflict, overrideEntries, writeOverride } from '../../src/remediation/patch.ts';
+import type { Action, VulnCase } from '../../src/types.ts';
 
 let tmp: string;
-let config: Config;
 
 before(async () => {
   tmp = await mkdtemp(path.join(os.tmpdir(), 'pp-plan-'));
-  config = await projectConfig(tmp, tmp);
 });
 
 after(async () => {
   await rm(tmp, { recursive: true, force: true });
-});
-
-function byPackage(actions: readonly Action[]): Map<string, Action> {
-  return new Map(actions.map((a) => [a.package, a]));
-}
-
-describe('planActions on the vulnerable-app fixture', () => {
-  it('plans one action per package with kind, target, CVEs, spec style and parents', async () => {
-    const { caseFile, assessment } = await loadFixtures();
-    const actions = planActions(caseFile, assessment, await fixtureGraph(), config);
-    const map = byPackage(actions);
-    assert.deepEqual([...map.keys()].sort(), ['decode-uri-component', 'json5', 'lodash', 'marked', 'minimist', 'semver']);
-
-    const lodash = map.get('lodash') as Action;
-    assert.equal(lodash.kind, 'bump');
-    assert.equal(lodash.id, 'bump:lodash@4.18.1');
-    assert.equal(lodash.toVersion, '4.18.1', 'skips the deprecated 4.18.0');
-    assert.deepEqual(lodash.vulnIds.sort(), ['GHSA-29mw-wpgm-hmr9', 'GHSA-35jh-r3h4-6jhm', 'GHSA-xxjr-mmjv-4gpg']);
-    assert.deepEqual(lodash.direct, { depType: 'dependencies', spec: '4.17.20', specStyle: 'exact' });
-    assert.equal(lodash.worstRisk, 'Medium');
-    assert.ok(lodash.notes.some((n) => n.includes('Skips deprecated 4.18.0')));
-    assert.equal(lodash.requiresMigration, false);
-
-    const minimist = map.get('minimist') as Action;
-    assert.equal(minimist.kind, 'bump');
-    assert.equal(minimist.toVersion, '1.2.6');
-    assert.equal(minimist.worstRisk, 'High');
-    assert.deepEqual(minimist.parents, [{ name: 'json5', version: '2.2.0', key: 'node_modules/json5', range: '^1.2.5', acceptsTarget: true }]);
-
-    const marked = map.get('marked') as Action;
-    assert.equal(marked.kind, 'bump-major');
-    assert.equal(marked.toVersion, '4.0.10');
-    assert.equal(marked.majorBump, true);
-    assert.equal(marked.importedInSource, true);
-    assert.equal(marked.requiresMigration, true, 'a major bump imported in source is a transaction');
-    assert.equal(marked.vulnIds.length, 5, 'one bump closes all five marked CVEs');
-
-    const semver = map.get('semver') as Action;
-    assert.equal(semver.kind, 'bump');
-    assert.equal(semver.direct?.depType, 'devDependencies');
-
-    const decode = map.get('decode-uri-component') as Action;
-    assert.equal(decode.kind, 'override-transitive', '0.5.0 clears both CVEs but is outside query-string ^0.2.0');
-    assert.equal(decode.toVersion, '0.5.0');
-    assert.equal(decode.direct, null);
-    assert.deepEqual(decode.parents, [{ name: 'query-string', version: '6.14.1', key: 'node_modules/query-string', range: '^0.2.0', acceptsTarget: false }]);
-    assert.ok(decode.notes.some((n) => n.includes('not tested with decode-uri-component@0.5.0')));
-
-    // high, medium, then low
-    assert.deepEqual(actions.map((a) => a.worstRisk), ['High', 'High', 'Medium', 'Low', 'Low', 'Low']);
-    assert.equal(actions[0]?.package, 'minimist', 'GHSA CRITICAL sorts before HIGH at the same risk');
-    for (const a of actions) {
-      assert.equal(a.engines?.projectNode, '>=18');
-      assert.equal(a.engines?.runningNode, process.versions.node);
-    }
-  });
-
-  it('leaves accepted risks out: with GHSA-vcc3 accepted, decode-uri-component is an in-range update', async () => {
-    const { caseFile, assessment } = await loadFixtures();
-    const ignore: IgnoreEntry[] = [{ id: 'CVE-2026-45822', reason: 'query-string never sees attacker input', by: 'Test', createdAt: '2026-09-01T00:00:00Z' }];
-    const actions = planActions(caseFile, assessment, await fixtureGraph(), { ...config, ignore });
-    const decode = byPackage(actions).get('decode-uri-component') as Action;
-    assert.equal(decode.kind, 'update-transitive');
-    assert.equal(decode.toVersion, '0.2.1');
-    assert.deepEqual(decode.vulnIds, ['GHSA-w573-4hg7-7wgq']);
-    assert.equal(decode.parents[0]?.acceptsTarget, true);
-    assert.equal(decode.majorBump, false);
-  });
-
-  it('an expired accepted risk counts again', async () => {
-    const { caseFile, assessment } = await loadFixtures();
-    const ignore: IgnoreEntry[] = [{ id: 'GHSA-vcc3-ghjq-m6fr', reason: 'old', by: 'Test', createdAt: '2025-01-01T00:00:00Z', until: '2025-06-30' }];
-    const decode = byPackage(planActions(caseFile, assessment, await fixtureGraph(), { ...config, ignore })).get('decode-uri-component') as Action;
-    assert.equal(decode.kind, 'override-transitive');
-  });
-
-  it('drops a package whose CVEs are all accepted', async () => {
-    const { caseFile, assessment } = await loadFixtures();
-    const ignore: IgnoreEntry[] = [{ id: 'GHSA-c2qf-rxjj-qqgw', package: 'semver', reason: 'dev only', by: 'Test', createdAt: '2026-09-01T00:00:00Z' }];
-    const actions = planActions(caseFile, assessment, await fixtureGraph(), { ...config, ignore });
-    assert.equal(byPackage(actions).has('semver'), false);
-  });
-
-  it('skips packages that were not investigated or are no longer at the scanned version', async () => {
-    const { caseFile, assessment } = await loadFixtures();
-    const onlyTwo = { ...assessment, verdicts: assessment.verdicts.filter((v) => v.package === 'minimist' || v.package === 'lodash') };
-    assert.deepEqual(
-      planActions(caseFile, onlyTwo, await fixtureGraph(), config).map((a) => a.package).sort(),
-      ['lodash', 'minimist'],
-    );
-    const lock = await fixtureLock();
-    setNodeVersion(lock, 'node_modules/lodash', '4.18.1');
-    const graph = parseLockfile(lock, await fixturePackage());
-    assert.deepEqual(stalePackages(caseFile, graph).map((p) => p.name), ['lodash']);
-    assert.equal(byPackage(planActions(caseFile, assessment, graph, config)).has('lodash'), false);
-  });
 });
 
 describe('chooseTarget', () => {

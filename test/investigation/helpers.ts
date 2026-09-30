@@ -111,7 +111,7 @@ export function vulnCase(partial: Partial<VulnCase> & { id: string; package: str
   };
 }
 
-// modelled on examples/vulnerable-app
+// synthetic lodash, minimist, marked, json5, semver and decode-uri-component cases
 
 export const LODASH_TEMPLATE_DETAILS =
   'Lodash versions prior to 4.17.21 are vulnerable to Command Injection via the template function.';
@@ -269,24 +269,6 @@ export function markedParseFixture(): { pkg: PackageCase; vuln: VulnCase } {
       summary: 'Inefficient Regular Expression Complexity in marked',
       blamedSymbols: [{ name: 'marked.parse', kind: 'exported', via: 'member-access' }],
     },
-  };
-}
-
-export function osvRecordFor(vuln: VulnCase, details: string): OsvRecord {
-  return {
-    id: vuln.id,
-    modified: vuln.modified,
-    published: vuln.published,
-    aliases: vuln.aliases,
-    summary: vuln.summary,
-    details,
-    severity: vuln.severity.cvssVector ? [{ type: 'CVSS_V3', score: vuln.severity.cvssVector }] : [],
-    affected: [{ package: { name: vuln.package, ecosystem: 'npm' }, ranges: [{ type: 'SEMVER', events: [{ introduced: '0' }, { fixed: vuln.fixedVersions[0] ?? '99.0.0' }] }] }],
-    references: [
-      { type: 'WEB', url: `https://example.com/${vuln.id}` },
-      { type: 'ADVISORY', url: `https://github.com/advisories/${vuln.id}` },
-    ],
-    database_specific: { severity: vuln.severity.ghsa, cwe_ids: vuln.cweIds },
   };
 }
 

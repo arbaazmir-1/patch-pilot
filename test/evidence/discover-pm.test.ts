@@ -15,9 +15,9 @@ async function project(files: Record<string, string>): Promise<{ dir: string; cl
 const pkg = (extra: Record<string, unknown> = {}): string => JSON.stringify({ name: 'demo', version: '1.0.0', ...extra });
 
 describe('discoverProject: yarn and pnpm lockfiles', async () => {
-  const yarn1 = await text('vulnerable-app', 'yarn.lock');
-  const berry = await text('vulnerable-app', 'berry', 'yarn.lock');
-  const pnpm = await text('vulnerable-app', 'pnpm-lock.yaml');
+  const yarn1 = await text('workspaces', 'yarn.lock');
+  const berry = await text('workspaces', 'berry', 'yarn.lock');
+  const pnpm = await text('workspaces', 'pnpm-lock.yaml');
 
   it('finds yarn.lock and tells yarn 1 from yarn 2+ by the file', async () => {
     for (const [lock, manager] of [

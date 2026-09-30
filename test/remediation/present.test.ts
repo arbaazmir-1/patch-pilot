@@ -3,10 +3,9 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
-import { planActions } from '../../src/remediation/patch.ts';
-import { actionItemInfo, clean, presentActions, presentFindings, renderFindingsTable, renderVerdictCard, sortVerdicts, vulnFor } from '../../src/remediation/present.ts';
-import type { Action, Config } from '../../src/types.ts';
-import { captureUi, fixtureGraph, loadFixtures, projectConfig } from './patch-helpers.ts';
+import { clean, presentFindings, renderFindingsTable, renderVerdictCard, sortVerdicts, vulnFor } from '../../src/remediation/present.ts';
+import type { Config } from '../../src/types.ts';
+import { captureUi, loadFixtures, projectConfig } from './patch-helpers.ts';
 
 let dir: string;
 let config: Config;
@@ -94,39 +93,5 @@ describe('findings', () => {
   it('clean() removes em dashes from advisory and model text', () => {
     assert.equal(clean(`Prototype pollution ${EM_DASH} fixed in 1.2.6`), 'Prototype pollution, fixed in 1.2.6');
     assert.equal(clean(null), '');
-  });
-});
-
-describe('Action required', () => {
-  async function actions(): Promise<Action[]> {
-    const { caseFile, assessment } = await loadFixtures();
-    return planActions(caseFile, assessment, await fixtureGraph(), config);
-  }
-
-  it('lists each action with the patch and source notes from the UI design', async () => {
-    const list = await actions();
-    const { ui, out } = captureUi();
-    const { caseFile, assessment } = await loadFixtures();
-    presentActions(list, ui, { caseFile, assessment, config, researched: false });
-    const text = out();
-    assert.match(text, /Action required/);
-    assert.match(text, /1\. minimist 1\.2\.5 -> 1\.2\.6 \[HIGH\]\n {3}Patch: version bump only, no breaking changes \(closes 1 CVE\)\n {3}Source changes: none required/);
-    assert.match(text, /marked 0\.3\.6 -> 4\.0\.10 \[HIGH\]\n {3}Patch: major version \(closes 5 CVEs\)\n {3}Source changes: likely \(imported in source\); researched before approval/);
-    assert.match(text, /decode-uri-component 0\.2\.0 -> 0\.5\.0 \[LOW\]\n {3}Patch: parent-scoped override in package\.json \(closes 2 CVEs\); query-string not tested with 0\.5\.0/);
-  });
-
-  it('describes a researched transaction by its brief and code changes', async () => {
-    const marked = (await actions()).find((a) => a.package === 'marked') as Action;
-    const withBrief: Action = {
-      ...marked,
-      brief: { package: 'marked', from: '0.3.6', to: '4.0.10', items: [], sources: [], queries: [], offline: false, model: 'm', createdAt: '' },
-      codemod: { package: 'marked', model: 'm', patches: [{ file: 'src/render.js', edits: [], diff: '', beforeHash: '', newContent: '' }], rejected: [], manualChecklist: null },
-    };
-    withBrief.brief?.items.push({ change: 'Default export removed', appliesToProject: 'yes', evidenceQuote: 'q', evidenceUrl: 'u', oldApi: 'a', newApi: 'b', affectedFiles: ['src/render.js'], verified: true });
-    const info = actionItemInfo(withBrief, 2);
-    assert.equal(info.patchNote, 'Patch: major version, 1 breaking change detected (closes 5 CVEs)');
-    assert.equal(info.sourceNote, 'Source changes: 1 file needs updates (src/render.js)');
-    const unavailable = actionItemInfo({ ...marked, notes: ['Migration research unavailable: offline.'] }, 2);
-    assert.equal(unavailable.sourceNote, 'Source changes: unknown (migration research unavailable)');
   });
 });

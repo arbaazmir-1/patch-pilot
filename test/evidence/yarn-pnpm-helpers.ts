@@ -6,7 +6,6 @@ import { dependencyPaths, parseLockfile, type LockfileJson } from '../../src/evi
 import type { DependencyGraph, PackageJson } from '../../src/types.ts';
 
 export const LOCKFILES = fileURLToPath(new URL('./fixtures/lockfiles/', import.meta.url));
-export const APP = fileURLToPath(new URL('../../examples/vulnerable-app/', import.meta.url));
 
 export async function text(...parts: string[]): Promise<string> {
   return readFile(path.join(LOCKFILES, ...parts), 'utf8');
@@ -14,15 +13,6 @@ export async function text(...parts: string[]): Promise<string> {
 
 export async function json<T>(file: string): Promise<T> {
   return JSON.parse(await readFile(file, 'utf8')) as T;
-}
-
-export async function appPackage(): Promise<PackageJson> {
-  return json<PackageJson>(path.join(APP, 'package.json'));
-}
-
-// reference graph for every format
-export async function appNpmGraph(): Promise<DependencyGraph> {
-  return parseLockfile(await json<LockfileJson>(path.join(APP, 'package-lock.json')), await appPackage());
 }
 
 export async function workspacePackages(): Promise<{ root: PackageJson; workspaces: { path: string; pkg: PackageJson }[] }> {
