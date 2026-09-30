@@ -2,7 +2,7 @@
 
 **Supply chain defence**
 
-An autonomous AI agent for software supply chain security.
+An AI agent for software supply chain security.
 
 _Local model. Human approval. Full audit trail._
 
@@ -35,13 +35,13 @@ INTI International University
 
 The most dangerous vulnerabilities live in code nobody wants to update.
 
-A typical Node.js project depends on hundreds of open-source packages. When a vulnerability is published, the tools most teams have report it with a severity score and a version to upgrade to. What they cannot tell you is whether the vulnerable code is actually reachable in your project.
+A typical Node.js project depends on hundreds of open-source packages. When a vulnerability is published, the tools most teams have report it with a severity score and a version to upgrade to. What they do not tell you is whether the vulnerable code is actually reachable in your project.
 
-A prototype-pollution bug in a function your project never calls is not a risk today. A regex denial-of-service in the function that parses user-supplied input is. Both arrive with similar CVSS scores. Because existing tools cannot tell them apart, developers learn to ignore the entire list, and the one genuinely exploitable finding gets buried alongside the twenty that are not.
+A prototype-pollution bug in a function your project never calls is not a risk today. A regex denial-of-service in the function that parses user-supplied input is. Both arrive with similar CVSS scores. When the two look the same, developers learn to ignore the entire list, and the one genuinely exploitable finding gets buried alongside the twenty that are not.
 
-When a fix requires a major version bump, the tools stop at the version number and leave the breaking changes to the developer. That is where most upgrades stall.
+When a fix requires a major version bump, those tools stop at the version number and leave the breaking changes to the developer. That is where most upgrades stall.
 
-> **2 of 20** vulnerable packages in a real Astro project are actually imported. A conventional scanner reports all twenty with equal urgency. PatchPilot tells them apart.
+> **2 of 20** vulnerable packages in a real Astro project are actually imported. PatchPilot shows which two.
 
 _Untouched code, unpatched risk._
 
@@ -53,9 +53,9 @@ _Untouched code, unpatched risk._
 
 It investigates dependency vulnerabilities the way a security engineer would.
 
-PatchPilot reads the codebase, checks whether vulnerable functions are actually imported and called, assesses real-world exploitability, and proposes a safe patching plan, including source code changes when a major upgrade introduces breaking API changes.
+PatchPilot reads the codebase, checks whether vulnerable functions are actually imported and called, assesses real-world exploitability, and proposes a patching plan, including source code changes when a major upgrade introduces breaking API changes.
 
-Nothing changes without human approval. Every decision is logged in a full audit trail. The language model runs on your machine through Ollama. Your code never leaves it.
+Nothing changes until you approve it. Every decision is logged in a JSONL audit trail. By default the language model runs on your machine through Ollama, so your code stays on it.
 
 ---
 
@@ -75,19 +75,19 @@ Nothing changes without human approval. Every decision is logged in a full audit
 
 ### How it works
 
-Three phases. The hackathon's own agent framework, built end to end.
+Three phases.
 
 #### I. Take in evidence (No LLM) _gather_
 
-Discover lockfiles across npm, yarn and pnpm. Parse the full dependency graph the way the package manager resolves it. Batch-query every dependency against the OSV vulnerability database, with a local SQLite snapshot as fallback that reports its own data age. Walk the project source with the TypeScript compiler API and record every import site, every member call, every alias chain, resolved across files. Extract the blamed symbols from each advisory. Build the case file.
+Discover the lockfile (npm, yarn or pnpm) and parse the dependency graph the way the package manager resolves it. Batch-query every dependency against the OSV vulnerability database, with a local SQLite cache and an offline snapshot that reports its own data age. Walk the project source with the TypeScript compiler API and record every import site, member call and alias chain, resolved across files. Extract the blamed symbols from each advisory. Build the case file.
 
 #### II. Investigate and decide (Agentic LLM loop) _judge_
 
-For each vulnerable package the model receives the case file and a set of tools it can call in a loop. It checks imports, traces function usage, reads source files, fetches changelogs, pulls the full advisory. An evidence gate ensures the model cannot skip a required check; if it tries, the harness runs the check itself. Guard rails bound the verdict by the evidence gathered. The recommended action is derived by rules, never by the model's opinion.
+For each vulnerable package the model receives the case file and a set of tools it can call in a loop. It checks imports, traces function usage, reads source files, fetches changelogs, pulls the full advisory. An evidence gate ensures the model cannot skip a required check; if it tries, the harness runs the check itself. Guard rails bound the verdict by the evidence gathered. The recommended action is derived by rules, not by the model's opinion.
 
 #### III. Act safely (Human approval required) _act_
 
-Present findings with risk level, reachability, reasoning and confidence. Research breaking changes from release notes, changelogs, migration guides and public documentation, and verify every quote against its source. Draft code edits that are syntax-checked before being shown. Apply approved patches with a backup and a one-command rollback. Write the complete audit report.
+Present findings with risk level, reachability, reasoning and confidence. Research breaking changes from release notes, changelogs, migration guides and package documentation, and check every quote against its source. Draft code edits that are syntax-checked before being shown. Apply approved patches with a backup and a one-command rollback. Write the audit report.
 
 ---
 
@@ -137,7 +137,7 @@ brace-expansion@2.1.0      transitive via minimatch, not imported, 3 CVEs, fix 2
 
 _Fig. 1. Phase one output. Dependency graph parsed, OSV queried, usage evidence located._
 
-Phase one finishes with a severity table and every advisory grouped by package. Note the line that matters: 2 of 20 vulnerable packages are actually imported. Eighteen of them are transitive dependencies the project never touches directly. A conventional scanner would report all twenty with equal urgency.
+Phase one finishes with a severity table and every advisory grouped by package. Note the line that matters: 2 of 20 vulnerable packages are actually imported. The other eighteen are transitive dependencies the project never touches directly.
 
 ---
 
@@ -190,71 +190,84 @@ agent Checking the changelog of sharp 0.34.5 to 0.35.4...
 
 _Fig. 2. Phase two. Per-CVE verdicts with reasoning, confidence and cached results._
 
-Each verdict states the reasoning in plain English: the vulnerable function is not called, the package is not fed untrusted input, the risk is Low and the recommendation is monitor rather than upgrade. Verdicts are cached against the model, the prompt version and a hash of the usage evidence, so a re-scan of unchanged code costs milliseconds. The checklist at the bottom of the terminal tracks all three phases live.
+Each verdict states the reasoning in plain English: the vulnerable function is not called, the package is not fed untrusted input, the risk is Low and the recommendation is monitor rather than upgrade. Verdicts are cached against the model, the prompt version and a hash of the usage evidence, so a re-scan of unchanged code reuses them instead of asking the model again. The checklist at the bottom of the terminal tracks all three phases live.
 
 ---
 
-## 07. Comparison
-
-### Against existing tools
-
-|                          | npm audit | Dependabot  | Snyk       | **PatchPilot** |
-| ------------------------ | --------- | ----------- | ---------- | -------------- |
-| Reachability analysis    | No        | No          | Enterprise | **Yes**        |
-| Plain-English reasoning  | No        | No          | No         | **Yes**        |
-| Breaking change research | No        | No          | No         | **Yes**        |
-| Source code patches      | No        | No          | No         | **Yes**        |
-| Runs locally or offline  | Yes       | GitHub only | Cloud      | **Yes**        |
-| Audit trail              | No        | PR history  | Dashboard  | **Full JSONL** |
-| Cost at scale            | Free      | Free        | Paid       | **Free**       |
-
----
-
-## 08. Rationale
+## 07. Rationale
 
 ### Why not just use Claude Code or Codex?
 
-A general coding agent can do this if you prompt it correctly. PatchPilot is an agentic tool that does it the same way, every time.
+A general coding agent can do this if you prompt it correctly. PatchPilot does it the same way, every time.
 
-1. **Coverage is systematic, not remembered.** OSV is queried for every one of 861 dependencies. A general agent checks what it thinks to check, and what a model recalls about a package's advisories is not a vulnerability database.
-2. **The audit trail is structured, not chat history.** Every tool call, evidence gate intervention, verdict, approval and applied patch is one JSON line with a timestamp and an identity. A compliance team can read it. A transcript is not an audit log.
-3. **The approval gate is part of the workflow.** Backups, lockfile diff guards, syntax validation and one-command rollback are enforced by code before any change lands, not by asking the model to be careful.
-4. **It is repeatable and it runs in CI.** One command, an exit code, and a cached verdict store. A conversation cannot run on a schedule or fail a build.
-5. **It runs on a laptop with no cloud cost.** A 7B model on local hardware, zero per-scan cost, and no source code leaving the machine. The evidence gate and guard rails are what make a small model's verdicts trustworthy.
+1. **Coverage is systematic, not remembered.** OSV is queried for every dependency in the lockfile. A general agent checks what it thinks to check, and what a model recalls about a package's advisories is not a vulnerability database.
+2. **The audit trail is structured, not chat history.** Every tool call, evidence gate intervention, verdict, approval and applied patch is one JSON line with a timestamp and an identity.
+3. **The approval gate is part of the workflow.** Backups, lockfile diff guards, syntax validation and rollback are enforced by code before any change lands, not by asking the model to be careful.
+4. **It is repeatable and it runs in CI.** `patch-pilot --ci` runs without prompts or changes, writes JSON and Markdown reports, and sets the exit code from `--fail-on`.
+5. **It runs on a laptop.** An 8B model on local hardware (qwen3:8b by default), no per-scan cost, and no source code leaving the machine. The evidence gate and guard rails are what make a small model's verdicts trustworthy.
+
+You can still use them: `--provider claude` (Anthropic API key) or `--provider codex` (Codex CLI) run the same investigation in the cloud, and `patch-pilot mcp claude` gives your own Claude Code PatchPilot's tools with the same evidence gate. With a cloud provider, code snippets are sent to that provider, and the trust prompt says so.
 
 ---
 
-## 09. Stack
+## 08. Stack
 
 ### Tech stack
 
-| Component     | Technology                                                                 |
-| ------------- | -------------------------------------------------------------------------- |
-| Runtime       | Node.js and TypeScript, ES modules                                         |
-| CLI           | Commander.js and Chalk                                                     |
-| Model         | Ollama, local-first. qwen3:8b by default, mistral:7b as the lighter option |
-| CVE data      | OSV.dev API, with a SQLite cache and offline snapshot                      |
-| Code analysis | TypeScript Compiler API. A real syntax tree with cross-file resolution     |
-| Lockfiles     | npm v1 to v3, yarn 1 and 2+, pnpm v6 and v9                                |
-| Tests         | 900+ tests, no GPU or network required                                     |
+| Component     | Technology                                                                              |
+| ------------- | --------------------------------------------------------------------------------------- |
+| Runtime       | Node.js 22.12+ and TypeScript, ES modules                                               |
+| CLI           | Commander.js and Chalk                                                                  |
+| Model         | Ollama, local-first. qwen3:8b by default. Optional Claude (API key) and Codex providers |
+| CVE data      | OSV.dev API, with a SQLite cache and offline snapshot                                   |
+| Code analysis | TypeScript compiler API. A real syntax tree with cross-file resolution                  |
+| Lockfiles     | npm v1 to v3, yarn 1 and 2+, pnpm v5 to v9                                              |
+| Dashboard     | Astro, reads each project's report and live run status                                  |
 
 ---
 
-## 11. Limits
+## 09. Get started
+
+```bash
+npm install
+npm run build
+npm link              # puts `patch-pilot` on your PATH
+
+ollama pull qwen3:8b
+cd your-project
+patch-pilot           # asks to trust the folder, then runs all three phases
+```
+
+`patch-pilot doctor` checks Node, Ollama, the model and the network. `patch-pilot rollback` restores the last backup. `examples/` has four small intentionally vulnerable apps for a quick first run.
+
+The dashboard lists every scanned project:
+
+```bash
+cd web
+npm install
+npm run build
+npm start             # http://localhost:4321
+```
+
+---
+
+## 10. Limits
 
 ### Scope and limitations
 
-Scoped to the npm, yarn and pnpm ecosystems; the architecture extends to pip, Cargo and Go through OSV, which already covers them. Reachability is static: import sites, member calls and alias chains come from a real syntax tree with cross-file resolution, but there is no data-flow analysis, so whether the value reaching a call is untrusted is judged by the model from the surrounding code. Verdicts carry a reachability value and a confidence rather than a yes or no for exactly this reason.
+Scoped to the npm, yarn and pnpm ecosystems. Reachability is static: import sites, member calls and alias chains come from a real syntax tree with cross-file resolution, but there is no data-flow analysis, so whether the value reaching a call is untrusted is judged by the model from the surrounding code. Verdicts carry a reachability value and a confidence rather than a yes or no for exactly this reason.
 
 Source code modifications for breaking API changes are syntax-checked and shown as diffs before applying, and an edit whose supporting quote cannot be verified against a real source is never drafted. Small local models are weak reasoners; the correctness of the verdicts comes largely from the evidence gate and the guard rails.
 
+Breaking-change research uses the web: Ollama Web Search (with an API key) or Brave Search, falling back to the package's own docs. Only search queries and page requests go out; source files are never uploaded. `--offline` skips it and uses cached data only.
+
 ---
 
-## 12. Closing
+## 11. Closing
 
 ### In one sentence
 
-**We will build a security analyst that never misses a dependency, never skips an audit log, and runs on a laptop.**
+**A security analyst that never misses a dependency, never skips an audit log, and runs on a laptop.**
 
 The AI is the engine, not the product. The product is a security workflow that produces auditable results and that a solo developer or a five-person team can actually afford to run.
 
