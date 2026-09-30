@@ -13,7 +13,7 @@ import { loadAssessment } from '../../src/investigation/assessment.ts';
 import { createMcpServer, mcpConfigText } from '../../src/mcp/server.ts';
 import { McpSession, MCP_PROMPT_VERSION, type SessionLogEntry } from '../../src/mcp/tools.ts';
 import type { CaseFile, Config } from '../../src/types.ts';
-import { caseFileOf, fakeRegistry, lodashFixture, minimistFixture, tempDir, testConfig, usageResult } from '../investigation/helpers.ts';
+import { caseFileOf, fakeRegistry, lodashFixture, markedThreeFixture, minimistFixture, tempDir, testConfig, usageResult } from '../investigation/helpers.ts';
 
 const BIN = fileURLToPath(new URL('../../bin/patch-pilot.ts', import.meta.url));
 
@@ -119,6 +119,21 @@ describe('PatchPilot MCP server', () => {
     const tool = lines.find((l) => l.type === 'tool');
     assert.ok(tool && tool.type === 'tool');
     assert.equal(tool.description, 'Checking how minimist is used...');
+  });
+
+  it('shows the package fix version on a cve whose own fix is lower', async () => {
+    const { pkg, fixedIn2, vulns } = markedThreeFixture();
+    const h = await harness('package-fix', (root) => caseFileOf([{ ...pkg, vulnIds: vulns.map((v) => v.id) }], vulns, root));
+    await h.call('get_usage', { package: 'marked' });
+    await h.call('get_usage', { package: 'marked', symbol: 'marked' });
+    await h.call('read_file', { path: 'src/cli.js', startLine: 1, endLine: 30 });
+    const res = await h.call('submit_verdict', { vulnId: fixedIn2.id, verdict: { ...HIGH, reasoning: 'marked renders user markdown.' } });
+    assert.equal(res.isError, false, res.text);
+    const body = JSON.parse(res.text) as { recommendation: string };
+    assert.match(body.recommendation, /4\.0\.10/);
+    assert.match(body.recommendation, /this CVE alone is fixed in 2\.0\.0/);
+    const saved = (await loadAssessment(h.config.paths.assessmentFile))?.verdicts.find((v) => v.vulnId === fixedIn2.id);
+    assert.equal(saved?.recommendation.targetVersion, '4.0.10');
   });
 
   it('refuses a verdict without the evidence, naming the exact call, then accepts it and saves it', async () => {

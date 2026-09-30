@@ -481,6 +481,14 @@ export function packageFixFor(vuln: VulnCase, packageVulns: readonly VulnCase[],
   return { version: choice.version, majorBump: isMajorBump(installed, choice.version) };
 }
 
+// package fix for one cve, same rule as planActions
+export function casePackageFix(caseFile: CaseFile, pkg: PackageCase, vuln: VulnCase, config: Pick<Config, 'ignore'>, now: Date = new Date()): PackageFix | null {
+  const vulns = caseFile.vulnerabilities.filter(
+    (v) => v.package === pkg.name && (v.installedVersion || pkg.version) === pkg.version && !v.malware && !isAccepted(config, v, now),
+  );
+  return packageFixFor(vuln, vulns, pkg.version, caseFile);
+}
+
 // per-cve target follows the package fix
 export function alignRecommendation(
   verdict: Verdict,

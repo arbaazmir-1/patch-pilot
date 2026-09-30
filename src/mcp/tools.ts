@@ -9,7 +9,9 @@ import { findImportsInSource, walkProject } from '../evidence/codebase.ts';
 import { loadDependencyGraph } from '../evidence/lockfile.ts';
 import { createAssessment, caseFileHash, loadAssessment, saveAssessment, upsertDossier, upsertVerdict } from '../investigation/assessment.ts';
 import {
+  alignRecommendation,
   applyRails,
+  casePackageFix,
   deriveRecommendation,
   evidenceRequirements,
   parseDossierOutput,
@@ -676,7 +678,7 @@ export class McpSession {
       investigation.adjustReason = adjusted.reason;
     }
     if (gate.fired || gate.coached || gate.harnessCalls.length > 0) investigation.gate = { ...gate, harnessCalls: [...gate.harnessCalls] };
-    const verdict: Verdict = {
+    let verdict: Verdict = {
       vulnId: vuln.id,
       package: pkg.name,
       installedVersion: vuln.installedVersion || pkg.version,
@@ -692,6 +694,11 @@ export class McpSession {
       }),
       investigation,
     };
+    // card shows the version the package action will install
+    verdict = alignRecommendation(verdict, pkg, vuln, casePackageFix(caseFile, pkg, vuln, this.config), {
+      graph: await this.graph(),
+      modelAction: output.recommendationAction,
+    });
     await this.store(caseFile, pkg, vuln, verdict);
     this.audit.log({
       event: 'verdict',
