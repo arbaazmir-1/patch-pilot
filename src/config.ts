@@ -84,6 +84,7 @@ export interface CliFlags {
   offline?: boolean;
   dryRun?: boolean;
   cache?: boolean;
+  fresh?: boolean;
   approveAll?: boolean;
   approveCodemods?: boolean;
   approve?: string | string[];

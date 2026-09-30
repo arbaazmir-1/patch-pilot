@@ -19,6 +19,7 @@ import { loadAssessment } from './investigation/assessment.ts';
 import { offerGitignore, openStateDb, rollbackLatest, runPhase3, stateDirExists } from './remediation/patch.ts';
 import { presentFindings } from './remediation/present.ts';
 import { writeReports } from './remediation/report.ts';
+import { clearProjectState } from './reset.ts';
 import { trackRun } from './runStatus.ts';
 import { ensurePreflight, NEEDS, pullModel, renderPreflight, renderPullProgress, runPreflight, type PullProgress } from './preflight.ts';
 import { cloudProviderNotice, ensureTrusted, trustDirectory, trustStorePath, untrustDirectory } from './trust.ts';
@@ -50,6 +51,7 @@ const OPTIONS = {
   offline: () => new Option('--offline', 'no network: cached vulnerability data and sources only'),
   dryRun: () => new Option('--dry-run', 'stop after presenting the findings; change nothing'),
   noCache: () => new Option('--no-cache', 're-investigate every vulnerability (ignore the verdict cache)'),
+  fresh: () => new Option('--fresh', 'start over: clear saved findings, verdicts, cache and reports first (backups and the audit log are kept)'),
   approveAll: () => new Option('--approve-all', 'approve every version bump without prompting (code edits need --approve-codemods)'),
   approveCodemods: () => new Option('--approve-codemods', 'also approve code edits for major-version migrations'),
   approve: () => new Option('--approve <pkgs>', 'approve the actions for these packages only (comma-separated)'),
@@ -95,6 +97,7 @@ const SCAN_OPTIONS: readonly OptionName[] = [
   'offline',
   'dryRun',
   'noCache',
+  'fresh',
   'approveAll',
   'approveCodemods',
   'approve',
@@ -358,6 +361,11 @@ async function scanCommand(dir: string | undefined, flags: CliFlags): Promise<Ex
   const ctx = await openProject('scan', dir, flags, NEEDS.scan, true, true);
   const { config, ui, audit, identity } = ctx;
   if (firstWrite) await offerGitignore(config, ui);
+  if (flags.fresh) {
+    const removed = await clearProjectState(config);
+    audit.log({ event: 'state.reset', removed });
+    ui.check('Cleared earlier results', removed.length > 0 ? removed.join(` ${ui.glyphs.dot} `) : 'nothing saved yet');
+  }
   const provider = createProvider(config);
   const db = openStateDb(config, ui);
   const run = trackRun(config, ui, 'scan');
