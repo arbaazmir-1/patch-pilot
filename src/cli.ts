@@ -19,7 +19,7 @@ import { loadAssessment } from './investigation/assessment.ts';
 import { offerGitignore, openStateDb, rollbackLatest, runPhase3, stateDirExists } from './remediation/patch.ts';
 import { presentFindings } from './remediation/present.ts';
 import { writeReports } from './remediation/report.ts';
-import { clearProjectState } from './reset.ts';
+import { archiveLastRun, clearProjectState } from './runHistory.ts';
 import { trackRun } from './runStatus.ts';
 import { ensurePreflight, NEEDS, pullModel, renderPreflight, renderPullProgress, runPreflight, type PullProgress } from './preflight.ts';
 import { cloudProviderNotice, ensureTrusted, trustDirectory, trustStorePath, untrustDirectory } from './trust.ts';
@@ -51,7 +51,7 @@ const OPTIONS = {
   offline: () => new Option('--offline', 'no network: cached vulnerability data and sources only'),
   dryRun: () => new Option('--dry-run', 'stop after presenting the findings; change nothing'),
   noCache: () => new Option('--no-cache', 're-investigate every vulnerability (ignore the verdict cache)'),
-  fresh: () => new Option('--fresh', 'start over: clear saved findings, verdicts, cache and reports first (backups and the audit log are kept)'),
+  fresh: () => new Option('--fresh', 'start over: re-investigate everything with no cached verdicts (the last run is kept in .patch-pilot/history)'),
   approveAll: () => new Option('--approve-all', 'approve every version bump without prompting (code edits need --approve-codemods)'),
   approveCodemods: () => new Option('--approve-codemods', 'also approve code edits for major-version migrations'),
   approve: () => new Option('--approve <pkgs>', 'approve the actions for these packages only (comma-separated)'),
@@ -361,10 +361,15 @@ async function scanCommand(dir: string | undefined, flags: CliFlags): Promise<Ex
   const ctx = await openProject('scan', dir, flags, NEEDS.scan, true, true);
   const { config, ui, audit, identity } = ctx;
   if (firstWrite) await offerGitignore(config, ui);
+  const archived = await archiveLastRun(config, { withCache: flags.fresh === true });
+  if (archived) {
+    audit.log({ event: 'history.archived', dir: archived.dir, files: archived.files });
+    ui.check('Kept the last run', archived.dir);
+  }
   if (flags.fresh) {
     const removed = await clearProjectState(config);
     audit.log({ event: 'state.reset', removed });
-    ui.check('Cleared earlier results', removed.length > 0 ? removed.join(` ${ui.glyphs.dot} `) : 'nothing saved yet');
+    ui.check('Starting fresh', 'every vulnerability is investigated again');
   }
   const provider = createProvider(config);
   const db = openStateDb(config, ui);
@@ -414,6 +419,14 @@ async function investigateCommand(dir: string | undefined, flags: CliFlags): Pro
   if (firstWrite) await offerGitignore(config, ui);
   const caseFile = await loadCaseFile(config.paths.caseFile);
   if (!caseFile) throw noCaseFile(config);
+  // a new investigation, not a resume
+  if (!config.resume) {
+    const archived = await archiveLastRun(config);
+    if (archived) {
+      audit.log({ event: 'history.archived', dir: archived.dir, files: archived.files });
+      ui.check('Kept the last run', archived.dir);
+    }
+  }
   // damaged assessment, phase 2 restarts
   if (config.resume && (await loadAssessment(config.paths.assessmentFile).catch(() => undefined)) === null) {
     ui.infoLine('Nothing to resume', 'no saved assessment yet: starting a fresh investigation');

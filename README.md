@@ -238,7 +238,7 @@ cd your-project
 patch-pilot           # asks to trust the folder, then runs all three phases
 ```
 
-`patch-pilot doctor` checks Node, Ollama, the model and the network. `patch-pilot --fresh` starts over, clearing earlier findings, verdicts and reports (backups and the audit log are kept). `patch-pilot rollback` restores the last backup. `examples/` has four small intentionally vulnerable apps for a quick first run.
+`patch-pilot doctor` checks Node, Ollama, the model and the network. Every rerun keeps the previous run's findings, verdicts and reports in `.patch-pilot/history/`, and `patch-pilot --fresh` re-investigates everything instead of reusing cached verdicts. `patch-pilot rollback` restores the last backup. `examples/` has four small intentionally vulnerable apps for a quick first run.
 
 The dashboard lists every scanned project:
 

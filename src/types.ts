@@ -1338,6 +1338,7 @@ export type AuditEvent =
   | { event: 'preflight'; ok: boolean; checks: { id: PreflightCheckId; status: CheckStatus; detail: string }[]; model: string | null; ollamaVersion: string | null }
   | { event: 'trust.granted'; dir: string; remote: string | null; method: TrustEntry['method']; by: Identity }
   | { event: 'state.reset'; removed: string[] }
+  | { event: 'history.archived'; dir: string; files: string[] }
   | { event: 'scan.start'; command: string; dir: string; version: string; provider: ProviderName; model: string; options: Record<string, unknown> }
   | { event: 'discover.lockfile'; lockfile: string | null; kind: LockfileKind | null; lockfileVersion: number | null; generated: boolean; unsupported: string[] }
   | { event: 'deps.parsed'; total: number; direct: number; dev: number; lockfileVersion: number }
